@@ -13,3 +13,8 @@ fn trial_divisions_test() {
 fn sieve_primes_test() {
     sieve_primes(1000000);
 }
+
+#[divan::bench]
+fn wheel_primes_test() {
+    wheel_primes(vec![2, 3], 1000000);
+}
