@@ -1,0 +1,21 @@
+[package]
+name = "primality_tests"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[[bench]]
+name = "trial_divisions"
+harness = false
+
+[[bench]]
+name = "wheel_primes"
+harness = false
+
+[[bench]]
+name = "sieve_primes"
+harness = false
