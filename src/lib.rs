@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod tests;
+
 pub fn trial_division(num: u64) -> bool {
     for i in 2..=f64::sqrt(num as f64) as u64 {
         if num % i == 0 {
