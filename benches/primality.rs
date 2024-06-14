@@ -16,5 +16,5 @@ fn sieve_primes_test() {
 
 #[divan::bench]
 fn wheel_primes_test() {
-    wheel_primes(vec![2, 3], 1000000);
+    wheel_primes(vec![2, 3], 10000);
 }
