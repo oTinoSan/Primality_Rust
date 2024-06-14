@@ -68,19 +68,15 @@ pub fn sieve_primes(max_val: u64) -> Vec<u64> {
         is_prime[1] = false;
     }
     let mut p = 2;
-    while p < max_val {
-        for i in 2..=max_val / p {
-            is_prime[(i * p) as usize] = false;
+    while p <= f64::sqrt(max_val as f64) as u64 {
+        for i in (p*p..=max_val).step_by(p as usize) {
+            is_prime[i as usize] = false;
         }
-        let old_p = p;
         for i in (p + 1)..max_val {
             if is_prime[i as usize] {
                 p = i;
                 break;
             }
-        }
-        if old_p == p {
-            break;
         }
     }
     let mut primes: Vec<_> = (0..=max_val).collect();
