@@ -1,4 +1,4 @@
-use primality_tests::{trial_divisions, wheel_primes, sieve_primes};
+use primality_tests::{sieve_primes, trial_divisions, wheel_primes};
 
 fn main() {
     divan::main();

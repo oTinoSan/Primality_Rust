@@ -64,7 +64,9 @@ pub fn wheel_primes(mut basis: Vec<u64>, max_val: u64) -> Vec<u64> {
 pub fn sieve_primes(max_val: u64) -> Vec<u64> {
     let mut is_prime = vec![true; (max_val + 1) as usize];
     is_prime[0] = false;
-    is_prime[1] = false;
+    if max_val > 0 {
+        is_prime[1] = false;
+    }
     let mut p = 2;
     while p < max_val {
         for i in 2..=max_val / p {
