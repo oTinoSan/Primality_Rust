@@ -4,7 +4,7 @@ pub fn miller_rabin(k: u64, n: u64) -> bool {
     let s = (n - 1).trailing_zeros();
     let d = (n - 1) >> s;
     'outer: for _ in 0..k {
-        let mut a: u64 = thread_rng().gen_range(2..=(n-2));
+        let mut a: u64 = thread_rng().gen_range(2..=(n - 2));
 
         a = mod_exp(a, d, n);
 
@@ -50,7 +50,7 @@ fn mod_exp(mut base: u64, mut exp: u64, modulus: u64) -> u64 {
     result
 }
 
-fn mod_exp_naive(base: u64, exp: u64, modulus: u64) -> u64 {
+fn _mod_exp_naive(base: u64, exp: u64, modulus: u64) -> u64 {
     let mut res = 1;
     for _ in 0..exp {
         res = (res * base) % modulus;

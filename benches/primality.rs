@@ -1,4 +1,7 @@
-use primality_tests::{sieve_primes, trial_divisions, trial_division, miller_rabin::miller_rabin_list, miller_rabin::miller_rabin};
+use primality_tests::{
+    miller_rabin::miller_rabin, miller_rabin::miller_rabin_list, sieve_primes, trial_division,
+    trial_divisions,
+};
 
 fn main() {
     divan::main();
