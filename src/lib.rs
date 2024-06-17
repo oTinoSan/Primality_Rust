@@ -1,6 +1,8 @@
 #[cfg(test)]
 mod tests;
 
+pub mod miller_rabin;
+
 pub fn trial_division(num: u64) -> bool {
     for i in 2..=f64::sqrt(num as f64) as u64 {
         if num % i == 0 {
@@ -69,7 +71,7 @@ pub fn sieve_primes(max_val: u64) -> Vec<u64> {
     }
     let mut p = 2;
     while p <= f64::sqrt(max_val as f64) as u64 {
-        for i in (p*p..=max_val).step_by(p as usize) {
+        for i in (p * p..=max_val).step_by(p as usize) {
             is_prime[i as usize] = false;
         }
         for i in (p + 1)..max_val {
