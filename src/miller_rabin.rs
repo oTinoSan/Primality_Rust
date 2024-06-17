@@ -4,12 +4,9 @@ pub fn miller_rabin(k: u64, n: u64) -> bool {
     let s = (n - 1).trailing_zeros();
     let d = (n - 1) >> s;
     'outer: for _ in 0..k {
-        let orig_a: u64 = thread_rng().gen_range(2..=(n-2));
-        let mut a = orig_a;
+        let mut a: u64 = thread_rng().gen_range(2..=(n-2));
 
-        for _ in 1..d {
-            a = (a * orig_a) % n;
-        }
+        a = mod_exp(a, d, n);
 
         if a == 1 {
             continue;
@@ -18,7 +15,7 @@ pub fn miller_rabin(k: u64, n: u64) -> bool {
             if a == n - 1 {
                 continue 'outer;
             }
-            a = (a * a) % n;
+            a = mod_exp(a, 2, n);
         }
         if a != n - 1 {
             return false;
@@ -35,4 +32,28 @@ pub fn miller_rabin_list(k: u64, n: u64) -> Vec<u64> {
         }
     }
     primes
+}
+
+fn mod_exp(mut base: u64, mut exp: u64, modulus: u64) -> u64 {
+    if modulus == 1 {
+        return 0;
+    }
+    let mut result = 1;
+    base = base % modulus;
+    while exp > 0 {
+        if exp % 2 == 1 {
+            result = (result * base) % modulus;
+        }
+        exp >>= 1;
+        base = (base * base) % modulus;
+    }
+    result
+}
+
+fn mod_exp_naive(base: u64, exp: u64, modulus: u64) -> u64 {
+    let mut res = 1;
+    for _ in 0..exp {
+        res = (res * base) % modulus;
+    }
+    return res;
 }
