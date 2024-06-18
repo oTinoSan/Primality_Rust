@@ -1,5 +1,14 @@
-// use std::env;
 use rand::Rng;
+
+pub fn trial_vect(limit: u32) -> Vec<u32> {
+    let mut primes: Vec<u32> = Vec::new();
+    for num in 2..=limit {
+        if trial(num) {
+            primes.push(num);
+        }
+    }
+    primes
+}
 
 pub fn trial(candidate: u32) -> bool {
     let sqrt = (candidate as f64).sqrt() as u32;
@@ -14,10 +23,10 @@ pub fn trial(candidate: u32) -> bool {
     is_prime
 }
 
-pub fn trial_vect(limit: u32) -> Vec<u32> {
+pub fn trial_vect_2(limit: u32) -> Vec<u32> {
     let mut primes: Vec<u32> = Vec::new();
     for num in 2..=limit {
-        if trial(num) {
+        if trial_2(num) {
             primes.push(num);
         }
     }
@@ -44,16 +53,6 @@ pub fn trial_2(candidate: u32) -> bool {
     true
 }
 
-pub fn trial_vect_2(limit: u32) -> Vec<u32> {
-    let mut primes: Vec<u32> = Vec::new();
-    for num in 2..=limit {
-        if trial_2(num) {
-            primes.push(num);
-        }
-    }
-    primes
-}
-
 pub fn sieve(candidate: u32) -> bool {
     if candidate <= 1 {
         return false;
@@ -78,11 +77,6 @@ pub fn sieve(candidate: u32) -> bool {
 
 pub fn sieve_vect(limit: u32) -> Vec<u32> {
     (2..=limit).filter(|&num| sieve(num)).collect()
-}
-
-pub fn wheel(candidate: u64) -> bool {
-    let factors = wheel_facts(candidate);
-    factors.len() <= 2 
 }
 
 pub fn wheel_facts(candidate: u64) -> Vec<u64> {
@@ -115,6 +109,11 @@ pub fn wheel_facts(candidate: u64) -> Vec<u64> {
     }
 
     factors
+}
+
+pub fn wheel(candidate: u64) -> bool {
+    let factors = wheel_facts(candidate);
+    factors.len() <= 2 
 }
 
 pub fn mod_pow(mut base: u64, mut exp: u64, modulus: u64) -> u64 {

@@ -1,4 +1,3 @@
-// use std::env;
 use rand::Rng;
 
 fn main() {
@@ -18,11 +17,13 @@ fn main() {
     // let result = sieve_vect(1000);
     // println!("{:?}", result);
 
-    let result = wheel_facts(1000);
-    println!("{:?}", result);
-    let result = wheel(1000);
-    println!("{:?}", result);
+    // let result = wheel_facts(1000);
+    // println!("{:?}", result);
+    // let result = wheel(1000);
+    // println!("{:?}", result);
 
+    // let result = miller_rabin(1000);
+    // println!("{:?}", result);
 
 }
 
