@@ -1,8 +1,8 @@
 use primality::{
-    miller_rabin::miller_rabin, sieve::sieve, lib::trial, lib::trial_2,
-    wheel::wheel, solovay_strassen::solovay_strassen
-}
-
+    miller_rabin::miller_rabin, sieve::sieve, wheel::wheel,
+    solovay_strassen::solovay_strassen, trial, trial_2,
+};
+use divan; // Add the divan crate as a dependency
 
 fn main() {
     // Run registered benchmarks.

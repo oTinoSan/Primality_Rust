@@ -1,4 +1,3 @@
-use rand::Rng;
 pub mod miller_rabin;
 pub mod solovay_strassen;
 pub mod sieve;
