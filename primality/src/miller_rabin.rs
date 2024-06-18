@@ -1,7 +1,6 @@
 use rand::prelude::*;
 use super::mod_pow;
 
-
 pub fn miller_rabin(candidate: u64) -> bool {
     if candidate < 2 {
         return false;
