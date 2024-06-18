@@ -1,4 +1,5 @@
 use rand::prelude::*;
+use super::mod_exp;
 
 pub fn miller_rabin(k: u64, n: u64) -> bool {
     let s = (n - 1).trailing_zeros();
@@ -32,28 +33,4 @@ pub fn miller_rabin_list(k: u64, n: u64) -> Vec<u64> {
         }
     }
     primes
-}
-
-fn mod_exp(mut base: u64, mut exp: u64, modulus: u64) -> u64 {
-    if modulus == 1 {
-        return 0;
-    }
-    let mut result = 1;
-    base = base % modulus;
-    while exp > 0 {
-        if exp % 2 == 1 {
-            result = (result * base) % modulus;
-        }
-        exp >>= 1;
-        base = (base * base) % modulus;
-    }
-    result
-}
-
-fn _mod_exp_naive(base: u64, exp: u64, modulus: u64) -> u64 {
-    let mut res = 1;
-    for _ in 0..exp {
-        res = (res * base) % modulus;
-    }
-    return res;
 }

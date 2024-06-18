@@ -2,6 +2,7 @@
 mod tests;
 
 pub mod miller_rabin;
+pub mod solovay_strassen;
 
 pub fn trial_division(num: u64) -> bool {
     for i in 2..=f64::sqrt(num as f64) as u64 {
@@ -85,4 +86,28 @@ pub fn sieve_primes(max_val: u64) -> Vec<u64> {
     let mut iter = is_prime.iter();
     primes.retain(|_| *iter.next().unwrap());
     primes
+}
+
+fn mod_exp(mut base: u64, mut exp: u64, modulus: u64) -> u64 {
+    if modulus == 1 {
+        return 0;
+    }
+    let mut result = 1;
+    base = base % modulus;
+    while exp > 0 {
+        if exp % 2 == 1 {
+            result = (result * base) % modulus;
+        }
+        exp >>= 1;
+        base = (base * base) % modulus;
+    }
+    result
+}
+
+fn _mod_exp_naive(base: u64, exp: u64, modulus: u64) -> u64 {
+    let mut res = 1;
+    for _ in 0..exp {
+        res = (res * base) % modulus;
+    }
+    return res;
 }
