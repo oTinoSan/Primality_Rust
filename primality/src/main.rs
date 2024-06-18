@@ -1,4 +1,3 @@
-use rand::Rng;
 use primality::*;
 
 fn main() {
