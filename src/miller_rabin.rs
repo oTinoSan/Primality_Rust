@@ -1,5 +1,5 @@
-use rand::prelude::*;
 use super::mod_exp;
+use rand::prelude::*;
 
 pub fn miller_rabin(k: u64, n: u64) -> bool {
     let s = (n - 1).trailing_zeros();
