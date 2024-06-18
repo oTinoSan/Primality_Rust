@@ -1,4 +1,8 @@
-use primality::*;
+use primality::{
+    miller_rabin::miller_rabin, sieve::sieve, lib::trial, lib::trial_2,
+    wheel::wheel, solovay_strassen::solovay_strassen
+}
+
 
 fn main() {
     // Run registered benchmarks.
@@ -28,4 +32,9 @@ fn wheel_test(arg: u64) {
 #[divan::bench(args = [1000, 2149, 2334])]
 fn miller_rabin_test(args: u64) {
     miller_rabin(args);
+}
+
+#[divan::bench(args = [1000, 2149, 2334])]
+fn solovay_strassen_test(args: i64) {
+    solovay_strassen(args);
 }
