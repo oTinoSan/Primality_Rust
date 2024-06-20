@@ -9,11 +9,11 @@ pub struct Jacobi {
 }
 
 impl Jacobi {
-    pub fn new(m: u64, n: u64, sign: bool) -> Jacobi {
+    pub fn new(m: u64, n: u64) -> Jacobi {
         Jacobi {
             m,
             n,
-            sign,
+            sign: false
         }
     }
 
@@ -39,7 +39,7 @@ impl Jacobi {
         self.n = temp;
     }
 
-    pub fn eval(&mut self) -> i32 {
+    pub fn eval(mut self) -> i32 {
         if self.m % 2 == 0 {
             self.remove_twos();
         }
@@ -62,7 +62,7 @@ impl Jacobi {
 pub fn solovay_strassen(num_tests: u64, candidate: u64) -> bool {
     for _ in 0..num_tests {
         let a = thread_rng().gen_range(2..=(candidate - 2));
-        let mut jacobi = Jacobi::new(a, candidate, false);
+        let jacobi = Jacobi::new(a, candidate);
         let jacobi_result = jacobi.eval();
         let mod_result = mod_exp(a, (candidate - 1) / 2, candidate);
         if !((mod_result == 0 && jacobi_result == 0)
