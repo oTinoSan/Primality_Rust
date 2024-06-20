@@ -1,6 +1,7 @@
 use super::mod_exp;
 use rand::prelude::*;
 
+#[derive(Debug, Clone)]
 pub struct Jacobi {
     m: u64,
     n: u64,
@@ -38,30 +39,54 @@ impl Jacobi {
         self.n = temp;
     }
 
-    pub fn eval(&mut self) -> bool {
+    pub fn eval(&mut self) -> i32 {
         while self.m > 1 {
+            if self.m % 2 == 0 {
+                self.remove_twos();
+            }
+            if self.m == 1 {
+                break;
+            }
             self.invert();
             self.mod_reduce();
+            if self.m == 0 {
+                return 0;
+            }
             self.remove_twos();
         }
-        self.sign
+        if self.sign {
+            return -1;
+        } else {
+            return 1;
+        }
     }
 }
 
 pub fn solovay_strassen(num_tests: u64, candidate: u64) -> bool {
     for _ in 0..num_tests {
         let a = thread_rng().gen_range(2..=(candidate - 2));
-        let mut jacobi = Jacobi::new(a, candidate, true);
-        let jacobi_result;
-        if jacobi.eval() {
-            jacobi_result = 1;
-        } else {
-            jacobi_result = candidate - 1;
-        }
-        if jacobi_result != mod_exp(a, (candidate - 1) / 2, candidate) {
+        let mut jacobi = Jacobi::new(a, candidate, false);
+        let jacobi_result = jacobi.eval();
+        let mod_result = mod_exp(a, (candidate - 1) / 2, candidate);
+        if !((mod_result == 0 && jacobi_result == 0)
+            || (mod_result == 1 && jacobi_result == 1)
+            || (mod_result == candidate - 1 && jacobi_result == -1))
+        {
             return false;
         }
     }
 
     return true;
+}
+
+pub fn solovay_strassen_list(num_tests: u64, max_val: u64) -> Vec<u64> {
+    let mut primes = vec![];
+
+    for i in (5..=max_val).step_by(2) {
+        if solovay_strassen(num_tests, i) {
+            primes.push(i);
+        }
+    }
+
+    primes
 }

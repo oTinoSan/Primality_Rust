@@ -88,7 +88,7 @@ pub fn sieve_primes(max_val: u64) -> Vec<u64> {
     primes
 }
 
-fn mod_exp(mut base: u64, mut exp: u64, modulus: u64) -> u64 {
+pub fn mod_exp(mut base: u64, mut exp: u64, modulus: u64) -> u64 {
     if modulus == 1 {
         return 0;
     }
