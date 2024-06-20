@@ -7,9 +7,9 @@ fn main() {
     // let result = trial(1000);
     // println!("{:?}", result);
 
-    // let result = trial_vect_2(1000);
+    // let result = trials::trial_vect_2(1000);
     // println!("{:?}", result);
-    // let result = trial_2(1000);
+    // let result = trials::trial_2(1000);
     // println!("{:?}", result);
 
     // let result = sieve::sieve(1000);
@@ -25,7 +25,7 @@ fn main() {
     // let result = miller_rabine::miller_rabin(1000);
     // println!("{:?}", result);
 
-    let result = solovay_strassen::solovay_strassen(1000);
+    let result = solovay_strassen::solovay_strassen(479001599);
     println!("{:?}", result);
 
 }

@@ -28,10 +28,17 @@ pub fn jacobi(a: i64, n: i64) -> i64 {
 }
 
 pub fn solovay_strassen(candidate: i64) -> bool {
+    if candidate < 4 {
+        return candidate == 2 || candidate == 3;
+    }
+    if candidate % 2 == 0 {
+        return false;
+    }
     let mut rng = rand::thread_rng();
-    let iterations = 5;
+    let iterations = 3;
+    let max_range = (candidate as f64).sqrt() as i64;
     for _ in 0..iterations {
-        let a = rng.gen_range(2..candidate-2);
+        let a = rng.gen_range(2..max_range);
         let x = jacobi(a, candidate);
         let y = mod_pow(a as u64, ((candidate - 1) / 2) as u64, candidate as u64) as i64;
         if x == 0 || y != (x + candidate) % candidate {
