@@ -40,13 +40,10 @@ impl Jacobi {
     }
 
     pub fn eval(&mut self) -> i32 {
+        if self.m % 2 == 0 {
+            self.remove_twos();
+        }
         while self.m > 1 {
-            if self.m % 2 == 0 {
-                self.remove_twos();
-            }
-            if self.m == 1 {
-                break;
-            }
             self.invert();
             self.mod_reduce();
             if self.m == 0 {
