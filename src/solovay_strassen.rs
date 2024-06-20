@@ -11,9 +11,9 @@ pub struct Jacobi {
 impl Jacobi {
     pub fn new(m: u64, n: u64, sign: bool) -> Jacobi {
         Jacobi {
-            m: m,
-            n: n,
-            sign: sign,
+            m,
+            n,
+            sign,
         }
     }
 
