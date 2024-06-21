@@ -10,11 +10,7 @@ pub struct Jacobi {
 
 impl Jacobi {
     pub fn new(m: u64, n: u64) -> Jacobi {
-        Jacobi {
-            m,
-            n,
-            sign: false
-        }
+        Jacobi { m, n, sign: false }
     }
 
     fn mod_reduce(&mut self) {

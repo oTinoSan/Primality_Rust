@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests;
 
+pub mod bigint_algorithms;
 pub mod miller_rabin;
 pub mod solovay_strassen;
-pub mod bigint_algorithms;
 
 pub fn trial_division(num: u64) -> bool {
     for i in 2..=f64::sqrt(num as f64) as u64 {

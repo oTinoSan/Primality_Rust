@@ -1,8 +1,9 @@
-use primality_tests::{
-    miller_rabin::miller_rabin, miller_rabin::miller_rabin_list, sieve_primes, trial_division,
-    trial_divisions, solovay_strassen::solovay_strassen, solovay_strassen::solovay_strassen_list
-};
 use divan::black_box;
+use primality_tests::{
+    miller_rabin::miller_rabin, miller_rabin::miller_rabin_list, sieve_primes,
+    solovay_strassen::solovay_strassen, solovay_strassen::solovay_strassen_list, trial_division,
+    trial_divisions,
+};
 
 fn main() {
     divan::main();
