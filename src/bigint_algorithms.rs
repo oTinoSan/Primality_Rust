@@ -23,10 +23,9 @@ pub fn miller_rabin(num_tests: u64, candidate: Integer) -> bool {
     let minus_one = Integer::from(&candidate - 1);
     let s = minus_one.find_one(0).unwrap();
     let d = Integer::from(&minus_one >> s);
-    let exp = Integer::from(&minus_one / 2);
     'outer: for _ in 0..num_tests {
         let mut a = Integer::from(candidate.random_below_ref(&mut rand));
-        a = a.pow_mod(&exp, &candidate).unwrap();
+        a = a.pow_mod(&d, &candidate).unwrap();
         if a == 1 {
             continue;
         }
