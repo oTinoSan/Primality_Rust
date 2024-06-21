@@ -1,5 +1,5 @@
 use mod_exp::mod_exp;
-use rand::prelude::*;
+use rand::{thread_rng, Rng};
 use std::env;
 
 fn main() {
@@ -13,7 +13,7 @@ fn main() {
 fn miller_list(limit: u32) -> Vec<u32> {
     let mut primes: Vec<u32> = Vec::new();
     // let sqrt = (limit as f64).sqrt() as u32;
-    for num in 2..=limit {
+    for num in 5..=limit {
         if miller_test(num) {
             primes.push(num);
         }
@@ -23,7 +23,7 @@ fn miller_list(limit: u32) -> Vec<u32> {
 
 fn miller_test(candidate: u32) -> bool {
     // while n<=number{
-    let mut is_prime = false;
+    let mut is_composite = true;
     let mut k = 0;
     let mut divisor = candidate - 1;
     let mut b;
@@ -35,24 +35,23 @@ fn miller_test(candidate: u32) -> bool {
             break;
         }
     }
-    // for i in 0..50 {
-    let a = thread_rng().gen_range(2..=(candidate - 2));
-    println!("{a}");
-    b = mod_exp(a, divisor, candidate);
-    if b == 1 {
-        is_prime = true;
-    } else {
-        for i in (0..k).step_by(2) {
-            if b == (candidate - 1) % candidate {
-                is_prime = true;
+        for i in 0..50 {
+            let a = thread_rng().gen_range(2..=(candidate - 2));
+            b = mod_exp(a, divisor, candidate);
+            if b == 1 {
+                is_composite = false;
                 break;
             } else {
-                b = mod_exp(b, 2, candidate);
+                for i in (0..k).step_by(2) {
+                    if b == (candidate - 1) {
+                        is_composite = false;
+                        break;
+                    }
+                    b = mod_exp(b, 2, candidate);
+                }
             }
         }
-    }
-    // }
-    return is_prime;
+    return !is_composite;
 }
 
 // fn modpow(number, ){
