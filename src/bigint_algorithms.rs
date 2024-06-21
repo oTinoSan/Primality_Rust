@@ -17,7 +17,6 @@ pub fn solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
     return true;
 }
 
-// Not working for candidate < 10
 pub fn miller_rabin(num_tests: u64, candidate: Integer) -> bool {
     let mut rand = rand::RandState::new();
     let minus_one = Integer::from(&candidate - 1);
