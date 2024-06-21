@@ -8,4 +8,6 @@ fn main() {
         }
     }
     println!("{:?}", miller_primes);
+
+    println!("{:?}", miller_rabin::miller_rabin_list(10, 100));
 }
