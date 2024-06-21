@@ -1,8 +1,11 @@
 use primality_tests::*;
+use rug::Integer;
 fn main() {
-    let max_val = 1000;
-    let solovay_primes = solovay_strassen::solovay_strassen_list(10, max_val);
-    let sieve_primes = sieve_primes(max_val)[2..].to_vec();
-    assert_eq!(solovay_primes, sieve_primes);
-    println!("{:?}", sieve_primes);
+    let mut solovay_primes = vec![];
+    for i in (5..100).step_by(2) {
+        if bigint_algorithms::solovay_strassen(10, Integer::from(i)) {
+            solovay_primes.push(i);
+        }
+    }
+    println!("{:?}", solovay_primes);
 }
