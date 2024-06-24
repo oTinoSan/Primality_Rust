@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 rand = "0.8.4"
 divan = "0.1.14"
+array2d = "0.3.2"
 
 [[bench]]
 name = "example"

@@ -33,7 +33,7 @@ fn miller_rabin_test(args: u64) {
     miller_rabin(args);
 }
 
-#[divan::bench(args = [1000, 2149, 2334])]
+#[divan::bench(args = [1000, 2111, 2149, 2334])]
 fn solovay_strassen_test(args: i64) {
     solovay_strassen(args);
 }
