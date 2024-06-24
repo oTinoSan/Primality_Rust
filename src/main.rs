@@ -22,7 +22,7 @@ fn main() {
     // let result = wheel::wheel(1000);
     // println!("{:?}", result);
 
-    let result = miller_rabine::miller_rabin(1000);
+    let result = miller_rabin::miller_rabin(1000);
     println!("{:?}", result);
 
     // let result = solovay_strassen::solovay_strassen(479001599);
