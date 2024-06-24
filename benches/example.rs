@@ -1,8 +1,8 @@
-use primality::{
-    miller_rabin::miller_rabin, sieve::sieve, wheel::wheel,
-    solovay_strassen::solovay_strassen, trials::trial, trials::trial_2,
-};
 use divan;
+use primality::{
+    miller_rabin::miller_rabin, sieve::sieve, solovay_strassen::solovay_strassen, trials::trial,
+    trials::trial_2, wheel::wheel,
+};
 
 fn main() {
     divan::main();

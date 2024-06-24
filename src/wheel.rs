@@ -32,5 +32,5 @@ pub fn wheel_facts(candidate: u64) -> Vec<u64> {
 
 pub fn wheel(candidate: u64) -> bool {
     let factors = wheel_facts(candidate);
-    factors.len() <= 2 
+    factors.len() <= 2
 }

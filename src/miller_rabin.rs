@@ -1,5 +1,5 @@
-use rand::prelude::*;
 use super::mod_pow;
+use rand::prelude::*;
 
 pub fn miller_rabin(candidate: u64) -> bool {
     if candidate < 2 {

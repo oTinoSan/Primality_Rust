@@ -3,14 +3,15 @@ pub fn sieve(candidate: u32) -> bool {
         return false;
     }
     let limit = (candidate as f64).sqrt() as u32;
-    let mut primes = vec![true; (candidate + 1) as usize]; 
+    let mut primes = vec![true; (candidate + 1) as usize];
     primes[0] = false;
     primes[1] = false;
 
     for num in 2..=limit {
         if primes[num as usize] {
             let mut multiple = num * num;
-            while multiple <= candidate { // Change here
+            while multiple <= candidate {
+                // Change here
                 primes[multiple as usize] = false;
                 multiple += num;
             }
