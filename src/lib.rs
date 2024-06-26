@@ -3,6 +3,7 @@ pub mod sieve;
 pub mod solovay_strassen;
 pub mod trials;
 pub mod wheel;
+pub mod big_int;
 
 pub fn mod_pow(mut base: u64, mut exp: u64, modulus: u64) -> u64 {
     let mut result = 1;

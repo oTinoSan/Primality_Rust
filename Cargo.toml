@@ -7,6 +7,10 @@ edition = "2021"
 rand = "0.8.4"
 divan = "0.1.14"
 array2d = "0.3.2"
+num = "0.4"
+# rand = "0.8"
+num-bigint = { version = "0.4", features = ["rand"] }
+num-format = "0.4.4"
 
 [[bench]]
 name = "example"
