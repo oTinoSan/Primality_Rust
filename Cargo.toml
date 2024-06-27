@@ -11,5 +11,9 @@ rug = "1.24.1"
 name = "primality"
 harness = false
 
+[[bench]]
+name = "bigint_benchmark"
+harness = false
+
 [dev-dependencies]
 divan = "0.1.14"

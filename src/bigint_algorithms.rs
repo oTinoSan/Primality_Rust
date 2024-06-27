@@ -42,3 +42,27 @@ pub fn miller_rabin(num_tests: u64, candidate: Integer) -> bool {
     }
     true
 }
+
+pub fn miller_rabin_range(num_tests: u64, max: Integer) -> Vec<Integer> {
+    let mut r = vec![];
+    let mut idx = Integer::from(5);
+    while idx < max {
+        if miller_rabin(num_tests, idx.clone()) {
+            r.push(idx.clone());
+        }
+        idx += 2;
+    }
+    r
+}
+
+pub fn solovay_strassen_range(num_tests: u64, max: Integer) -> Vec<Integer> {
+    let mut r = vec![];
+    let mut idx = Integer::from(5);
+    while idx < max {
+        if solovay_strassen(num_tests, idx.clone()) {
+            r.push(idx.clone());
+        }
+        idx += 2;
+    }
+    r
+}

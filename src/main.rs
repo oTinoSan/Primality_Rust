@@ -1,13 +1,9 @@
 use primality_tests::*;
-use rug::Integer;
+use rug::{integer::Order, Integer};
 fn main() {
-    let mut miller_primes = vec![];
-    for i in (5..100).step_by(2) {
-        if bigint_algorithms::miller_rabin(10, Integer::from(i)) {
-            miller_primes.push(i);
-        }
-    }
-    println!("{:?}", miller_primes);
-
-    println!("{:?}", miller_rabin::miller_rabin_list(10, 100));
+    let max = Integer::from(100000000);
+    let solovay_primes = primality_tests::bigint_algorithms::solovay_strassen_range(10, max.clone());
+    let miller_rabin_primes = primality_tests::bigint_algorithms::miller_rabin_range(10, max.clone());
+    println!("Solovay-Strassen found {} primes under {}", solovay_primes.len(), max);
+    println!("Miller-Rabin found {} primes under {}", miller_rabin_primes.len(), max);
 }
