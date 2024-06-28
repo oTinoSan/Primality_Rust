@@ -4,8 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+num-iter = "0.1.45"
 rand = "0.8.5"
-rug = "1.24.1"
+rug = {version = "1.24.1", features=["num-traits"]}
 
 [[bench]]
 name = "primality"
