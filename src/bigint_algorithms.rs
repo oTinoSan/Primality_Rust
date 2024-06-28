@@ -94,8 +94,7 @@ pub fn miller_rabin_threaded(num_tests: u64, max: Integer, num_threads: u64) -> 
         }));
     }
     let mut results = vec![];
-    for _ in 0..num_threads {
-        let handle = threads.remove(0);
+    for handle in threads {
         let mut thread_results = handle.join().unwrap();
         results.append(&mut thread_results);
     }
@@ -125,8 +124,7 @@ pub fn solovay_strassen_threaded(num_tests: u64, max: Integer, num_threads: u64)
         }));
     }
     let mut results = vec![];
-    for _ in 0..num_threads {
-        let handle = threads.remove(0);
+    for handle in threads {
         let mut thread_results = handle.join().unwrap();
         results.append(&mut thread_results);
     }
