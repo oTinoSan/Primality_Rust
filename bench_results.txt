@@ -1,0 +1,25 @@
+1_000_000 with thread counts, 1 sample 1 iter
+Timer precision: 20 ns
+bigint_benchmark                           fastest       │ slowest       │ median        │ mean          │ samples │ iters
+├─ bigint_miller_rabin_range               633.1 ms      │ 680.6 ms      │ 665.9 ms      │ 658.1 ms      │ 100     │ 100
+├─ bigint_miller_rabin_threaded_range                    │               │               │               │         │
+│  ├─ 1                                    637.2 ms      │ 637.2 ms      │ 637.2 ms      │ 637.2 ms      │ 1       │ 1
+│  ├─ 4                                    191.1 ms      │ 191.1 ms      │ 191.1 ms      │ 191.1 ms      │ 1       │ 1
+│  ├─ 8                                    85.69 ms      │ 85.69 ms      │ 85.69 ms      │ 85.69 ms      │ 1       │ 1
+│  ├─ 16                                   70.6 ms       │ 70.6 ms       │ 70.6 ms       │ 70.6 ms       │ 1       │ 1
+│  ├─ 32                                   29.04 ms      │ 29.04 ms      │ 29.04 ms      │ 29.04 ms      │ 1       │ 1
+│  ├─ 64                                   19.45 ms      │ 19.45 ms      │ 19.45 ms      │ 19.45 ms      │ 1       │ 1
+│  ├─ 128                                  20.35 ms      │ 20.35 ms      │ 20.35 ms      │ 20.35 ms      │ 1       │ 1
+│  ╰─ 256                                  27.6 ms       │ 27.6 ms       │ 27.6 ms       │ 27.6 ms       │ 1       │ 1
+├─ bigint_solovay_strassen_range           686.2 ms      │ 738.1 ms      │ 698.5 ms      │ 697.2 ms      │ 100     │ 100
+├─ bigint_solovay_strassen_single                        │               │               │               │         │
+│  ╰─ 999999937                            4.179 µs      │ 9.349 µs      │ 4.229 µs      │ 4.363 µs      │ 100     │ 100
+╰─ bigint_solovay_strassen_threaded_range                │               │               │               │         │
+   ├─ 1                                    647.1 ms      │ 647.1 ms      │ 647.1 ms      │ 647.1 ms      │ 1       │ 1
+   ├─ 4                                    166.1 ms      │ 166.1 ms      │ 166.1 ms      │ 166.1 ms      │ 1       │ 1
+   ├─ 8                                    88.27 ms      │ 88.27 ms      │ 88.27 ms      │ 88.27 ms      │ 1       │ 1
+   ├─ 16                                   51.8 ms       │ 51.8 ms       │ 51.8 ms       │ 51.8 ms       │ 1       │ 1
+   ├─ 32                                   32.03 ms      │ 32.03 ms      │ 32.03 ms      │ 32.03 ms      │ 1       │ 1
+   ├─ 64                                   29.42 ms      │ 29.42 ms      │ 29.42 ms      │ 29.42 ms      │ 1       │ 1
+   ├─ 128                                  22.13 ms      │ 22.13 ms      │ 22.13 ms      │ 22.13 ms      │ 1       │ 1
+   ╰─ 256                                  30.46 ms      │ 30.46 ms      │ 30.46 ms      │ 30.46 ms      │ 1       │ 1
