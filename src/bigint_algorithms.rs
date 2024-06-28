@@ -80,7 +80,7 @@ pub fn miller_rabin_threaded(num_tests: u64, max: Integer, num_threads: u64) -> 
         if Integer::from(&thread_min % 2) == 0 {
             thread_min += 1;
         }
-        let thread_max = ((i + 1) * &per_thread).complete();
+        let thread_max = ((i + 1) * &per_thread).complete() + 5;
         threads.push(thread::spawn(move || {
             let mut r = vec![];
             let mut idx = thread_min;
@@ -111,7 +111,7 @@ pub fn solovay_strassen_threaded(num_tests: u64, max: Integer, num_threads: u64)
         if Integer::from(&thread_min % 2) == 0 {
             thread_min += 1;
         }
-        let thread_max = ((i + 1) * &per_thread).complete();
+        let thread_max = ((i + 1) * &per_thread).complete() + 5;
         threads.push(thread::spawn(move || {
             let mut r = vec![];
             let mut idx = thread_min;
