@@ -1,0 +1,13 @@
+[package]
+name = "is_it_prime"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+num = "0.4"
+rand = "0.8"
+num-bigint = { version = "0.4", features = ["rand"] }
+num-format = "0.4.4"
+
+[dev-dependencies]
+divan = "0.1.14"
