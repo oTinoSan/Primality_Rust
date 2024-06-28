@@ -1,6 +1,6 @@
-use rug::{Integer, Complete};
-use std::thread;
 use super::{miller_rabin, solovay_strassen};
+use rug::{Complete, Integer};
+use std::thread;
 
 pub fn miller_rabin_threaded(num_tests: u64, max: Integer, num_threads: u64) -> Vec<Integer> {
     let per_thread = (&max / num_threads).complete();

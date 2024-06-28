@@ -1,5 +1,4 @@
-use rug::{integer::MiniInteger, rand, Complete, Integer};
-use std::thread;
+use rug::{integer::MiniInteger, rand, Integer};
 
 pub mod threaded;
 

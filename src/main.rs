@@ -19,9 +19,5 @@ fn main() {
 
     let threaded_primes = bigint_algorithms::solovay_strassen_threaded(10, max.clone(), 64);
 
-    println!(
-        "Found {} primes under {}",
-        threaded_primes.len(),
-        &max
-    );
+    println!("Found {} primes under {}", threaded_primes.len(), &max);
 }
