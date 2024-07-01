@@ -2,7 +2,7 @@ use divan::black_box;
 use primality_tests::bigint_algorithms::*;
 use rug::Integer;
 
-const THREAD_ARGS: [u64; 5] = [8, 16, 32, 64, 128];
+const THREAD_ARGS: [u64; 1] = [128];
 
 fn main() {
     divan::main();
@@ -22,7 +22,7 @@ fn main() {
 fn bigint_miller_rabin_threaded_range(num_threads: u64) {
     miller_rabin_threaded(
         black_box(10),
-        black_box(Integer::from(100000000)),
+        black_box(Integer::from(u32::MAX)),
         black_box(num_threads),
     );
 }
@@ -36,7 +36,7 @@ fn bigint_miller_rabin_threaded_range(num_threads: u64) {
 fn bigint_solovay_strassen_threaded_range(num_threads: u64) {
     solovay_strassen_threaded(
         black_box(10),
-        black_box(Integer::from(100000000)),
+        black_box(Integer::from(u32::MAX)),
         black_box(num_threads),
     );
 }
@@ -45,7 +45,7 @@ fn bigint_solovay_strassen_threaded_range(num_threads: u64) {
 fn solovay_strassen_wheel_bench(num_threads: u64) {
     solovay_strassen_wheel(
         black_box(10),
-        black_box(Integer::from(100000000)),
+        black_box(Integer::from(u32::MAX)),
         black_box(num_threads),
     );
 }
@@ -54,7 +54,7 @@ fn solovay_strassen_wheel_bench(num_threads: u64) {
 fn miller_rabin_wheel_bench(num_threads: u64) {
     miller_rabin_wheel(
         black_box(10),
-        black_box(Integer::from(100000000)),
+        black_box(Integer::from(u32::MAX)),
         black_box(num_threads),
     );
 }
