@@ -107,3 +107,15 @@ bigint_benchmark                           fastest       │ slowest       │ m
    ├─ 32                                   2.608 s       │ 2.608 s       │ 2.608 s       │ 2.608 s       │ 1       │ 1
    ├─ 64                                   1.569 s       │ 1.569 s       │ 1.569 s       │ 1.569 s       │ 1       │ 1
    ╰─ 128                                  963.3 ms      │ 963.3 ms      │ 963.3 ms      │ 963.3 ms      │ 1       │ 1
+
+u32::MAX at 128 threads
+Timer precision: 20 ns
+bigint_benchmark                           fastest       │ slowest       │ median        │ mean          │ samples │ iters
+├─ bigint_miller_rabin_threaded_range                    │               │               │               │         │
+│  ╰─ 128                                  39.93 s       │ 39.93 s       │ 39.93 s       │ 39.93 s       │ 1       │ 1
+├─ bigint_solovay_strassen_threaded_range                │               │               │               │         │
+│  ╰─ 128                                  40.67 s       │ 40.67 s       │ 40.67 s       │ 40.67 s       │ 1       │ 1
+├─ miller_rabin_wheel_bench                              │               │               │               │         │
+│  ╰─ 128                                  30.95 s       │ 30.95 s       │ 30.95 s       │ 30.95 s       │ 1       │ 1
+╰─ solovay_strassen_wheel_bench                          │               │               │               │         │
+   ╰─ 128                                  33.87 s       │ 33.87 s       │ 33.87 s       │ 33.87 s       │ 1       │ 1
