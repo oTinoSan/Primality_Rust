@@ -2,7 +2,7 @@ use divan::black_box;
 use primality_tests::bigint_algorithms::*;
 use rug::Integer;
 
-const THREAD_ARGS: [u64; 4] = [1, 2, 4, 8];
+const THREAD_ARGS: [u64; 5] = [8, 16, 32, 64, 128];
 
 fn main() {
     divan::main();
