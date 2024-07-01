@@ -1,8 +1,10 @@
 use rug::{integer::MiniInteger, rand, Integer};
 
 pub mod threaded;
+pub mod wheel_threaded;
 
 pub use threaded::{miller_rabin_threaded, solovay_strassen_threaded};
+pub use wheel_threaded::{miller_rabin as miller_rabin_wheel, solovay_strassen as solovay_strassen_wheel};
 
 pub fn solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
     let mut rand = rand::RandState::new();

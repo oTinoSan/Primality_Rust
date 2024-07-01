@@ -17,7 +17,9 @@ fn main() {
     //     max
     // );
 
-    let threaded_primes = bigint_algorithms::solovay_strassen_threaded(10, max.clone(), 64);
+    let threaded_primes = bigint_algorithms::miller_rabin_wheel(10, max.clone(), 4);
+
+    // println!("{:?}", threaded_primes);
 
     println!("Found {} primes under {}", threaded_primes.len(), &max);
 }
