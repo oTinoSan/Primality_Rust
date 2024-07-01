@@ -1,6 +1,6 @@
 use num::BigUint;
 use divan;
-use primality::{
+use primality::algorithms::{
     miller_rabin::miller_rabin, sieve::sieve, solovay_strassen::solovay_strassen, trials::trial,
     trials::trial_2, wheel::wheel, miller_rabin_threaded::miller_rabin_array,
     miller_rabin_threaded::miller_rabin_threaded,

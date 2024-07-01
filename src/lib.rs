@@ -1,9 +1,10 @@
 pub mod miller_rabin;
+// pub mod algorithms;
 pub mod sieve;
 pub mod solovay_strassen;
 pub mod trials;
 pub mod wheel;
-pub mod big_int;
+pub mod big_int_jacob;
 pub mod mod_pow;
 pub mod mod_pow_big;
 pub mod miller_rabin_big;

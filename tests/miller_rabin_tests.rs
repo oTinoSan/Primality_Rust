@@ -16,7 +16,7 @@ mod miller_rabin_big_test {
 #[cfg(test)]
 mod miller_rabin_jacob {
     use num::BigUint;
-    use primality::big_int::b_miller_rabin;
+    use primality::big_int_jacob::b_miller_rabin;
 
     #[test]
     fn t_mr_32761_big() {

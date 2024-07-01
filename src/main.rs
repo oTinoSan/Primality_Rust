@@ -1,5 +1,4 @@
 use primality::*;
-
 fn main() {
     // let result = trial_vect(1000);
     // println!("{:?}", result);
@@ -29,3 +28,4 @@ fn main() {
     // let result = solovay_strassen::solovay_strassen(479001599);
     // println!("{:?}", result);
 }
+

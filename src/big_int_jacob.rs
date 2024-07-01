@@ -2,8 +2,8 @@ use num::BigUint;
 use num::FromPrimitive;
 // no --- use rand::RandBigInt;
 use num::bigint::RandBigInt;
-use num_format::ToFormattedString;
-use num_format::Locale;
+// use num_format::ToFormattedString;
+// use num_format::Locale;
 
 // cargo test t_mr_max --release --nocapture
 
@@ -15,7 +15,7 @@ pub fn t_shift() {
     let c = 63;
     println!("{:b}", c); 
 
-    for i in 0..64 {
+    for _i in 0..64 {
         //println!("{:b}, {:b}", (i as u8 + c) % 64, (i as u8 + 1 - c) % 64);
         //println!("{}, {}", (i as u8 + c) % 64, (i as u8 + 1 - c) % 64);
     }
@@ -283,7 +283,7 @@ pub fn miller_rabin(n : u64) -> bool {
     if b == 1 {
         return true;
     }
-    for i in 0..k {
+    for _i in 0..k {
         if b == n-1 {
             return true;
         }
@@ -475,7 +475,7 @@ pub fn basic_sieve() {
     println!("vector creation in {:02?}.", elapsed);
 
     //println!("{} {}", usize::MAX, u64::MAX);
-    println!("elems in vector: {} ", MAX.to_formatted_string(&Locale::en));
+    // println!("elems in vector: {} ", MAX.to_formatted_string(&Locale::en));
     n[0] = 0; 
     n[1] = 0; 
     for i in (4..MAX).step_by(2) {
@@ -496,7 +496,7 @@ pub fn basic_sieve() {
     println!("mark off multiples of 2,3,5,7 in total {:02?}.", elapsed);
 
     //let short = 10_000; 
-    let short = 100; 
+    let _short = 100; 
 
     let mut i = 8;
 
@@ -528,17 +528,17 @@ pub fn basic_sieve() {
 
     let mut checkpoint = 10;
 
-    let mut count = 0; 
+    let mut _count = 0; 
     for i in 0..MAX {
         if n[i] == 1 {
-            count += 1;
+//            count += 1;
         }
         if i == checkpoint {
-            println!("count at {}: {}", checkpoint.to_formatted_string(&Locale::en), count.to_formatted_string(&Locale::en));
+            // println!("count at {}: {}", checkpoint.to_formatted_string(&Locale::en), count.to_formatted_string(&Locale::en));
             checkpoint *= 10; 
         }
     }
-    println!("count: {}", count.to_formatted_string(&Locale::en));
+    // println!("count: {}", count.to_formatted_string(&Locale::en));
 
     /* // sanity
     for i in 0..short {
@@ -548,3 +548,4 @@ pub fn basic_sieve() {
     }
     */
 }
+
