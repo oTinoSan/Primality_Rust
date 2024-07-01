@@ -18,7 +18,7 @@ fn main() {
     // );
 
     // let threaded_primes = bigint_algorithms::miller_rabin_wheel(10, max.clone(), 4);
-    let threaded_primes = bigint_algorithms::miller_rabin_rayon(10, max.clone());
+    let threaded_primes = bigint_algorithms::miller_rabin_general(10, max.clone(), 4);
 
     // println!("{:?}", threaded_primes);
 

@@ -5,7 +5,8 @@ pub mod wheel_threaded;
 
 pub use threaded::{miller_rabin_threaded, solovay_strassen_threaded};
 pub use wheel_threaded::{
-    miller_rabin as miller_rabin_wheel, solovay_strassen as solovay_strassen_wheel, miller_rabin_rayon
+    miller_rabin as miller_rabin_wheel, miller_rabin_general,
+    solovay_strassen as solovay_strassen_wheel,
 };
 
 pub fn solovay_strassen(num_tests: u64, candidate: Integer) -> bool {

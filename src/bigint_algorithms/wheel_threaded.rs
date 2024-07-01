@@ -1,6 +1,6 @@
 use rayon::prelude::*;
 use rug::{Complete, Integer};
-use std::thread;
+use std::{sync::Arc, thread};
 
 /// wheeling and threading a primality test using the 2-3-5 wheel of coprimes up to 30 to sieve
 fn wheel_threaded(
@@ -33,7 +33,7 @@ fn wheel_threaded(
         .collect()
 }
 
-fn general_wheel(
+fn general_wheel_rayon(
     num_tests: u64,
     min: Integer,
     max: Integer,
@@ -57,6 +57,48 @@ fn general_wheel(
         .collect()
 }
 
+fn general_wheel_threaded(
+    num_tests: u64,
+    min: Integer,
+    max: Integer,
+    num_threads: u64,
+    test: fn(u64, Integer) -> bool,
+    primes: Vec<u64>,
+    coprimes: Vec<u64>,
+) -> Vec<Integer> {
+    let product: u64 = primes.iter().product();
+    let start = min / product + 1;
+    let end = max / product + 1;
+    let step = Integer::from(&end - &start) / num_threads;
+    let mut handles = vec![];
+    let coprimes = Arc::new(coprimes);
+
+    for i in 0..num_threads {
+        let thread_start = Integer::from(&start) + &step * i;
+        let thread_end = Integer::from(&thread_start + &step);
+        let coprimes = Arc::clone(&coprimes);
+        handles.push(thread::spawn(move || {
+            let mut idx = thread_start;
+            let mut r = vec![];
+            while idx < thread_end {
+                for c in coprimes.iter() {
+                    let candidate = Integer::from(&idx * product) + c;
+                    if test(num_tests, candidate.clone()) {
+                        r.push(candidate);
+                    }
+                }
+                idx += 1;
+            }
+            r
+        }))
+    }
+    handles
+        .into_iter()
+        .map(move |h| h.join().unwrap())
+        .flatten()
+        .collect()
+}
+
 pub fn miller_rabin(num_tests: u64, max: Integer, num_threads: u64) -> Vec<Integer> {
     wheel_threaded(num_tests, max, num_threads, super::miller_rabin)
 }
@@ -65,6 +107,14 @@ pub fn solovay_strassen(num_tests: u64, max: Integer, num_threads: u64) -> Vec<I
     wheel_threaded(num_tests, max, num_threads, super::solovay_strassen)
 }
 
-pub fn miller_rabin_rayon(num_tests: u64, max: Integer) -> Vec<Integer> {
-    general_wheel(num_tests, Integer::ZERO, max, super::miller_rabin, vec![2, 3, 5], vec![1, 7, 11, 13, 17, 19, 23, 29])
+pub fn miller_rabin_general(num_tests: u64, max: Integer, num_threads: u64) -> Vec<Integer> {
+    general_wheel_threaded(
+        num_tests,
+        Integer::ZERO,
+        max,
+        num_threads,
+        super::miller_rabin,
+        vec![2, 3, 5],
+        vec![1, 7, 11, 13, 17, 19, 23, 29],
+    )
 }

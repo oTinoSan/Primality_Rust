@@ -1,3 +1,5 @@
+use core::num;
+
 use divan::black_box;
 use primality_tests::bigint_algorithms::*;
 use rug::Integer;
@@ -59,9 +61,13 @@ fn miller_rabin_wheel_bench(num_threads: u64) {
     );
 }
 
-#[divan::bench(sample_count = 1, sample_size = 1)]
-fn miller_rabin_rayon_wheel_bench() {
-    miller_rabin_rayon(black_box(10), black_box(Integer::from(1000000000)));
+#[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
+fn miller_rabin_general_wheel_bench(num_threads: u64) {
+    miller_rabin_general(
+        black_box(10),
+        black_box(Integer::from(1000000000)),
+        black_box(num_threads),
+    );
 }
 
 // Ethan's tests
