@@ -1,5 +1,5 @@
-use super::mod_pow;
 use rand::prelude::*;
+use crate::mod_pow::mod_pow;
 
 pub fn jacobi(a: i64, n: i64) -> i64 {
     let mut j = 1i64;

@@ -233,6 +233,7 @@ dependencies = [
  "num",
  "num-bigint",
  "num-format",
+ "num-traits",
  "rand",
 ]
 

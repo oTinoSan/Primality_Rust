@@ -21,7 +21,9 @@ fn main() {
     // let result = wheel::wheel(1000);
     // println!("{:?}", result);
 
-    let result = miller_rabin::miller_rabin(1000);
+
+   // 2, 3, 5, 7, 11, 13, 17, 19, 23, 29
+    let result = miller_rabin::miller_rabin(3, 5);
     println!("{:?}", result);
 
     // let result = solovay_strassen::solovay_strassen(479001599);

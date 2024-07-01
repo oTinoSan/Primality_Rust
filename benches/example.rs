@@ -1,7 +1,9 @@
+use num::BigUint;
 use divan;
 use primality::{
     miller_rabin::miller_rabin, sieve::sieve, solovay_strassen::solovay_strassen, trials::trial,
-    trials::trial_2, wheel::wheel,
+    trials::trial_2, wheel::wheel, miller_rabin_threaded::miller_rabin_array,
+    miller_rabin_threaded::miller_rabin_threaded,
 };
 
 fn main() {
@@ -30,10 +32,30 @@ fn wheel_test(arg: u64) {
 
 #[divan::bench(args = [1000, 2149, 2334])]
 fn miller_rabin_test(args: u64) {
-    miller_rabin(args);
+    miller_rabin(args, 5);
 }
 
 #[divan::bench(args = [1000, 2111, 2149, 2334])]
 fn solovay_strassen_test(args: i64) {
     solovay_strassen(args);
+}
+
+#[divan::bench(args = [1000, 2000, 4000, 8000, 16000, 32000])]
+fn miller_rabin_array_test (arg: u32) {
+    miller_rabin_array(arg);
+}
+
+#[divan::bench(args = [1000, 2000, 4000, 8000, 16000, 32000])]
+fn threaded_miller_rabin_array_test_8 (arg: u32) {
+    miller_rabin_threaded(BigUint::from(arg), 3, 8);
+}
+
+#[divan::bench(args = [1000, 2000, 4000, 8000, 16000, 32000])]
+fn threaded_miller_rabin_array_test_16 (arg: u64) {
+    miller_rabin_threaded(BigUint::from(arg), 3, 16);
+}
+
+#[divan::bench(args = [1000, 2000, 4000, 8000, 16000, 32000])]
+fn threaded_miller_rabin_array_test_128 (arg: u64) {
+    miller_rabin_threaded(BigUint::from(arg), 3, 128);
 }

@@ -1,10 +1,11 @@
 use num::BigUint;
 use num::FromPrimitive;
-use rand::Rng;
 // no --- use rand::RandBigInt;
 use num::bigint::RandBigInt;
 use num_format::ToFormattedString;
 use num_format::Locale;
+
+// cargo test t_mr_max --release --nocapture
 
 #[test]
 pub fn t_shift() {
@@ -359,7 +360,7 @@ pub fn b_miller_rabin(n : BigUint) -> bool{
     }
 
     let k = x.0; 
-    for i in 0..k {
+    for _i in 0..k {
         if b == n_minus_one {
             //println!("{} is prime!", n);
             return true;
