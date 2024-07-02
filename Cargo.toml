@@ -5,11 +5,12 @@ edition = "2021"
 default-run = "primality_tests"
 
 [dependencies]
+async-trait = "0.1.80"
 lamellar = "0.6.1"
 num-iter = "0.1.45"
 rand = "0.8.5"
 rayon = "1.10.0"
-rug = {version = "1.24.1", features=["num-traits"]}
+rug = {version = "1.24.1", features=["num-traits", "serde"]}
 
 [[bench]]
 name = "primality"
