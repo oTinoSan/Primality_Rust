@@ -15,7 +15,10 @@ fn main() {
     let step = Integer::from(&search_max / num_pes);
 
     let local_min = Integer::from(&step * my_pe);
-    let local_max = Integer::from(&step * (my_pe + 1));
+    let mut local_max = Integer::from(&step * (my_pe + 1));
+    if my_pe == num_pes - 1 {
+        local_max = search_max.clone();
+    }
 
     let local_results = primality_tests::bigint_algorithms::wheel_threaded::general_wheel_threaded(
         10,
