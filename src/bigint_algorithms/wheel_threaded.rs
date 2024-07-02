@@ -57,7 +57,7 @@ fn general_wheel_rayon(
         .collect()
 }
 
-fn general_wheel_threaded(
+pub fn general_wheel_threaded(
     num_tests: u64,
     min: Integer,
     max: Integer,
