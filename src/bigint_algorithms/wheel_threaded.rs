@@ -79,7 +79,6 @@ pub fn general_wheel_threaded(
         let coprimes = Arc::clone(&coprimes);
         let min = min.clone();
         let max = max.clone();
-        println!("Thread #{} start: {}, end: {}", i, &thread_start, &thread_end);
         handles.push(thread::spawn(move || {
             let mut idx = thread_start;
             let mut r = vec![];
