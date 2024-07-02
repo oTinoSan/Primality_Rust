@@ -1,7 +1,7 @@
 use primality_tests::*;
 use rug::{integer::Order, Integer};
 fn main() {
-    let max = Integer::from(1000);
+    let max = Integer::from(100000000);
     // let solovay_primes =
     //     primality_tests::bigint_algorithms::solovay_strassen_range(10, max.clone());
     // let miller_rabin_primes =
@@ -32,5 +32,5 @@ fn main() {
     // println!("{:?}", threaded_primes);
 
     println!("Found {} primes under {}", threaded_primes.len(), &max);
-    println!("{:?}", threaded_primes);
+    // println!("{:?}", threaded_primes);
 }

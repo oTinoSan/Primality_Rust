@@ -68,7 +68,7 @@ pub fn general_wheel_threaded(
 ) -> Vec<Integer> {
     let product: u64 = primes.iter().product();
     let start = min / product + 1;
-    let end = max / product + 1;
+    let end = max.clone() / product + 1;
     let step = Integer::from(&end - &start) / num_threads;
     let mut handles = vec![];
     let coprimes = Arc::new(coprimes);
@@ -77,6 +77,7 @@ pub fn general_wheel_threaded(
         let thread_start = Integer::from(&start) + &step * i;
         let thread_end = Integer::from(&thread_start + &step);
         let coprimes = Arc::clone(&coprimes);
+        let max = max.clone();
         handles.push(thread::spawn(move || {
             let mut idx = thread_start;
             let mut r = vec![];
@@ -88,6 +89,20 @@ pub fn general_wheel_threaded(
                     }
                 }
                 idx += 1;
+            }
+            if i == num_threads - 1 {
+                'outer: loop {
+                    for c in coprimes.iter() {
+                        let candidate = Integer::from(&idx * product) + c;
+                        if candidate > max {
+                            break 'outer;
+                        }
+                        if test(num_tests, candidate.clone()) {
+                            r.push(candidate);
+                        }
+                    }
+                    idx += 1;
+                }
             }
             r
         }))
