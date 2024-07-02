@@ -84,12 +84,14 @@ pub fn general_wheel_threaded(
             let mut r = vec![];
             if i == 0 {
                 idx -= 1;
-                for c in coprimes.iter().rev() {
-                    let candidate = Integer::from(&idx * product) + c;
-                    if candidate < min {
-                        break;
-                    } else if test(num_tests, candidate.clone()) {
-                        r.push(candidate);
+                if idx != 0 {
+                    for c in coprimes.iter().rev() {
+                        let candidate = Integer::from(&idx * product) + c;
+                        if candidate < min {
+                            break;
+                        } else if test(num_tests, candidate.clone()) {
+                            r.push(candidate);
+                        }
                     }
                 }
                 idx += 1;
