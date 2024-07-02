@@ -1,8 +1,7 @@
 use num::BigUint;
 use num::FromPrimitive;
 use num::bigint::RandBigInt;
-
-use crate::mod_pow_big::mod_pow_bigint;
+use super::mod_pow_big::mod_pow_bigint;
 
 pub fn miller_rabin_bigint(candidate: BigUint, iterations: usize) -> bool {
     if candidate == BigUint::from_u64(2).unwrap() {

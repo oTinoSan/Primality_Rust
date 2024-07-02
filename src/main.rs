@@ -1,4 +1,6 @@
 use primality::*;
+use num_bigint::BigUint;
+use num_traits::FromPrimitive;
 fn main() {
     // let result = trial_vect(1000);
     // println!("{:?}", result);
@@ -20,12 +22,19 @@ fn main() {
     // let result = wheel::wheel(1000);
     // println!("{:?}", result);
 
-
-   // 2, 3, 5, 7, 11, 13, 17, 19, 23, 29
-    let result = miller_rabin::miller_rabin(3, 5);
-    println!("{:?}", result);
-
+    // let result = miller_rabin::miller_rabin(3, 5);
+    // println!("{:?}", result);
     // let result = solovay_strassen::solovay_strassen(479001599);
     // println!("{:?}", result);
+    
+    let n = BigUint::from_u32(3*324).unwrap();
+    let result = bigint_num::miller_rabin_big::miller_rabin_bigint(n, 5);
+    println!("{}", result);
+
+    // let n = Integer::from(3*324);
+    // let result = miller_rabin_rug::miller_rabin_bigrug(n, 5);
+    // println!("{}", result);
+
+
 }
 

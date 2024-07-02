@@ -2,7 +2,7 @@ use num_bigint::BigUint;
 use num_traits::FromPrimitive; // Removed ToPrimitive
 use std::sync::{Arc, Mutex};
 use std::thread;
-use crate::miller_rabin_big::miller_rabin_bigint;
+use super::miller_rabin_big::miller_rabin_bigint;
 use crate::miller_rabin::miller_rabin;
 
 pub fn miller_rabin_array(limit: u32) -> Vec<bool> {
