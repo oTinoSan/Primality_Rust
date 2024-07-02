@@ -1,9 +1,9 @@
-use rug::{Assign, Integer};
-use std::cmp::min;
+use rug::Integer;
+// use std::cmp::min;
 use rand::Rng;  // Import Rng trait for random number generation
 use rand::thread_rng;
 
-pub fn miller_rabin(n: &Integer, k: u32) -> bool {
+pub fn miller_rabin_bigrug(n: &Integer, k: u32) -> bool {
     if n == &Integer::from(2) {
         return true;
     }
@@ -11,7 +11,7 @@ pub fn miller_rabin(n: &Integer, k: u32) -> bool {
         return false;
     }
 
-    let mut d: Integer = n - 1;
+    let mut d = Integer::from(n - 1);
     let mut r = 0;
 
     while d.is_even() {
@@ -19,20 +19,19 @@ pub fn miller_rabin(n: &Integer, k: u32) -> bool {
         r += 1;
     }
 
-    let mut rng = thread_rng();  // Use thread_rng for RNG
-
     'outer: for _ in 0..k {
-        let a = Integer::from(2) + Integer::from(rng.gen_range(0..(n - 3u64).unwrap()));
-        let mut x = mod_pow(&a, &d, &n);
+        let mut rng = thread_rng();
+        // let mut rand_state = RandState::new();
+        let a: u64 = rng.gen_range(2..=n.to_u64().unwrap());
+        let mut x = Integer::from(a).pow_mod(&d, n).unwrap();
 
-        if x == 1 || x == n - 1 {
-            continue;
+        if x == 1 || x == Integer::from(n - 1) {
+            continue 'outer;
         }
 
-        for _ in 0..(r - 1) {
-            x = mod_pow(&x, &Integer::from(2), &n);
-
-            if x == n - 1 {
+        for _ in 0..r - 1 {
+            x = x.pow_mod(&Integer::from(2), n).unwrap();
+            if x == Integer::from(n - 1) {
                 continue 'outer;
             }
         }

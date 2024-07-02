@@ -4,11 +4,12 @@ pub fn mod_pow_bigrug(mut base: Integer, mut exp: Integer, modulus: Integer) -> 
     let mut result = Integer::from(1);
     base %= &modulus;
     while exp > Integer::from(0) {
-        if &exp % 2 == Integer::from(1) {
+        if Integer::from(&exp % 2) == Integer::from(1) {
             result = (result * &base) % &modulus;
         }
         exp >>= 1;
-        base.assign(((&base) * &base) % &modulus);
+        let squared_base: Integer = (&base * &base).into();
+        base.assign(&squared_base % &modulus);
     }
     result
 }

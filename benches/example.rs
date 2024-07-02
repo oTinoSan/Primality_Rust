@@ -1,7 +1,8 @@
 use num::BigUint;
+use rug::Integer;
 use divan;
 use primality::{
-    bigint_num::{miller_rabin_big::miller_rabin_bigint, miller_rabin_threaded::{miller_rabin_array, miller_rabin_threaded}}, miller_rabin::miller_rabin, sieve::sieve, solovay_strassen::solovay_strassen, trials::{trial, trial_2}, wheel::wheel
+    bigint_num::{miller_rabin_big::miller_rabin_bigint, miller_rabin_threaded::{miller_rabin_array, miller_rabin_threaded}}, bigint_rug::miller_rabin_rug::miller_rabin_bigrug, miller_rabin::miller_rabin, sieve::sieve, solovay_strassen::solovay_strassen, trials::{trial, trial_2}, wheel::wheel
 };
 
 fn main() {
@@ -44,9 +45,15 @@ fn miller_rabin_array_test (arg: u32) {
 }
 
 #[divan::bench(args = [1000, 2000, 4000, 8000, 16000, 32000, 3u64.pow(43), 4u64.pow(26)])]
-fn miller_rabin_bigint_test (arg: u64) {
+fn miller_rabin_bigint_num_test (arg: u64) {
     miller_rabin_bigint(BigUint::from(arg), 5);
 }
+
+#[divan::bench(args = [1000, 2000, 4000, 8000, 16000, 32000, 3u64.pow(43), 4u64.pow(26)])]
+fn miller_rabin_bigint_rug_test (arg: u64) {
+    miller_rabin_bigrug(&Integer::from(arg), 5);
+}
+
 // #[divan::bench(args = [1000, 2000, 4000, 8000, 16000, 32000])]
 // fn threaded_miller_rabin_array_test_8 (arg: u32) {
 //     miller_rabin_threaded(BigUint::from(arg), 3, 8);
