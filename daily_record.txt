@@ -1,0 +1,22 @@
+- convert miller rabin to rug big int > done
+I created a miller rabin for rug and one for num bigint. In the process, I found that my num bigint implementation is faster than my rug implementation. This is interesting because it goes against the consensus of the group, who have found rug to be faster. For my test, I loop through numbers 0 to one million testing each number for primality. Here are the results of the test:
+
+                    
+fastest       │ slowest       │ median        │ mean          │ samples │ iters
+├─ check_all_primes_bignum                │               │               │               │         │
+│  ╰─ 1000000               
+1.643 s       │ 1.907 s       │ 1.784 s       │ 1.79 s        │ 100     │ 100
+╰─ check_all_primes_bigrug                │               │               │               │         │
+   ╰─ 1000000               
+1.562 s       │ 1.909 s       │ 1.789 s       │ 1.788 s       │ 100     │ 100
+
+
+Some possible reasons that may lead to this result:
+a. the results may vary if the max value is increased, ex: a loop greater than one million.
+b. the pow_mod I am using in rug is part of the rug crate and the implementation use num bigint is written by me.
+
+With either of these considered, the comparison of runtimes is unique compared to my teammates. I will note that both implementations do an initial filter for numbers divisible by 2 or candidates equal to 0 or 1 and classify these as non-prime, as well as candidates equal to 3 or 2 and classify these as prime, prior to implementing the algorithm further. An interesting step forward would be to compare the specific runtime bench outputs with my teammate's code and compare code based on the results.
+
+- create threaded miller rabin
+- research lamillar implementation
+- implement lamillar exercises

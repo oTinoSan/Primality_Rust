@@ -1,2 +1,3 @@
 /target
-daily_record.txt
+/bench_output.txt
+/cargo_output.txt
