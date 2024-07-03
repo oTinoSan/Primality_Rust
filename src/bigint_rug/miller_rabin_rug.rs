@@ -1,43 +1,29 @@
-use rug::Integer;
-// use std::cmp::min;
-use rand::Rng;  // Import Rng trait for random number generation
-use rand::thread_rng;
+use rug::{integer::MiniInteger, rand, Integer};
 
-pub fn miller_rabin_bigrug(n: &Integer, k: u32) -> bool {
-    if n == &Integer::from(2) {
-        return true;
-    }
-    if n < &Integer::from(2) || n.is_even() {
-        return false;
-    }
-
-    let mut d = Integer::from(n - 1);
-    let mut r = 0;
-
-    while d.is_even() {
-        d >>= 1;
-        r += 1;
-    }
-
-    'outer: for _ in 0..k {
-        let mut rng = thread_rng();
-        // let mut rand_state = RandState::new();
-        let a: u64 = rng.gen_range(2..=n.to_u64().unwrap());
-        let mut x = Integer::from(a).pow_mod(&d, n).unwrap();
-
-        if x == 1 || x == Integer::from(n - 1) {
-            continue 'outer;
+pub fn miller_rabin_bigrug(candidate: Integer, iterations: u64) -> bool {
+    let mut rand = rand::RandState::new();
+    let minus_one = Integer::from(&candidate - 1);
+    let s = minus_one.find_one(0).unwrap();
+    let d = Integer::from(&minus_one >> s);
+    'outer: for _ in 0..iterations {
+        let mut a = Integer::from(
+            Integer::from(Integer::from(&candidate - 3).random_below_ref(&mut rand)) + 1,
+        );
+        a = a.pow_mod(&d, &candidate).unwrap();
+        if a == 1 {
+            continue;
         }
-
-        for _ in 0..r - 1 {
-            x = x.pow_mod(&Integer::from(2), n).unwrap();
-            if x == Integer::from(n - 1) {
+        for _ in 0..s {
+            if a == Integer::from(&candidate - 1) {
                 continue 'outer;
             }
+            a = a
+                .pow_mod(&MiniInteger::from(2).borrow(), &candidate)
+                .unwrap();
         }
-
-        return false;
+        if a != minus_one {
+            return false;
+        }
     }
-
     true
 }

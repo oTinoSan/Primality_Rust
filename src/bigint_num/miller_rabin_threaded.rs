@@ -2,7 +2,7 @@ use num_bigint::BigUint;
 use num_traits::FromPrimitive; // Removed ToPrimitive
 use std::sync::{Arc, Mutex};
 use std::thread;
-use super::miller_rabin_big::miller_rabin_bigint;
+use super::miller_rabin_big::miller_rabin_bignum;
 use crate::miller_rabin::miller_rabin;
 
 pub fn miller_rabin_array(limit: u32) -> Vec<bool> {
@@ -35,7 +35,7 @@ pub fn miller_rabin_threaded(candidate: BigUint, iterations: usize, num_threads:
             let start = if i == 0 { BigUint::from_u32(2).unwrap() } else { thread_min };
             let mut current = start.clone();
             while current < thread_max {
-                if miller_rabin_bigint(current.clone(), iterations) {
+                if miller_rabin_bignum(current.clone(), iterations) {
                     local_vector.push(current.clone());
                 }
                 current += BigUint::from_u32(1).unwrap();

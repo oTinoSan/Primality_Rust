@@ -3,7 +3,7 @@ use num::FromPrimitive;
 use num::bigint::RandBigInt;
 use super::mod_pow_big::mod_pow_bigint;
 
-pub fn miller_rabin_bigint(candidate: BigUint, iterations: usize) -> bool {
+pub fn miller_rabin_bignum(candidate: BigUint, iterations: usize) -> bool {
     if candidate == BigUint::from_u64(2).unwrap() {
         return true;
     }
