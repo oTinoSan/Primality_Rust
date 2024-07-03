@@ -4,10 +4,10 @@ use num::bigint::RandBigInt;
 use super::mod_pow_big::mod_pow_bigint;
 
 pub fn miller_rabin_bignum(candidate: BigUint, iterations: usize) -> bool {
-    if candidate == BigUint::from_u64(2).unwrap() {
+    if candidate == BigUint::from(2u8) || candidate == BigUint::from(3u8) {
         return true;
     }
-    if &candidate % &BigUint::from_u64(2).unwrap() == BigUint::from_u64(0).unwrap() || candidate == BigUint::from_u64(1).unwrap() {
+    if &candidate % &BigUint::from(2u8) == BigUint::from(0u8) || candidate == BigUint::from(1u8) {
         return false;
     }
 
