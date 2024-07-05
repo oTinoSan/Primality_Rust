@@ -2,7 +2,7 @@ use bigint_num;
 use bigint_rug;
 use num_bigint::BigUint;
 use num_traits::FromPrimitive;
-use primality::{bigint_num::miller_rabin_threaded, bigint_rug::threaded_bigint_rug, *};
+use primality::{bigint_num::threaded_bigint_num::{self, threaded_bignum}, bigint_rug::threaded_bigint_rug, *};
 use rug::{ops::Pow, Integer};
 
 fn main() {
@@ -75,7 +75,12 @@ fn main() {
     //     println!("Is {} prime? {}", tested_num, result);
     // }
 
+    // threaded bigrug test
     let result = threaded_bigint_rug::threaded_bigrug(100, 2);
+    println!("{:?}", result);
+
+    // threaded bignum test
+    let result = threaded_bigint_num::threaded_bignum(100, 2);
     println!("{:?}", result);
 
     //     check_primes_up_to(1_000_000);

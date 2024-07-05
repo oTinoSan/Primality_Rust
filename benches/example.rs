@@ -1,9 +1,9 @@
 use divan;
-use num::BigUint;
+use num::BigInt;
 use primality::{
     bigint_num::{
         miller_rabin_big::miller_rabin_bignum,
-        miller_rabin_threaded::{miller_rabin_array, miller_rabin_threaded},
+        threaded_bigint_num::threaded_bignum,
     },
     bigint_rug::{
         miller_rabin_rug::miller_rabin_bigrug,
@@ -72,10 +72,15 @@ fn threaded_bigrug_test(arg: i64) {
 }
 
 #[divan::bench(args = [10_000i64])]
+fn threaded_bignum_test(arg: i64) {
+    threaded_bignum(arg, 2);
+}
+
+#[divan::bench(args = [10_000i64])]
 fn check_all_primes_bignum(arg: i64) {
     let list: Vec<i64> = (5..=arg).collect();
     for num in list {
-        miller_rabin_bignum(BigUint::from(num as u64), 5);
+        miller_rabin_bignum(BigInt::from(num as i64), 5);
         // let result = bigint_rug::miller_rabin_rug::miller_rabin_bigrug(Integer::from(num), 5);
         // println!("Is {} prime? {}", num, result);
     }
@@ -85,7 +90,7 @@ fn check_all_primes_bignum(arg: i64) {
 fn check_all_primes_bigrug(arg: i64) {
     let list: Vec<i64> = (5..=arg).collect();
     for num in list {
-        miller_rabin_bignum(BigUint::from(num as u64), 5);
+        miller_rabin_bignum(BigInt::from(num as u64), 5);
         // let result = bigint_rug::miller_rabin_rug::miller_rabin_bigrug(Integer::from(num), 5);
         // println!("Is {} prime? {}", num, result);
     }
