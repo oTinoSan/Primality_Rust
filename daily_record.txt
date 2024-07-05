@@ -20,7 +20,7 @@ With either of these considered, the comparison of runtimes is unique compared t
 - create threaded miller rabin > done *for rug bigints
 I completed an implementation of the miller rabin test using threading. This is performed on the rug crate for big ints. The output was proved as correct for boolean results. When compared in a divan bench test against the non-threaded miller rabins for rug and num implementations of big int, the threaded test proved to be roughly 4 times as fast. The results are here:
 
-example                     
+
 fastest       │ slowest       │ median        │ mean          │ samples │ iters
 ├─ check_all_primes_bignum                │               │               │               │         │
 │  ╰─ 10000                 
@@ -31,6 +31,7 @@ fastest       │ slowest       │ median        │ mean          │ samples 
 ╰─ threaded_bigrug_test                   │               │               │               │         │
    ╰─ 10000                 
    4.508 ms      │ 8.393 ms      │ 5.573 ms      │ 5.712 ms      │ 100     │ 100
+
 
 In the future, I would like to do the same for the num bigint crate version of the miller rabin test. This should be fairly quick to achieve.
 
