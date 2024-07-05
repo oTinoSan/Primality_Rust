@@ -17,7 +17,7 @@ b. the pow_mod I am using in rug is part of the rug crate and the implementation
 
 With either of these considered, the comparison of runtimes is unique compared to my teammates. I will note that both implementations do an initial filter for numbers divisible by 2 or candidates equal to 0 or 1 and classify these as non-prime, as well as candidates equal to 3 or 2 and classify these as prime, prior to implementing the algorithm further. An interesting step forward would be to compare the specific runtime bench outputs with my teammate's code and compare code based on the results.
 
-- create threaded miller rabin > done *for rug bigints
+- create threaded miller rabin > done 
 I completed an implementation of the miller rabin test using threading. This is performed on the rug crate for big ints as well as the num crate for big ints. The output was proved as correct for boolean results. When compared in a divan bench test against the non-threaded miller rabins for rug and num implementations of big int, the threaded test proved to be roughly 4 times as fast for the rug crate, with much less of a speed advantage for the threaded num crate. I tested this for BigInt and BigUint conversion in the num crate and found the same results. To summarize the rug crate proved much faster than the num crate for threaded tests, even when unthreaded tests for each were comparable. The results are here:
 
                      
