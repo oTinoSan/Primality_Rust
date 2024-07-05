@@ -1,36 +1,39 @@
 use rug::Integer;
 use std::thread;
-use std::time::Duration;
+// use std::time::Duration;
 
 use super::super::bigint_rug::miller_rabin_rug;
 
+// Assume miller_rabin_rug is a module you've defined or imported
+// use miller_rabin_rug;
+
 pub fn threaded_bigrug(max_num: i64, num_threads: i64) {
-    // divides max_numb by num_threads to decide the distribution step
     let num_per_thread = max_num / num_threads;
-    // sets new_thread to 0
-    let mut new_thread = 0;
-    // updates end_thread to distribution step
-    let mut end_thread: i64 = num_per_thread;
-    // begins for loop over each step
-    for number in new_thread..end_thread {
-        thread::spawn(move || {
-            let candidate_num = Integer::from(number);
-            println!("hi number {number} from the spawned thread!");
-            let result = miller_rabin_rug::miller_rabin_bigrug(candidate_num, 5);
-            println!("Is {} prime? {}", number, result);
-            thread::sleep(Duration::from_millis(1));
+    let mut threads = Vec::new();
+
+    for t in 0..num_threads {
+        let start = t * num_per_thread + 1;
+        let end = if t == num_threads - 1 {
+            max_num + 1
+        } else {
+            start + num_per_thread
+        };
+
+        let handle = thread::spawn(move || {
+            for number in start..end {
+                // println!("hi number {number} from the spawned thread!");
+                let candidate_num = Integer::from(number);
+                // Assuming miller_rabin_bigrug is a function that returns a boolean
+                miller_rabin_rug::miller_rabin_bigrug(candidate_num, 5);
+                // println!("Is {} prime? {}", number, result);
+            }
         });
 
-        for i in new_thread..end_thread {
-            println!("hi number {i} from the main thread!");
-            thread::sleep(Duration::from_millis(1));
-        }
-        if end_thread >= max_num {
-            break;
-        } else {
-            new_thread += &num_per_thread;
-            end_thread += &num_per_thread;
-        }
+        threads.push(handle);
+    }
+
+    for handle in threads {
+        handle.join().unwrap();
     }
 }
 

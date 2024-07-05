@@ -2,8 +2,7 @@ use bigint_num;
 use bigint_rug;
 use num_bigint::BigUint;
 use num_traits::FromPrimitive;
-use primality::{bigint_num::miller_rabin_threaded, 
-    bigint_rug::threaded_bigint_rug, *};
+use primality::{bigint_num::miller_rabin_threaded, bigint_rug::threaded_bigint_rug, *};
 use rug::{ops::Pow, Integer};
 
 fn main() {

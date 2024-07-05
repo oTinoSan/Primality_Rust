@@ -5,7 +5,10 @@ use primality::{
         miller_rabin_big::miller_rabin_bignum,
         miller_rabin_threaded::{miller_rabin_array, miller_rabin_threaded},
     },
-    bigint_rug::miller_rabin_rug::miller_rabin_bigrug,
+    bigint_rug::{
+        miller_rabin_rug::miller_rabin_bigrug,
+        threaded_bigint_rug::threaded_bigrug,
+    },
     miller_rabin::miller_rabin,
     sieve::sieve,
     solovay_strassen::solovay_strassen,
@@ -63,7 +66,12 @@ fn main() {
 //     miller_rabin_bigrug(Integer::from(arg), 5);
 // }
 
-#[divan::bench(args = [1_000_000i64])]
+#[divan::bench(args = [10_000i64])]
+fn threaded_bigrug_test(arg: i64) {
+    threaded_bigrug(arg, 2);
+}
+
+#[divan::bench(args = [10_000i64])]
 fn check_all_primes_bignum(arg: i64) {
     let list: Vec<i64> = (5..=arg).collect();
     for num in list {
@@ -73,7 +81,7 @@ fn check_all_primes_bignum(arg: i64) {
     }
 }
 
-#[divan::bench(args = [1_000_000i64])]
+#[divan::bench(args = [10_000i64])]
 fn check_all_primes_bigrug(arg: i64) {
     let list: Vec<i64> = (5..=arg).collect();
     for num in list {
