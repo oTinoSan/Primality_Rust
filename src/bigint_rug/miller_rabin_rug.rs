@@ -1,10 +1,12 @@
 use rug::{integer::MiniInteger, rand, Integer};
 
 pub fn miller_rabin_bigrug(candidate: Integer, iterations: u64) -> bool {
-    if candidate == Integer::from(2u8) || candidate == Integer::from(3u8){
+    if candidate == Integer::from(2u8) || candidate == Integer::from(3u8) {
         return true;
     }
-    if Integer::from(&candidate % &Integer::from(2u8)) == Integer::from(0u8) || candidate == Integer::from(1u8) {
+    if Integer::from(&candidate % &Integer::from(2u8)) == Integer::from(0u8)
+        || candidate == Integer::from(1u8)
+    {
         return false;
     }
     let mut rand = rand::RandState::new();

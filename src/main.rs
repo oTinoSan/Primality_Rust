@@ -1,10 +1,9 @@
-use primality::*;
 use bigint_num;
-use rug::{ops::Pow, Integer};
 use bigint_rug;
 use num_bigint::BigUint;
 use num_traits::FromPrimitive;
-
+use primality::*;
+use rug::{ops::Pow, Integer};
 
 fn main() {
     // let result = trial_vect(1000);
@@ -26,12 +25,12 @@ fn main() {
     // println!("{:?}", result);
     // let result = wheel::wheel(1000);
     // println!("{:?}", result);
-    
+
     // let result = miller_rabin::miller_rabin(3, 5);
     // println!("{:?}", result);
     // let result = solovay_strassen::solovay_strassen(479001599);
     // println!("{:?}", result);
-    
+
     let num_list: [BigUint; 14] = [
         BigUint::from(0u8),
         BigUint::from(1u8),
@@ -76,14 +75,13 @@ fn main() {
         println!("Is {} prime? {}", tested_num, result);
     }
 
-   
-//     check_primes_up_to(1_000_000);
-//     pub fn check_primes_up_to(candidate: i64) {
-//         let list: Vec<i64> = (5..=candidate).collect();
-//         for num in list {
-//             let result = bigint_num::miller_rabin_big::miller_rabin_bignum(BigUint::from(num as u64), 5);
-//             // let result = bigint_rug::miller_rabin_rug::miller_rabin_bigrug(Integer::from(num), 5);
-//             println!("Is {} prime? {}", num, result);
-//         }
-//     }
+    //     check_primes_up_to(1_000_000);
+    //     pub fn check_primes_up_to(candidate: i64) {
+    //         let list: Vec<i64> = (5..=candidate).collect();
+    //         for num in list {
+    //             let result = bigint_num::miller_rabin_big::miller_rabin_bignum(BigUint::from(num as u64), 5);
+    //             // let result = bigint_rug::miller_rabin_rug::miller_rabin_bigrug(Integer::from(num), 5);
+    //             println!("Is {} prime? {}", num, result);
+    //         }
+    //     }
 }

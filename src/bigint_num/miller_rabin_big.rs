@@ -1,7 +1,7 @@
+use super::mod_pow_big::mod_pow_bigint;
+use num::bigint::RandBigInt;
 use num::BigUint;
 use num::FromPrimitive;
-use num::bigint::RandBigInt;
-use super::mod_pow_big::mod_pow_bigint;
 
 pub fn miller_rabin_bignum(candidate: BigUint, iterations: usize) -> bool {
     if candidate == BigUint::from(2u8) || candidate == BigUint::from(3u8) {

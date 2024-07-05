@@ -1,10 +1,10 @@
-use rand::prelude::*;
 use crate::mod_pow::mod_pow;
+use rand::prelude::*;
 
 pub fn miller_rabin(candidate: u64, iterations: i32) -> bool {
     match candidate {
         0 | 1 => false, // 0 and 1 are not prime
-        2 | 3 => true, // 2 and 3 are prime
+        2 | 3 => true,  // 2 and 3 are prime
         _ => {
             let mut rng = rand::thread_rng();
             let mut d = candidate - 1;

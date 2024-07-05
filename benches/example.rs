@@ -1,9 +1,18 @@
-use num::BigUint;
-use rug::Integer;
 use divan;
+use num::BigUint;
 use primality::{
-    bigint_num::{miller_rabin_big::miller_rabin_bignum, miller_rabin_threaded::{miller_rabin_array, miller_rabin_threaded}}, bigint_rug::miller_rabin_rug::miller_rabin_bigrug, miller_rabin::miller_rabin, sieve::sieve, solovay_strassen::solovay_strassen, trials::{trial, trial_2}, wheel::wheel,
+    bigint_num::{
+        miller_rabin_big::miller_rabin_bignum,
+        miller_rabin_threaded::{miller_rabin_array, miller_rabin_threaded},
+    },
+    bigint_rug::miller_rabin_rug::miller_rabin_bigrug,
+    miller_rabin::miller_rabin,
+    sieve::sieve,
+    solovay_strassen::solovay_strassen,
+    trials::{trial, trial_2},
+    wheel::wheel,
 };
+use rug::Integer;
 
 fn main() {
     divan::main();
@@ -55,7 +64,7 @@ fn main() {
 // }
 
 #[divan::bench(args = [1_000_000i64])]
-fn check_all_primes_bignum (arg: i64) {
+fn check_all_primes_bignum(arg: i64) {
     let list: Vec<i64> = (5..=arg).collect();
     for num in list {
         miller_rabin_bignum(BigUint::from(num as u64), 5);
@@ -65,7 +74,7 @@ fn check_all_primes_bignum (arg: i64) {
 }
 
 #[divan::bench(args = [1_000_000i64])]
-fn check_all_primes_bigrug (arg: i64) {
+fn check_all_primes_bigrug(arg: i64) {
     let list: Vec<i64> = (5..=arg).collect();
     for num in list {
         miller_rabin_bignum(BigUint::from(num as u64), 5);
