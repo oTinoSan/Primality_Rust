@@ -1,4 +1,4 @@
-use crate::mod_pow::mod_pow;
+use super::mod_pow::mod_pow;
 use rand::prelude::*;
 
 pub fn miller_rabin(candidate: u64, iterations: i32) -> bool {

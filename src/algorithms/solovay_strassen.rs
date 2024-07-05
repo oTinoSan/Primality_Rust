@@ -1,4 +1,4 @@
-use crate::mod_pow::mod_pow;
+use super::mod_pow::mod_pow;
 use rand::prelude::*;
 
 pub fn jacobi(a: i64, n: i64) -> i64 {

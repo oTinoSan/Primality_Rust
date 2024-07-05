@@ -9,11 +9,13 @@ use primality::{
         miller_rabin_rug::miller_rabin_bigrug,
         threaded_bigint_rug::threaded_bigrug,
     },
+    algorithms::{
     miller_rabin::miller_rabin,
     sieve::sieve,
     solovay_strassen::solovay_strassen,
     trials::{trial, trial_2},
     wheel::wheel,
+    },
 };
 use rug::Integer;
 

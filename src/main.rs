@@ -1,6 +1,6 @@
 use bigint_num;
 use bigint_rug;
-use num_bigint::BigUint;
+use num_bigint::BigInt;
 use num_traits::FromPrimitive;
 use primality::{bigint_num::threaded_bigint_num::{self, threaded_bignum}, bigint_rug::threaded_bigint_rug, *};
 use rug::{ops::Pow, Integer};

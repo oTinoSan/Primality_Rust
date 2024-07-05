@@ -1,3 +1,4 @@
 /target
 /bench_output.txt
 /cargo_output.txt
+/tests
