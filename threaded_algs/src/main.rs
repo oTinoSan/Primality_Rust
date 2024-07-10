@@ -1,9 +1,5 @@
-use crate::wheel_algos::wheel_threaded;
-use crate::AKS_prime::u64AKS;
 use crate::lamellar_prime_tests::{lamellar, bigint_miller_rabin};
-use rug::{rand, Complete, Integer}; //integer::MiniInteger,
-use std::env;
-use std::thread;
+use rug::{Complete, Integer}; //integer::MiniInteger,
 
 pub mod AKS_prime;
 pub mod wheel_algos;

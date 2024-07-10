@@ -1,11 +1,9 @@
-use num_iter::{range, range_inclusive, range_step_inclusive};
 use rug::ops::AssignRound;
-use rug::{float::Round, rand, Complete, Float, Integer};
+use rug::{float::Round, Float, Integer};
 use rug_polynomial::ModPoly;
-use std::thread;
 
 pub fn u64AKS(prime_candidate: u64) -> bool {
-    let mut prime_int = Integer::from(prime_candidate.clone());
+    let prime_int = Integer::from(prime_candidate.clone());
     let mut prime_float: Float = Float::with_val(31, 0);
     prime_float.assign_round(prime_int.clone(), Round::Nearest);
     let log2n = prime_float.clone().log2();
@@ -13,7 +11,7 @@ pub fn u64AKS(prime_candidate: u64) -> bool {
     if prime_int.clone().is_perfect_power() {
         return false;
     }
-    let mut r = 0;
+    let r = 0;
     //find smallest r such that the multiplicative order of prime modulo r is greater than (log2n)^2
     for mut r in num_iter::range(Integer::from(0), prime_int.clone()) {
         r = Integer::from(r);

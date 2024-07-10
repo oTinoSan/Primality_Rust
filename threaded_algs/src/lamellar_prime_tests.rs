@@ -1,5 +1,4 @@
 use lamellar::array::prelude::*;
-use crate::wheel_algos::general_wheel_rayon;
 use rug::{Integer, rand};
 
 pub fn lamellar(){
@@ -21,7 +20,7 @@ pub fn lamellar(){
         local_max = search_max.clone();
     }
 
-    let local_results = super::wheel_algos::general_wheel_rayon(
+    let local_results = super::wheel_algos::general_wheel_threaded(
         10,
         local_min,
         local_max,
@@ -44,6 +43,8 @@ pub fn lamellar(){
     }
 
 }
+
+
 pub fn bigint_miller_rabin(loop_amount: u64, n: Integer) -> bool {
     let mut rand = rand::RandState::new();
     let minus_one = Integer::from(&n - 1);
