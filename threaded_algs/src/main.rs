@@ -7,6 +7,7 @@ use std::thread;
 
 pub mod AKS_prime;
 pub mod wheel_algos;
+pub mod lamellar_prime_tests;
 
 fn main() {
     // threaded_miller_rabin(Integer::from(1000000000), 8);
