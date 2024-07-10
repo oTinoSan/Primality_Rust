@@ -24,6 +24,7 @@ pub fn lamellar(){
         10,
         local_min,
         local_max,
+        128,
         bigint_miller_rabin,
         vec![2, 3, 5],
         vec![1, 7, 11, 13, 17, 19, 23, 29],

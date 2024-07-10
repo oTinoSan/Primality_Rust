@@ -1,6 +1,7 @@
 use rayon::prelude::*;
 use rug::{Integer};
 use std::{thread};
+use std::sync::Arc;
 
 pub fn wheel_threaded(
     num_tests: u64,
