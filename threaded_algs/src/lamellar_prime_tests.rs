@@ -1,7 +1,6 @@
 use lamellar::array::prelude::*;
 use crate::wheel_algos::general_wheel_rayon;
-use crate::main::bigint_miller_rabin;
-use rug::Integer;
+use rug::{Integer, rand};
 
 pub fn lamellar(){
     let world = lamellar::LamellarWorldBuilder::new().build();
@@ -44,4 +43,28 @@ pub fn lamellar(){
         println!("Time elapsed: {:?}", elapsed);
     }
 
+}
+pub fn bigint_miller_rabin(loop_amount: u64, n: Integer) -> bool {
+    let mut rand = rand::RandState::new();
+    let minus_one = Integer::from(&n - 1);
+    let s = minus_one.find_one(0).unwrap();
+    let d = Integer::from(&minus_one >> s);
+    'outer: for _ in 0..loop_amount {
+        let mut a =
+            Integer::from(Integer::from(Integer::from(&n - 3).random_below_ref(&mut rand)) + 1);
+        a = a.pow_mod(&d, &n).unwrap();
+        if a == 1 {
+            continue;
+        }
+        for _ in 0..s {
+            if a == Integer::from(&n - 1) {
+                continue 'outer;
+            }
+            // a = a.pow_mod(&MiniInteger::from(2).borrow(), &n).unwrap();
+        }
+        if a != minus_one {
+            return false;
+        }
+    }
+    true
 }

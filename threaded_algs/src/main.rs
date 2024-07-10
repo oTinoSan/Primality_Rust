@@ -1,6 +1,6 @@
 use crate::wheel_algos::wheel_threaded;
 use crate::AKS_prime::u64AKS;
-use crate::lamellar_prime_tests::lamellar;
+use crate::lamellar_prime_tests::{lamellar, bigint_miller_rabin};
 use rug::{rand, Complete, Integer}; //integer::MiniInteger,
 use std::env;
 use std::thread;
@@ -31,7 +31,7 @@ pub fn threaded_miller_rabin(limit: Integer, num_threads: u64) -> Vec<Integer> {
         thread_handles.push(std::thread::spawn(move || {
             let mut return_vector = Vec::new();
             while thread_min < thread_max {
-                if bigint_miller_rabin(thread_min.clone(), 10) {
+                if bigint_miller_rabin(10, thread_min.clone()) {
                     return_vector.push(thread_min.clone());
                 }
                 thread_min += 2;
@@ -48,27 +48,3 @@ pub fn threaded_miller_rabin(limit: Integer, num_threads: u64) -> Vec<Integer> {
     results
 }
 
-pub fn bigint_miller_rabin(n: Integer, loop_amount: u64) -> bool {
-    let mut rand = rand::RandState::new();
-    let minus_one = Integer::from(&n - 1);
-    let s = minus_one.find_one(0).unwrap();
-    let d = Integer::from(&minus_one >> s);
-    'outer: for _ in 0..loop_amount {
-        let mut a =
-            Integer::from(Integer::from(Integer::from(&n - 3).random_below_ref(&mut rand)) + 1);
-        a = a.pow_mod(&d, &n).unwrap();
-        if a == 1 {
-            continue;
-        }
-        for _ in 0..s {
-            if a == Integer::from(&n - 1) {
-                continue 'outer;
-            }
-            // a = a.pow_mod(&MiniInteger::from(2).borrow(), &n).unwrap();
-        }
-        if a != minus_one {
-            return false;
-        }
-    }
-    true
-}
