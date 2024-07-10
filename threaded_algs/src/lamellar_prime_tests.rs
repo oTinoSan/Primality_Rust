@@ -3,7 +3,7 @@ use crate::wheel_algos::general_wheel_rayon;
 use crate::main::bigint_miller_rabin;
 use rug::Integer;
 
-pub fn main(){
+pub fn lamellar(){
     let world = lamellar::LamellarWorldBuilder::new().build();
     let my_pe = world.my_pe();
     let num_pes = world.num_pes();
