@@ -31,3 +31,28 @@ pub fn wheel_threaded(
         .flatten()
         .collect()
 }
+
+pub fn general_wheel_rayon(
+    num_tests: u64,
+    min: Integer,
+    max: Integer,
+    test: fn(u64, Integer) -> bool,
+    primes: Vec<u64>,
+    coprimes: Vec<u64>,
+) -> Vec<Integer> {
+    let product = primes.iter().fold(1, |a, i| a * i);
+    let start = min / product + 1;
+    let end = max / product + 1;
+    num_iter::range(start, end)
+        .map(move |i| i * 30)
+        .map(move |i| {
+            std::iter::repeat(i)
+                .zip(coprimes.clone())
+                .map(move |(i, j)| i + j)
+        })
+        .flatten()
+        .par_bridge()
+        .filter(|i: &Integer| test(num_tests, i.clone()))
+        .collect()
+}
+
