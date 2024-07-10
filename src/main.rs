@@ -35,22 +35,22 @@ fn miller_test(candidate: u32) -> bool {
             break;
         }
     }
-        for i in 0..50 {
-            let a = thread_rng().gen_range(2..=(candidate - 2));
-            b = mod_exp(a, divisor, candidate);
-            if b == 1 {
-                is_composite = false;
-                break;
-            } else {
-                for i in (0..k).step_by(2) {
-                    if b == (candidate - 1) {
-                        is_composite = false;
-                        break;
-                    }
-                    b = mod_exp(b, 2, candidate);
+    for i in 0..50 {
+        let a = thread_rng().gen_range(2..=(candidate - 2));
+        b = mod_exp(a, divisor, candidate);
+        if b == 1 {
+            is_composite = false;
+            break;
+        } else {
+            for i in (0..k).step_by(2) {
+                if b == (candidate - 1) {
+                    is_composite = false;
+                    break;
                 }
+                b = mod_exp(b, 2, candidate);
             }
         }
+    }
     return !is_composite;
 }
 

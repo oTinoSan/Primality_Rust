@@ -8,3 +8,5 @@ num = "0.4"
 rand = "0.8"
 num-bigint = { version = "0.4", features = ["rand"] }
 num-format = "0.4.4"
+num-iter = "0.1.45"
+rug = {version = "1.24.1", features=["num-traits"]}

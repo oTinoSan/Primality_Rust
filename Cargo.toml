@@ -1,8 +1,21 @@
 [package]
-name = "miller_rabin"
+name = "primality"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 mod_exp = "1.0.1"
 rand = "0.8.5"
+num = "0.4"
+num-bigint = { version = "0.4", features = ["rand"] }
+num-format = "0.4.4"
+rug = {version = "1.16.0", features = ["num-traits"]}
+rug-polynomial = "0.2.5"
+num-iter = "0.1.45"
+
+[dev-dependencies]
+divan = "0.1.14"
+
+[[bench]]
+name = "example"
+harness = false

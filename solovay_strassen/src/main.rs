@@ -1,6 +1,8 @@
 use mod_exp::mod_exp;
 use rand::{thread_rng, Rng};
 use std::env;
+use rug::{Assign, Integer};
+
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -100,7 +102,7 @@ impl Jacobi {
     }
 
     fn mod_reduce(&mut self) {
-        self.a = self.a % self.a;
+        self.a = self.a % self.n;
     }
 
     fn remove_twos(&mut self) {

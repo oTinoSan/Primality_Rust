@@ -1,20 +1,33 @@
-use rand::{thread_rng, Rng};
+use ::rand::thread_rng;
 use num::bigint::RandBigInt;
 use num::traits::ConstZero;
 use num::BigUint;
 use num::FromPrimitive;
-// use rug::{Assign, Integer};
+use num_iter::{range, range_inclusive, range_step_inclusive};
+use rug::ops::AssignRound;
+// use rug::{integer::MiniInteger,
+use rug::{float::Round, rand, Complete, Float, Integer};
+use rug_polynomial::ModPoly;
+use std::thread;
+// use rug::{println!("{:?}", Assign, Integer};
 
 fn modular_exponentiation(mut x: u64, mut a: u64, n: u64) -> u64 {
-
     let mut ans = 1;
     if a <= 0 {
         return 1;
     }
     loop {
-        if a == 1 { return ans * x % n; }
-        if a&1 == 0 { x = (x*x) % n; a>>=1; continue; }
-        else { ans = (ans * x) % n; a-=1; }
+        if a == 1 {
+            return ans * x % n;
+        }
+        if a & 1 == 0 {
+            x = (x * x) % n;
+            a >>= 1;
+            continue;
+        } else {
+            ans = (ans * x) % n;
+            a -= 1;
+        }
     }
 }
 
@@ -55,15 +68,15 @@ fn wheel_test(candidate: u32) -> bool {
     let mut wheel = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31];
     let mut is_prime = true;
     // loop {
-        for mut divisor in wheel {
-            if candidate == divisor {
-                break;
-            } else if candidate % divisor == 0 {
-                is_prime = false;
-                break;
-            }
-            // divisor += 30;
+    for mut divisor in wheel {
+        if candidate == divisor {
+            break;
+        } else if candidate % divisor == 0 {
+            is_prime = false;
+            break;
         }
+        // divisor += 30;
+    }
     //     if !is_prime | (candidate > wheel[1]) {
     //         break;
     //     }
@@ -109,22 +122,23 @@ fn miller_test(candidate: u32) -> bool {
             break;
         }
     }
-        for i in 0..50 {
-            let a = thread_rng().gen_range(2..=(candidate - 2));
-            b = modular_exponentiation(a as u64, divisor as u64, candidate as u64) as u32;
-            if b == 1 {
-                is_composite = false;
-                break;
-            } else {
-                for i in (0..k).step_by(2) {
-                    if b == (candidate - 1) {
-                        is_composite = false;
-                        break;
-                    }
-                    b = modular_exponentiation(b as u64, 2, candidate as u64) as u32;
+    for i in 0..50 {
+        // let a = rand::thread_rng().gen_range(2, (candidate - 2));
+        let a = 2;
+        b = modular_exponentiation(a as u64, divisor as u64, candidate as u64) as u32;
+        if b == 1 {
+            is_composite = false;
+            break;
+        } else {
+            for i in (0..k).step_by(2) {
+                if b == (candidate - 1) {
+                    is_composite = false;
+                    break;
                 }
+                b = modular_exponentiation(b as u64, 2, candidate as u64) as u32;
             }
         }
+    }
     return !is_composite;
 }
 
@@ -136,12 +150,8 @@ struct Jacobi {
 }
 
 impl Jacobi {
-    fn new(a:u64, n: u64) -> Jacobi {
-        Jacobi {
-            a,
-            n,
-            sign: false,
-        }
+    fn new(a: u64, n: u64) -> Jacobi {
+        Jacobi { a, n, sign: false }
     }
 
     fn mod_reduce(&mut self) {
@@ -152,12 +162,12 @@ impl Jacobi {
         let pow = self.a.trailing_zeros();
         self.a = self.a >> pow;
         let mod_8 = self.n % 8;
-        if !(pow % 2 == 0 || mod_8 == 1 || mod_8 == 7){
+        if !(pow % 2 == 0 || mod_8 == 1 || mod_8 == 7) {
             self.sign = !self.sign;
         }
     }
 
-    fn invert(&mut self){
+    fn invert(&mut self) {
         if self.a % 4 == 3 && self.n % 4 == 3 {
             self.sign = !self.sign;
         }
@@ -167,13 +177,13 @@ impl Jacobi {
     }
 
     fn eval(&mut self) -> i32 {
-        if self.a % 2 == 0{
+        if self.a % 2 == 0 {
             self.remove_twos();
         }
-        while self.a > 1{
+        while self.a > 1 {
             self.invert();
             self.mod_reduce();
-            if self.a == 0{
+            if self.a == 0 {
                 return 0;
             }
             self.remove_twos();
@@ -187,26 +197,29 @@ impl Jacobi {
 }
 
 fn solovay_strassen(num_tests: u64, candidate: u64) -> bool {
-    for _ in 0..num_tests{
-        let a = thread_rng().gen_range(2..=(candidate-2));
+    for _ in 0..num_tests {
+        // let a = thread_rng().gen_range(2, (candidate - 2));
+        let a = 2;
         let mut jacobi = Jacobi::new(a, candidate);
         let jacobi_result = jacobi.eval();
-        let mod_result = modular_exponentiation(a, candidate -1, candidate);
+        let mod_result = modular_exponentiation(a, candidate - 1, candidate);
         if mod_result == 0 {
             return false;
         }
-        if (mod_result == 1 && jacobi_result == 1) || (mod_result == candidate -1 && jacobi_result == -1) {
+        if (mod_result == 1 && jacobi_result == 1)
+            || (mod_result == candidate - 1 && jacobi_result == -1)
+        {
             return true;
         }
     }
     return false;
-    }
+}
 
-pub fn solovay_strassen_list(num_tests: u64, max_val: u64) -> Vec<u64>{
-    let mut primes= vec![];
+pub fn solovay_strassen_list(num_tests: u64, max_val: u64) -> Vec<u64> {
+    let mut primes = vec![];
 
-    for i in (5..=max_val).step_by(2){
-        if solovay_strassen(num_tests, i){
+    for i in (5..=max_val).step_by(2) {
+        if solovay_strassen(num_tests, i) {
             primes.push(i);
         }
     }
@@ -278,7 +291,8 @@ pub fn solovay_strassen_bigint(num_tests: u64, candidate: BigUint) -> bool {
         let can_minus_one = can_clone.clone() - BigUint::from_u64(1).unwrap();
         let big1 = BigUint::from_u64(1).unwrap();
 
-        let rand_num = rand::thread_rng().gen_biguint_range(&big1, &can_minus_one);
+        // let rand_num = rand::thread_rng().gen_biguint_range(&big1, &can_minus_one);
+        let rand_num:BigUint = BigUint::from_u64(2).unwrap();
         let a = rand_num.clone();
 
         let mut jacobi = bigJacobi::new(a, candidate.clone());
@@ -295,4 +309,142 @@ pub fn solovay_strassen_bigint(num_tests: u64, candidate: BigUint) -> bool {
         }
     }
     return false;
+}
+
+
+fn main() {
+    threaded_miller_rabin(Integer::from(1000000000), 8);
+}
+
+pub fn threaded_miller_rabin(limit: Integer, num_threads: u64) -> Vec<Integer> {
+    let block_size = (&limit / num_threads).complete();
+
+    let mut thread_handles = Vec::new();
+
+    for i in 0..num_threads {
+        let mut thread_min: Integer = (i * &block_size).complete() + 5;
+        let thread_max: Integer = ((i + 1) * &block_size).complete() + 5;
+
+        if Integer::from(&thread_min % 2) == 0 {
+            thread_min += 1;
+        }
+        thread_handles.push(std::thread::spawn(move || {
+            let mut return_vector = Vec::new();
+            while thread_min < thread_max {
+                if bigint_miller_rabin(thread_min.clone(), 10) {
+                    return_vector.push(thread_min.clone());
+                }
+                thread_min += 2;
+            }
+            return_vector
+        }));
+    }
+    let mut results = vec![];
+    for handle in thread_handles {
+        let mut thread_results = handle.join().unwrap();
+        results.append(&mut thread_results);
+    }
+
+    results
+}
+
+pub fn bigint_miller_rabin(n: Integer, loop_amount: u64) -> bool {
+    let mut rand = rand::RandState::new();
+    let minus_one = Integer::from(&n - 1);
+    let s = minus_one.find_one(0).unwrap();
+    let d = Integer::from(&minus_one >> s);
+    'outer: for _ in 0..loop_amount {
+        let mut a =
+            Integer::from(Integer::from(Integer::from(&n - 3).random_below_ref(&mut rand)) + 1);
+        a = a.pow_mod(&d, &n).unwrap();
+        if a == 1 {
+            continue;
+        }
+        for _ in 0..s {
+            if a == Integer::from(&n - 1) {
+                continue 'outer;
+            }
+            // a = a.pow_mod(&MiniInteger::from(2).borrow(), &n).unwrap();
+        }
+        if a != minus_one {
+            return false;
+        }
+    }
+    true
+}
+
+pub fn u64AKS(prime_candidate: u64) -> bool {
+    let mut prime_int = Integer::from(prime_candidate.clone());
+    let mut prime_float:Float = Float::with_val(31, 0);
+    prime_float.assign_round(prime_int.clone(), Round::Nearest);
+    let log2n = prime_float.clone().log2();
+    //check if n is a perfect power
+    if prime_int.clone().is_perfect_power() {
+        return false;
+    }
+    let mut r = 0;
+    //find smallest r such that the multiplicative order of prime modulo r is greater than (log2n)^2
+    for mut r in num_iter::range(Integer::from(0), prime_int.clone()) {
+        r = Integer::from(r);
+        for k in num_iter::range(Integer::from(0), r.clone()) {
+            if prime_int.clone().pow_mod(&k, &r.clone()) == Ok(Integer::from(1)) {
+                if log2n.clone() * log2n.clone() < r.clone() {
+                    if prime_int.clone().gcd(&r.clone()) == Integer::from(1) {
+                        break;
+                    }
+                    return false;
+                }
+            }
+        }
+    } // checking for all 2<=a>= min(r,prime_candidate-1) that a does not divide n
+    if prime_int.clone() - Integer::from(0) < r.clone() {
+        for a in num_iter::range(Integer::from(2), prime_int.clone()) {
+            if prime_int.clone() % a == 0 {
+                return false;
+            }
+        }
+    } else {
+        for a in num_iter::range_inclusive(Integer::from(2), Integer::from(r)) {
+            if prime_int.clone() % a == 0 {
+                return false;
+            }
+        }
+    }
+    // if n =< r output prime
+    if prime_int.clone() <= r {
+        return true;
+    }
+    // check finite ring
+    let mut totient = Float::new(53);
+    for i in num_iter::range(Integer::from(1), prime_int.clone()) {
+        if prime_int.clone().gcd(&i) == Integer::from(1) {
+            totient += 1;
+        }
+    }
+    let roof = (totient.sqrt() * log2n).to_integer_round(Round::Down).unwrap();
+    for a in num_iter::range(Integer::from(1), roof.0) {
+        let mut polynomial: ModPoly = ModPoly::with_roots(vec![-a.clone()], &Integer::from(u64::MAX)); // X + a
+        let p = polynomial.clone();
+        for _ in num_iter::range_inclusive(Integer::from(1), prime_int.clone()) {
+            polynomial.mul(&p); // (X + a)^n
+        }
+
+        // for _ in num_iter::range_inclusive(Integer::from(1), prime_candidate) {
+        //     poly_no_mod.polynomial_multiplication(p, prime_candidate); // (X + a)^n
+        // }
+
+        let mut eq_poly = ModPoly::from_int(Integer::from(u64::MAX), a.clone()); // X^n + a
+        eq_poly.set_coefficient((prime_candidate + 1).try_into().unwrap(), &Integer::from(1));
+        let mut mod_poly = ModPoly::from_int(Integer::from(u64::MAX), Integer::from(-1)); // X^r - 1
+        mod_poly.set_coefficient(r + 1, &Integer::from(1));
+        // if (X+a)^n ≠ X^n+a (mod X^r − 1,n), then output composite
+        if polynomial.rem(&mod_poly) != eq_poly.rem(&mod_poly)
+            || polynomial.rem(&ModPoly::from_int(Integer::from(u64::MAX), prime_int.clone()))
+                != eq_poly.rem(&ModPoly::from_int(Integer::from(u64::MAX),prime_int.clone()))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
