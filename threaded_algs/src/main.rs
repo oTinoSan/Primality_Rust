@@ -1,5 +1,6 @@
 use crate::wheel_algos::wheel_threaded;
 use crate::AKS_prime::u64AKS;
+use crate::lamellar_prime_tests::main;
 use rug::{rand, Complete, Integer}; //integer::MiniInteger,
 use std::env;
 use std::thread;
@@ -9,15 +10,9 @@ pub mod wheel_algos;
 
 fn main() {
     // threaded_miller_rabin(Integer::from(1000000000), 8);
-    let limit = "10000";
-    let limit_int = limit.parse::<Integer>().unwrap();
-    let prime_test = wheel_threaded(
-        10,
-        limit_int,
-        16,
-        bigint_miller_rabin,
-    );
-    println!("Primes: {:?}", prime_test);
+    // let limit = "10000000000";
+    // let limit_int = limit.parse::<Integer>().unwrap();
+    let prime_test = main();
 }
 
 pub fn threaded_miller_rabin(limit: Integer, num_threads: u64) -> Vec<Integer> {
