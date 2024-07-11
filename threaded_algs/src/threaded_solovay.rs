@@ -26,7 +26,7 @@ pub fn threaded_solovay_strassen(limit: Integer, num_threads: u64) -> Vec<Intege
     }
     let mut results = vec![];
     for handle in thread_handles {
-        let mut thread_results = handle.join().unwrap();
+        let mut thread_results = handle.join();
         results.append(&mut thread_results);
     }
 
@@ -52,17 +52,17 @@ impl Jacobi {
     fn remove_twos(&mut self) {
         while self.a.clone() % 2 as u64 == Integer::ZERO {
             self.a = self.a.clone() / 2 as u64;
-            let mut mod_8 = &self.n % Integer::from_u64(8).unwrap();
-            if !(mod_8 == Integer::from_u64(1 as u64).unwrap()
-                || mod_8 == Integer::from_u64(7 as u64).unwrap())
+            let mut mod_8 = &self.n % Integer::from(8);
+            if !(mod_8 == Integer::from(1 as u64)
+                || mod_8 == Integer::from(7 as u64))
             {
                 self.sign = !self.sign;
             }
         }
     }
     fn invert(&mut self) {
-        if &self.a % Integer::from_u64(4).unwrap() == Integer::from_u64(3).unwrap()
-            && &self.n % Integer::from_u64(4).unwrap() == Integer::from_u64(3).unwrap()
+        if &self.a % Integer::from(4) == Integer::from(3)
+            && &self.n % Integer::from(4) == Integer::from(3)
         {
             self.sign = !self.sign;
         }
@@ -72,13 +72,13 @@ impl Jacobi {
     }
 
     fn eval(&mut self) -> i32 {
-        if &self.a % Integer::from(2).unwrap() == Integer::from_u64(0).unwrap() {
+        if &self.a % Integer::from(2) == Integer::from(0) {
             self.remove_twos();
         }
-        while *&self.a > Integer::from(1).unwrap() {
+        while *&self.a > Integer::from(1) {
             self.invert();
             self.mod_reduce();
-            if *&self.a == Integer::from(0).unwrap() {
+            if *&self.a == Integer::from(0) {
                 return 0;
             }
             self.remove_twos();
@@ -99,8 +99,8 @@ pub fn bigint_solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
             Integer::from(Integer::from(&candidate - 3).random_below_ref(&mut rand)) + 1,
         );
         let mut jacobi = Jacobi::new(a, candidate.clone());
-        let jacobi_result = jacobi.eval(a, &candidate);
-        let mod_result = a.pow_mod(&(Integer::from(&candidate -1)/2), &candidate).unwrap();
+        let jacobi_result = jacobi.eval();
+        let mod_result = a.pow_mod(&(Integer::from(&candidate -1)/2), &candidate);
         if mod_result == Integer::from(0) {
             return false;
         }
