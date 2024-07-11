@@ -106,7 +106,7 @@ pub fn bigint_miller_rabin(loop_amount: u64, n: Integer) -> bool {
             if a == Integer::from(&n - 1) {
                 continue 'outer;
             }
-            // a = a.pow_mod(&MiniInteger::from(2).borrow(), &n).unwrap();
+            a = a.pow_mod(&Integer::from(2), &n).unwrap();
         }
         if a != minus_one {
             return false;
