@@ -1,5 +1,5 @@
 use crate::lamellar_prime_tests::{lamellar_wheel_miller, lamellar_wheel_solovay, bigint_miller_rabin};
-use crate::threaded_solovay::threaded_solovay;
+use crate::threaded_solovay::threaded_solovay_strassen;
 use rug::{Complete, Integer}; //integer::MiniInteger,
 
 pub mod threaded_solovay;
