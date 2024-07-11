@@ -99,7 +99,7 @@ pub fn bigint_solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
             Integer::from(Integer::from(&candidate - 3).random_below_ref(&mut rand)) + 1,
         );
         let mut jacobi = Jacobi::new(a, candidate.clone());
-        let jacobi_result = jacobi(a, &candidate);
+        let jacobi_result = jacobi.eval(a, &candidate);
         let mod_result = a.pow_mod(&(Integer::from(&candidate -1)/2), &candidate).unwrap();
         if mod_result == Integer::from(0) {
             return false;
