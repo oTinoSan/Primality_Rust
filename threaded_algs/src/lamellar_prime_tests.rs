@@ -9,8 +9,8 @@ pub fn lamellar(){
     let start = std::time::Instant::now();
 
     let results = AtomicArray::<u64>::new(&world, num_pes, Distribution::Block);
-
-    let search_max = Integer::from(u32::MAX);
+    let limit = "10000000000";
+    let search_max = limit.parse::<Integer>().unwrap();
 
     let step = Integer::from(&search_max / num_pes);
 
