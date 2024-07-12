@@ -10,20 +10,20 @@ fn main() {
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
 fn solovay_strassen_bench(num_threads: u64){
-    black_box( solovay_strassen(10, Integer::from(100000),black_box(num_threads)));  
+    black_box( solovay_strassen(10, Integer::from(1000000000),black_box(num_threads)));  
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
 fn miller_rabin_bench(num_threads: u64){
-    black_box( miller_rabin(10, Integer::from(100000),black_box(num_threads)));  
+    black_box( miller_rabin(10, Integer::from(1000000000),black_box(num_threads)));  
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
 fn solovay_strassen_general_bench(num_threads: u64) {
-    black_box( solovay_strassen_general(10, Integer::from(100000),black_box(num_threads)));
+    black_box( solovay_strassen_general(10, Integer::from(1000000000),black_box(num_threads)));
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
 fn miller_rabin_general_bench(num_threads: u64) {
-    black_box( miller_rabin_general(10, Integer::from(100000),black_box(num_threads)));
+    black_box( miller_rabin_general(black_box(10), black_box(Integer::from(1000000000)),black_box(num_threads)));
 }
