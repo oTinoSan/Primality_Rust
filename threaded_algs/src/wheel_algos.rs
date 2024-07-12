@@ -133,3 +133,34 @@ pub fn general_wheel_rayon(
         .collect()
 }
 
+pub fn miller_rabin(num_tests: u64, max: Integer, num_threads: u64) -> Vec<Integer> {
+    wheel_threaded(num_tests, max, num_threads, super::miller_rabin)
+}
+
+pub fn solovay_strassen(num_tests: u64, max: Integer, num_threads: u64) -> Vec<Integer> {
+    wheel_threaded(num_tests, max, num_threads, super::solovay_strassen)
+}
+
+pub fn miller_rabin_general(num_tests: u64, max: Integer, num_threads: u64) -> Vec<Integer> {
+    general_wheel_threaded(
+        num_tests,
+        Integer::ZERO,
+        max,
+        num_threads,
+        super::bigint_miller_rabin,
+        vec![2, 3, 5],
+        vec![1, 7, 11, 13, 17, 19, 23, 29],
+    )
+}
+
+pub fn solovay_strassen_general(num_tests: u64, max: Integer, num_threads: u64) -> Vec<Integer> {
+    general_wheel_threaded(
+        num_tests,
+        Integer::ZERO,
+        max,
+        num_threads,
+        super::solovay_strassen_bigint,
+        vec![2, 3, 5],
+        vec![1, 7, 11, 13, 17, 19, 23, 29],
+    )
+}

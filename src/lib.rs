@@ -9,7 +9,9 @@ use rug::ops::AssignRound;
 use rug::{float::Round, rand, Complete, Float, Integer};
 use rug_polynomial::ModPoly;
 use std::thread;
-// use rug::{println!("{:?}", Assign, Integer};
+// use rug::{Assign, Integer};
+
+pub mod wheel_algos;
 
 fn modular_exponentiation(mut x: u64, mut a: u64, n: u64) -> u64 {
     let mut ans = 1;
