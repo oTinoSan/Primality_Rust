@@ -104,7 +104,7 @@ pub fn bigint_solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
         if mod_result == Integer::from(0) {
             return false;
         }
-        if (mod_result == Integerjacobi_result) || (mod_result == Integer::from(&candidate -1) && jacobi_result == -1) {
+        if (mod_result == Ok(Integer::from(jacobi_result))) || (mod_result == Ok(Integer::from(&candidate -1)) && jacobi_result == -1) {
             return true;
         }
     }
