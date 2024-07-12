@@ -91,7 +91,6 @@ impl Jacobi {
     }
 }
 
-
 pub fn bigint_solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
     let mut rand = rand::RandState::new();
     for _ in 0..num_tests{
@@ -101,14 +100,14 @@ pub fn bigint_solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
         let mut jacobi = Jacobi::new(a.clone(), candidate.clone());
         let jacobi_result = jacobi.eval();
         let mod_result = a.pow_mod(&(Integer::from(&candidate -1)/2), &candidate);
-        if mod_result == Ok(Integer::from(0)) {
+        if !((mod_result == Ok(Integer::from(0)) && jacobi_result == 0)
+            || (mod_result == Ok(Integer::from(1)) && jacobi_result == 1)
+            || (mod_result == Ok(candidate.clone() - 1) && jacobi_result == -1))
+        {
             return false;
         }
-        if (mod_result == Ok(Integer::from(jacobi_result))) || (mod_result == Ok(Integer::from(&candidate -1)) && jacobi_result == -1) {
-            return true;
-        }
     }
-    return false;
+    return true;
     }
 
 pub fn bigint_solovay_strassen_list(num_tests: u64, max_val: Integer) -> Vec<Integer>{

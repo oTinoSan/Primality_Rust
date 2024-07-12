@@ -231,14 +231,28 @@ pub fn bigint_solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
         let mut jacobi = bigJacobi::new(a.clone(), candidate.clone());
         let jacobi_result = jacobi.eval();
         let mod_result = a.pow_mod(&(Integer::from(&candidate -1)/2), &candidate);
-        if mod_result == Ok(Integer::from(0)) {
+        if !((mod_result == Ok(Integer::from(0)) && jacobi_result == Integer::from(0))
+            || (mod_result == Ok(Integer::from(1)) && jacobi_result == 1)
+            || (mod_result == Ok(candidate.clone() - 1) && jacobi_result == -1))
+        {
             return false;
-        }
-        if (mod_result == Ok(Integer::from(jacobi_result))) || (mod_result == Ok(Integer::from(&candidate -1)) && jacobi_result == -1) {
-            return true;
         }
     }
     return false;
+    }
+
+    pub fn bigint_solovay_strassen_list(num_tests: u64, max_val: Integer) -> Vec<Integer>{
+        let mut primes= vec![];
+        let mut i = Integer::from(5);
+    
+        while i <= max_val {
+            if bigint_solovay_strassen(num_tests, i.clone()){
+                primes.push(i.clone());
+            }
+            i = i + 2;
+        }
+    
+        primes
     }
 
 pub fn threaded_miller_rabin(limit: Integer, num_threads: u64) -> Vec<Integer> {
@@ -296,6 +310,20 @@ pub fn bigint_miller_rabin(loop_amount: u64, n: Integer) -> bool {
         }
     }
     true
+}
+
+pub fn bigint_miller_rabin_list(num_tests: u64, max_val: Integer) -> Vec<Integer>{
+    let mut primes= vec![];
+    let mut i = Integer::from(5);
+
+    while i <= max_val {
+        if bigint_miller_rabin(num_tests, i.clone()){
+            primes.push(i.clone());
+        }
+        i = i + 2;
+    }
+
+    primes
 }
 
 pub fn wheel_threaded_two_fn(
