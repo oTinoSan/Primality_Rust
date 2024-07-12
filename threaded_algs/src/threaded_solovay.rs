@@ -26,7 +26,7 @@ pub fn threaded_solovay_strassen(limit: Integer, num_threads: u64) -> Vec<Intege
     }
     let mut results = vec![];
     for handle in thread_handles {
-        let mut thread_results = handle.join();
+        let mut thread_results = handle.join().unwrap();
         results.append(&mut thread_results);
     }
 
@@ -46,7 +46,7 @@ impl Jacobi {
     }
 
     fn mod_reduce(&mut self) {
-        self.a = &self.a % &self.n;
+        self.a = (&self.a % &self.n).into();
     }
 
     fn remove_twos(&mut self) {
@@ -98,10 +98,10 @@ pub fn bigint_solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
         let a = Integer::from(
             Integer::from(Integer::from(&candidate - 3).random_below_ref(&mut rand)) + 1,
         );
-        let mut jacobi = Jacobi::new(a, candidate.clone());
+        let mut jacobi = Jacobi::new(a.clone(), candidate.clone());
         let jacobi_result = jacobi.eval();
         let mod_result = a.pow_mod(&(Integer::from(&candidate -1)/2), &candidate);
-        if mod_result == Integer::from(0) {
+        if mod_result == Ok(Integer::from(0)) {
             return false;
         }
         if (mod_result == Ok(Integer::from(jacobi_result))) || (mod_result == Ok(Integer::from(&candidate -1)) && jacobi_result == -1) {
