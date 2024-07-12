@@ -1,7 +1,6 @@
 use ::rand::thread_rng;
 use num::bigint::RandBigInt;
 use num::traits::ConstZero;
-use num::BigUint;
 use num::FromPrimitive;
 use num_iter::{range, range_inclusive, range_step_inclusive};
 use rug::ops::AssignRound;
@@ -111,7 +110,7 @@ pub fn miller_list(limit: u32) -> Vec<u32> {
 }
 
 fn miller_test(candidate: u32) -> bool {
-    // while n<=number{
+    // while n<=number
     let mut is_composite = true;
     let mut k = 0;
     let mut divisor = candidate - 1;
@@ -229,151 +228,6 @@ pub fn solovay_strassen_list(num_tests: u64, max_val: u64) -> Vec<u64> {
     primes
 }
 
-#[derive(Debug, Clone)]
-struct bigJacobi {
-    a: BigUint,
-    n: BigUint,
-    sign: bool,
-}
-
-impl bigJacobi {
-    fn new(a: BigUint, n: BigUint) -> bigJacobi {
-        bigJacobi { a, n, sign: false }
-    }
-
-    fn mod_reduce(&mut self) {
-        self.a = &self.a % &self.n;
-    }
-
-    fn remove_twos(&mut self) {
-        while self.a.clone() % 2 as u64 == BigUint::ZERO {
-            self.a = self.a.clone() / 2 as u64;
-            let mut mod_8 = &self.n % BigUint::from_u64(8).unwrap();
-            if !(mod_8 == BigUint::from_u64(1 as u64).unwrap()
-                || mod_8 == BigUint::from_u64(7 as u64).unwrap())
-            {
-                self.sign = !self.sign;
-            }
-        }
-    }
-    fn invert(&mut self) {
-        if &self.a % BigUint::from_u64(4).unwrap() == BigUint::from_u64(3).unwrap()
-            && &self.n % BigUint::from_u64(4).unwrap() == BigUint::from_u64(3).unwrap()
-        {
-            self.sign = !self.sign;
-        }
-        let temp = self.a.clone();
-        self.a = self.n.clone();
-        self.n = temp.clone();
-    }
-
-    fn eval(&mut self) -> i32 {
-        if &self.a % BigUint::from_u64(2).unwrap() == BigUint::from_u64(0).unwrap() {
-            self.remove_twos();
-        }
-        while *&self.a > BigUint::from_u64(1).unwrap() {
-            self.invert();
-            self.mod_reduce();
-            if *&self.a == BigUint::from_u64(0).unwrap() {
-                return 0;
-            }
-            self.remove_twos();
-        }
-        if self.sign {
-            return -1;
-        } else {
-            return 1;
-        }
-    }
-}
-
-pub fn solovay_strassen_bigint(num_tests: u64, candidate: BigUint) -> bool {
-    let can_clone = candidate.clone();
-    for _ in 0..num_tests {
-        let can_minus_one = can_clone.clone() - BigUint::from_u64(1).unwrap();
-        let big1 = BigUint::from_u64(1).unwrap();
-
-        // let rand_num = rand::thread_rng().gen_biguint_range(&big1, &can_minus_one);
-        let rand_num:BigUint = BigUint::from_u64(2).unwrap();
-        let a = rand_num.clone();
-
-        let mut jacobi = bigJacobi::new(a, candidate.clone());
-        let jacobi_result = jacobi.eval();
-        let mod_result = rand_num.modpow(&can_minus_one, &candidate);
-        // println!("Jacobi result {} Random Number {}", jacobi_result, rand_num);
-        if mod_result == BigUint::ZERO {
-            return false;
-        }
-        if (mod_result == BigUint::from_u64(1).unwrap() && jacobi_result == 1)
-            || (mod_result == can_minus_one && jacobi_result == -1)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-fn main() {
-    threaded_miller_rabin(Integer::from(1000000000), 8);
-}
-
-pub fn threaded_miller_rabin(limit: Integer, num_threads: u64) -> Vec<Integer> {
-    let block_size = (&limit / num_threads).complete();
-
-    let mut thread_handles = Vec::new();
-
-    for i in 0..num_threads {
-        let mut thread_min: Integer = (i * &block_size).complete() + 5;
-        let thread_max: Integer = ((i + 1) * &block_size).complete() + 5;
-
-        if Integer::from(&thread_min % 2) == 0 {
-            thread_min += 1;
-        }
-        thread_handles.push(std::thread::spawn(move || {
-            let mut return_vector = Vec::new();
-            while thread_min < thread_max {
-                if bigint_miller_rabin(thread_min.clone(), 10) {
-                    return_vector.push(thread_min.clone());
-                }
-                thread_min += 2;
-            }
-            return_vector
-        }));
-    }
-    let mut results = vec![];
-    for handle in thread_handles {
-        let mut thread_results = handle.join().unwrap();
-        results.append(&mut thread_results);
-    }
-
-    results
-}
-
-pub fn bigint_miller_rabin(n: Integer, loop_amount: u64) -> bool {
-    let mut rand = rand::RandState::new();
-    let minus_one = Integer::from(&n - 1);
-    let s = minus_one.find_one(0).unwrap();
-    let d = Integer::from(&minus_one >> s);
-    'outer: for _ in 0..loop_amount {
-        let mut a =
-            Integer::from(Integer::from(Integer::from(&n - 3).random_below_ref(&mut rand)) + 1);
-        a = a.pow_mod(&d, &n).unwrap();
-        if a == 1 {
-            continue;
-        }
-        for _ in 0..s {
-            if a == Integer::from(&n - 1) {
-                continue 'outer;
-            }
-            // a = a.pow_mod(&MiniInteger::from(2).borrow(), &n).unwrap();
-        }
-        if a != minus_one {
-            return false;
-        }
-    }
-    true
-}
 
 pub fn u64AKS(prime_candidate: u64) -> bool {
     let mut prime_int = Integer::from(prime_candidate.clone());

@@ -19,7 +19,7 @@ fn miller_rabin_bench(num_threads: u64){
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
-fn solovay_strassen_general_bench(num_thread: u64) {
+fn solovay_strassen_general_bench(num_threads: u64) {
     black_box( solovay_strassen_general(10, Integer::from(100000),black_box(num_threads)));
 }
 
