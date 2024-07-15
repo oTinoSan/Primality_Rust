@@ -37,3 +37,14 @@ fn miller_solovay_bench(num_threads: u64){
 fn general_miller_solovay_bench(num_threads: u64){
     black_box( general_miller_solovay(5, Integer::from(1000000000),black_box(num_threads)));  
 }
+
+#[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
+fn general_baille_psw_bench(num_threads: u64){
+    black_box( baillie_psw_general_wheel(
+        Integer::ZERO,
+        Integer::from(1000000000),
+        black_box(num_threads),
+        vec![2, 3, 5],
+        vec![1, 7, 11, 13, 17, 19, 23, 29]
+    )); 
+}
