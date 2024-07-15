@@ -1,8 +1,8 @@
 use divan::black_box;
 use primality::{
-miller_list, mult_prime, sieve, solovay_strassen_list, wheel_mult_prime, u64AKS
+miller_list, mult_prime, sieve, solovay_strassen_list, wheel_mult_prime
 };
-use primality::wheel_algos::*;
+use primality::advanced_primality_tests::*;
 use rug::Integer;
 
 fn main() {

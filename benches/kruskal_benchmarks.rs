@@ -39,6 +39,11 @@ fn general_miller_solovay_bench(num_threads: u64){
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
+fn baillie_psw_bench(num_threads: u64){
+    black_box( baillie_psw_wheel_threaded( Integer::from(1000000000),black_box(num_threads)));  
+}
+
+#[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
 fn general_baille_psw_bench(num_threads: u64){
     black_box( baillie_psw_general_wheel(
         Integer::ZERO,

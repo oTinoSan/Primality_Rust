@@ -8,6 +8,7 @@ pub mod AKS_prime;
 pub mod lamellar_prime_tests;
 pub mod threaded_solovay;
 pub mod wheel_algos;
+pub mod baille_psw;
 
 fn main() {
     // threaded_miller_rabin(Integer::from(1000000000), 8);

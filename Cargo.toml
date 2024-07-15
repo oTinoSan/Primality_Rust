@@ -9,8 +9,7 @@ rand = "0.8.5"
 num = "0.4"
 num-bigint = { version = "0.4", features = ["rand"] }
 num-format = "0.4.4"
-rug = {version = "1.16.0", features = ["num-traits"]}
-rug-polynomial = "0.2.5"
+rug = {version = "1.24.0", features = ["num-traits"]}
 num-iter = "0.1.45"
 rayon = "1.10.0"
 
