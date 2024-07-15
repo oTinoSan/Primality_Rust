@@ -210,7 +210,7 @@ pub fn general_wheel_threaded_two_fn(
                     if candidate > max {
                         break;
                     }
-                    if test_1(num_tests, candidate.clone()) {
+                    if test_1(num_tests, candidate.clone() && test_2(num_tests, candidate.clone())) {
                         r.push(candidate);
                     }
                 }
