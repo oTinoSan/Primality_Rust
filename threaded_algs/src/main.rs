@@ -14,7 +14,7 @@ fn main() {
     // let limit = "100000000";
     // let limit_int = limit.parse::<Integer>().unwrap();
     // lamellar_wheel_miller();
-    lamellar_wheel_miller_solovay();
+    lamellar_wheel_miller();
 }
 
 pub fn threaded_miller_rabin(num_threads: u64, limit: Integer) -> Vec<Integer> {
