@@ -1,7 +1,7 @@
+use rug::{rand, Complete, Integer};
 use std::env;
-use rug::{Integer, Complete, rand};
 
-pub fn threaded_solovay_strassen(limit: Integer, num_threads: u64) -> Vec<Integer> {
+pub fn threaded_solovay_strassen(num_threads: u64, limit: Integer) -> Vec<Integer> {
     let block_size = (&limit / num_threads).complete();
 
     let mut thread_handles = Vec::new();
@@ -53,9 +53,7 @@ impl Jacobi {
         while self.a.clone() % 2 as u64 == Integer::ZERO {
             self.a = self.a.clone() / 2 as u64;
             let mut mod_8 = &self.n % Integer::from(8);
-            if !(mod_8 == Integer::from(1 as u64)
-                || mod_8 == Integer::from(7 as u64))
-            {
+            if !(mod_8 == Integer::from(1 as u64) || mod_8 == Integer::from(7 as u64)) {
                 self.sign = !self.sign;
             }
         }
@@ -93,13 +91,13 @@ impl Jacobi {
 
 pub fn bigint_solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
     let mut rand = rand::RandState::new();
-    for _ in 0..num_tests{
+    for _ in 0..num_tests {
         let a = Integer::from(
             Integer::from(Integer::from(&candidate - 3).random_below_ref(&mut rand)) + 1,
         );
         let mut jacobi = Jacobi::new(a.clone(), candidate.clone());
         let jacobi_result = jacobi.eval();
-        let mod_result = a.pow_mod(&(Integer::from(&candidate -1)/2), &candidate);
+        let mod_result = a.pow_mod(&(Integer::from(&candidate - 1) / 2), &candidate);
         if !((mod_result == Ok(Integer::from(0)) && jacobi_result == 0)
             || (mod_result == Ok(Integer::from(1)) && jacobi_result == 1)
             || (mod_result == Ok(candidate.clone() - 1) && jacobi_result == -1))
@@ -108,14 +106,14 @@ pub fn bigint_solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
         }
     }
     return true;
-    }
+}
 
-pub fn bigint_solovay_strassen_list(num_tests: u64, max_val: Integer) -> Vec<Integer>{
-    let mut primes= vec![];
+pub fn bigint_solovay_strassen_list(num_tests: u64, max_val: Integer) -> Vec<Integer> {
+    let mut primes = vec![];
     let mut i = Integer::from(5);
 
     while i <= max_val {
-        if bigint_solovay_strassen(num_tests, i.clone()){
+        if bigint_solovay_strassen(num_tests, i.clone()) {
             primes.push(i.clone());
         }
         i = i + 2;

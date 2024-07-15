@@ -1,21 +1,23 @@
-use crate::lamellar_prime_tests::{lamellar_wheel_miller, lamellar_wheel_solovay, bigint_miller_rabin};
+use crate::lamellar_prime_tests::{
+    bigint_miller_rabin, lamellar_wheel_miller, lamellar_wheel_solovay,
+};
 use crate::threaded_solovay::threaded_solovay_strassen;
 use rug::{Complete, Integer}; //integer::MiniInteger,
 
-pub mod threaded_solovay;
 pub mod AKS_prime;
-pub mod wheel_algos;
 pub mod lamellar_prime_tests;
+pub mod threaded_solovay;
+pub mod wheel_algos;
 
 fn main() {
     // threaded_miller_rabin(Integer::from(1000000000), 8);
     // let limit = "100000000";
     // let limit_int = limit.parse::<Integer>().unwrap();
     // lamellar_wheel_miller();
-    lamellar_wheel_solovay();
+    lamellar_wheel_miller_solovay();
 }
 
-pub fn threaded_miller_rabin(limit: Integer, num_threads: u64) -> Vec<Integer> {
+pub fn threaded_miller_rabin(num_threads: u64, limit: Integer) -> Vec<Integer> {
     let block_size = (&limit / num_threads).complete();
 
     let mut thread_handles = Vec::new();
@@ -46,4 +48,3 @@ pub fn threaded_miller_rabin(limit: Integer, num_threads: u64) -> Vec<Integer> {
 
     results
 }
-

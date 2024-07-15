@@ -1,9 +1,10 @@
-use lamellar::array::prelude::*;
-use rug::{Integer, rand};
 use crate::threaded_solovay::bigint_solovay_strassen;
 use crate::wheel_algos::*;
+use lamellar::array::prelude::*;
+use rug::{rand, Integer};
+use crate::wheel_algos::{general_wheel_threaded, general_wheel_threaded_two_fn};
 
-pub fn lamellar_wheel_miller(){
+pub fn lamellar_wheel_miller() {
     let world = lamellar::LamellarWorldBuilder::new().build();
     let my_pe = world.my_pe();
     let num_pes = world.num_pes();
@@ -22,7 +23,7 @@ pub fn lamellar_wheel_miller(){
         local_max = search_max.clone();
     }
 
-    let local_results = super::wheel_algos::general_wheel_threaded(
+    let local_results = general_wheel_threaded(
         10,
         local_min,
         local_max,
@@ -44,10 +45,9 @@ pub fn lamellar_wheel_miller(){
         println!("Found {} primes under {}", sum, &search_max);
         println!("Time elapsed: {:?}", elapsed);
     }
-
 }
 
-pub fn lamellar_wheel_solovay(){
+pub fn lamellar_wheel_solovay() {
     let world = lamellar::LamellarWorldBuilder::new().build();
     let my_pe = world.my_pe();
     let num_pes = world.num_pes();
@@ -66,14 +66,15 @@ pub fn lamellar_wheel_solovay(){
         local_max = search_max.clone();
     }
 
-    let local_results = super::wheel_algos::general_wheel_threaded(
+    let local_results = general_wheel_threaded(
         10,
         local_min,
         local_max,
         128,
         bigint_solovay_strassen,
-        vec![2, 3, 5, 7],
-        vec![1, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 107, 109, 113, 127, 131, 137, 139, 149 ],
+        vec![2, 3, 5],
+        vec![1, 7, 11, 13, 17, 19, 23, 29], // vec![2, 3, 5, 7],
+                                            // vec![1, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 107, 109, 113, 127, 131, 137, 139, 149 ],
     );
     results
         .mut_local_data()
@@ -88,10 +89,9 @@ pub fn lamellar_wheel_solovay(){
         println!("Found {} primes under {}", sum, &search_max);
         println!("Time elapsed: {:?}", elapsed);
     }
-
 }
 
-pub fn lamellar_wheel_miller_solovay(){
+pub fn lamellar_wheel_miller_solovay() {
     let world = lamellar::LamellarWorldBuilder::new().build();
     let my_pe = world.my_pe();
     let num_pes = world.num_pes();
@@ -110,15 +110,16 @@ pub fn lamellar_wheel_miller_solovay(){
         local_max = search_max.clone();
     }
 
-    let local_results = super::wheel_algos::general_wheel_threaded_two_fn(
+    let local_results = general_wheel_threaded_two_fn(
         5,
         local_min,
         local_max,
         128,
         bigint_miller_rabin,
         bigint_solovay_strassen,
-        vec![2, 3, 5, 7],
-        vec![1, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 107, 109, 113, 127, 131, 137, 139, 149 ],
+        vec![2, 3, 5],
+        vec![1, 7, 11, 13, 17, 19, 23, 29], // vec![2, 3, 5, 7],
+                                            // vec![1, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 107, 109, 113, 127, 131, 137, 139, 149 ],
     );
     results
         .mut_local_data()
@@ -133,7 +134,6 @@ pub fn lamellar_wheel_miller_solovay(){
         println!("Found {} primes under {}", sum, &search_max);
         println!("Time elapsed: {:?}", elapsed);
     }
-
 }
 
 pub fn bigint_miller_rabin(loop_amount: u64, n: Integer) -> bool {
@@ -161,12 +161,12 @@ pub fn bigint_miller_rabin(loop_amount: u64, n: Integer) -> bool {
     true
 }
 
-pub fn bigint_miller_rabin_list(num_tests: u64, max_val: Integer) -> Vec<Integer>{
-    let mut primes= vec![];
+pub fn bigint_miller_rabin_list(num_tests: u64, max_val: Integer) -> Vec<Integer> {
+    let mut primes = vec![];
     let mut i = Integer::from(5);
 
     while i <= max_val {
-        if bigint_miller_rabin(num_tests, i.clone()){
+        if bigint_miller_rabin(num_tests, i.clone()) {
             primes.push(i.clone());
         }
         i = i + 2;
