@@ -256,9 +256,9 @@ pub fn threaded_baillie_psw(
     for handle in thread_handles {
         return_vector.append(&mut handle.join().unwrap());
     }
-    if return_vector.len() > 0 {
-        println!("{:?}", return_vector);
-    }
+    // if return_vector.len() > 0 {
+    //     println!("{:?}", return_vector);
+    // }
     return_vector
 }
 
