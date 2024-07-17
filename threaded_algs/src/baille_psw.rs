@@ -39,10 +39,14 @@ pub fn threaded_baillie_psw(
 
     for i in 0..num_threads {
         let mut thread_min: Integer = i * Integer::from(&block_size) + &lower_limit + 5;
-        let thread_max: Integer = (i + 1) * Integer::from(&block_size) + &lower_limit + 5;
+        let mut thread_max: Integer = (i + 1) * Integer::from(&block_size) + &lower_limit + 5;
 
         if Integer::from(&thread_min) % 2 == Integer::ZERO {
             thread_min += 1;
+        }
+
+        if i == num_threads -1{
+            thread_max = upper_limit.clone();
         }
         let thread = std::thread::spawn(move || {
             let mut return_vector = Vec::new();
