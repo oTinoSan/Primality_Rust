@@ -45,9 +45,11 @@ pub fn threaded_baillie_psw(
             thread_min += 1;
         }
 
-        if i == num_threads -1{
+        if i == num_threads-1 {
             thread_max = upper_limit.clone();
         }
+
+        println!("thread_max: ", {thread_max});
         let thread = std::thread::spawn(move || {
             let mut return_vector = Vec::new();
             while thread_min < thread_max {
