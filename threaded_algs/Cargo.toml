@@ -11,4 +11,4 @@ rug-polynomial = "0.2.5"
 num-iter = "0.1.45"
 rayon = "1.10.0"
 async-trait = "0.1.80"
-lamellar = "0.6.1"
+lamellar = {version = "0.6.1", features = ["enable-rofi"]}
