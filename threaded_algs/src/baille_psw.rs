@@ -1,5 +1,6 @@
 use rug::ops::Pow;
 use rug::{Complete, Integer};
+use std::{fs::OpenOptions, io::{BufWriter, Write}, ops::Deref, sync::Mutex};
 
 pub fn baillie_psw_array(limit: Integer) -> Vec<Integer> {
     let mut array: Vec<Integer> = Vec::new();
@@ -48,8 +49,6 @@ pub fn threaded_baillie_psw(
             thread_max = upper_limit.clone();
         }
 
-        println!("thread_max: {}", { thread_max.clone() });
-
         let thread = std::thread::spawn(move || {
             let mut return_vector = Vec::new();
             while thread_min < thread_max {
@@ -71,6 +70,18 @@ pub fn threaded_baillie_psw(
     // if return_vector.len() > 0 {
     //     println!("{:?}", return_vector);
     // }
+    let baillie_psw_primes = OpenOptions::new()
+            .append(true)
+            .create(true) // Optionally create the file if it doesn't already exist
+            .open("data/spsp2.txt")
+            .expect("Unable to open file");
+        let mut stream = BufWriter::new(baillie_psw_primes);
+        for prime in &return_vector {
+            let string = prime.to_string() + "\n";
+            stream.write_all(string.as_bytes()).expect("Unable to write data");   
+        }
+        stream.flush().unwrap();
+
     return_vector
 }
 

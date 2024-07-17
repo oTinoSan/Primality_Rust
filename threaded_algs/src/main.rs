@@ -1,14 +1,15 @@
 use crate::lamellar_prime_tests::{
-    bigint_miller_rabin, lamellar_wheel_miller, lamellar_wheel_solovay, lamellar_wheel_miller_solovay, lamellar_wheel_baillie_psw, lamellar_baillie_psw
+    bigint_miller_rabin, lamellar_baillie_psw, lamellar_wheel_baillie_psw, lamellar_wheel_miller,
+    lamellar_wheel_miller_solovay, lamellar_wheel_solovay,
 };
 use crate::threaded_solovay::threaded_solovay_strassen;
 use rug::{Complete, Integer}; //integer::MiniInteger,
 
 pub mod AKS_prime;
+pub mod baille_psw;
 pub mod lamellar_prime_tests;
 pub mod threaded_solovay;
 pub mod wheel_algos;
-pub mod baille_psw;
 
 fn main() {
     // threaded_miller_rabin(Integer::from(1000000000), 8);

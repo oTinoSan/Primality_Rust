@@ -1,9 +1,9 @@
+use crate::baille_psw::threaded_baillie_psw;
 use crate::threaded_solovay::bigint_solovay_strassen;
 use crate::wheel_algos::*;
+use crate::wheel_algos::{general_wheel_threaded, general_wheel_threaded_two_fn};
 use lamellar::array::prelude::*;
 use rug::{rand, Integer};
-use crate::wheel_algos::{general_wheel_threaded, general_wheel_threaded_two_fn};
-use crate::baille_psw::threaded_baillie_psw;
 
 pub fn lamellar_wheel_miller() {
     let world = lamellar::LamellarWorldBuilder::new().build();
@@ -187,7 +187,7 @@ pub fn lamellar_baillie_psw() {
     let start = std::time::Instant::now();
 
     let results = AtomicArray::<u64>::new(&world, num_pes, Distribution::Block);
-    let limit = "10000000000";
+    let limit = "10_000_000_000";
     let search_max = limit.parse::<Integer>().unwrap();
 
     let step = Integer::from(&search_max / num_pes);
@@ -198,11 +198,7 @@ pub fn lamellar_baillie_psw() {
         local_max = search_max.clone();
     }
 
-    let local_results = threaded_baillie_psw(
-        local_min,
-        local_max,
-        128
-    );
+    let local_results = threaded_baillie_psw(local_min, local_max, 128);
     results
         .mut_local_data()
         .at(0)
