@@ -73,7 +73,7 @@ pub fn threaded_baillie_psw(
     let baillie_psw_primes = OpenOptions::new()
             .append(true)
             .create(true) // Optionally create the file if it doesn't already exist
-            .open("data/spsp2.txt")
+            .open("data/baillie.txt")
             .expect("Unable to open file");
         let mut stream = BufWriter::new(baillie_psw_primes);
         for prime in &return_vector {
