@@ -1,7 +1,6 @@
 use rug::ops::Pow;
 use rug::{Complete, Integer};
 
-
 pub fn baillie_psw_array(limit: Integer) -> Vec<Integer> {
     let mut array: Vec<Integer> = Vec::new();
     let mut i = Integer::from(5);
@@ -45,11 +44,12 @@ pub fn threaded_baillie_psw(
             thread_min += 1;
         }
 
-        if i == num_threads-1 {
+        if i == num_threads - 1 {
             thread_max = upper_limit.clone();
         }
 
-        println!("thread_max: ", {thread_max});
+        println!("thread_max: {}", { thread_max.clone() });
+
         let thread = std::thread::spawn(move || {
             let mut return_vector = Vec::new();
             while thread_min < thread_max {
@@ -146,7 +146,8 @@ pub fn lucas_test(n: &Integer) -> bool {
         } else {
             result = Integer::from(-i).jacobi(&n);
         }
-        if result == 0 { //then D and n have a prime factor in common, quit
+        if result == 0 {
+            //then D and n have a prime factor in common, quit
             return false;
         }
         if result == -1 {
@@ -174,7 +175,6 @@ pub fn lucas_test(n: &Integer) -> bool {
     // println!("(9/n): {}", evaluate_jacobi(9, n.clone()));
     // println!("(-11/n): {}", evaluate_jacobi(-11, n.clone()));
 
-
     let q_inv = modular_inverse(&q, &n);
     if q_inv == Integer::ZERO {
         // println!("there is no inverse for {} modulo {}", q, n);
@@ -184,7 +184,9 @@ pub fn lucas_test(n: &Integer) -> bool {
     // println!("q is {}, q inverse is {}", q, q_inv);
 
     // Auxiliary parameters
-    let a = Integer::from(p.clone().pow(2) * q_inv - 2).pow_mod(&Integer::from(1), &n).unwrap();
+    let a = Integer::from(p.clone().pow(2) * q_inv - 2)
+        .pow_mod(&Integer::from(1), &n)
+        .unwrap();
     let m: Integer = (n - evaluate_jacobi(d, n.clone())).complete() / 2;
 
     // lucas chain
@@ -195,31 +197,44 @@ pub fn lucas_test(n: &Integer) -> bool {
     for i in (0..=m.significant_bits()).rev() {
         if m.get_bit(i) {
             (u, v) = (
-                (&u * &v - &a).complete().pow_mod(&Integer::from(1), &n).unwrap(),
-                (&v * &v - Integer::from(2)).pow_mod(&Integer::from(1), &n).unwrap(),
+                (&u * &v - &a)
+                    .complete()
+                    .pow_mod(&Integer::from(1), &n)
+                    .unwrap(),
+                (&v * &v - Integer::from(2))
+                    .pow_mod(&Integer::from(1), &n)
+                    .unwrap(),
             );
             // x = 2*x+1;
             // y = 2*y;
         } else {
             (u, v) = (
-                (&u * &u - Integer::from(2)).pow_mod(&Integer::from(1), &n).unwrap(),
-                (&u * &v - &a).complete().pow_mod(&Integer::from(1), &n).unwrap(),
+                (&u * &u - Integer::from(2))
+                    .pow_mod(&Integer::from(1), &n)
+                    .unwrap(),
+                (&u * &v - &a)
+                    .complete()
+                    .pow_mod(&Integer::from(1), &n)
+                    .unwrap(),
             );
             // x = 2*x;
             // y = 2*y-1;
         }
         // println!("x: {}, y: {}, u: {}, v: {}",x,y,u,v);
-
     }
 
-    if (a * u).pow_mod(&Integer::from(1), n).unwrap() == (Integer::from(2) * v).pow_mod(&Integer::from(1), &n).unwrap() {
+    if (a * u).pow_mod(&Integer::from(1), n).unwrap()
+        == (Integer::from(2) * v)
+            .pow_mod(&Integer::from(1), &n)
+            .unwrap()
+    {
         return true;
     }
 
     return false;
 }
 
-pub fn calculate_parameters (n: Integer) {
+pub fn calculate_parameters(n: Integer) {
     let mut d: i32 = 0;
     let mut sign = true;
 
@@ -241,8 +256,11 @@ pub fn calculate_parameters (n: Integer) {
         sign = !sign;
     }
     if d == 0 {
-        println!("got through 100 jacobi iterations without finding a D s.t. (D/n)== -1.
-        {} is probably a square number, use newtons method of detecting them", n);
+        println!(
+            "got through 100 jacobi iterations without finding a D s.t. (D/n)== -1.
+        {} is probably a square number, use newtons method of detecting them",
+            n
+        );
     }
 
     let p: Integer = Integer::from(1);
@@ -260,9 +278,18 @@ fn evaluate_jacobi(d: i32, prime_candidate: Integer) -> i32 {
     //step 3
     while a != Integer::from(0) {
         //step 2
-        while Integer::from(a.clone().pow_mod(&Integer::from(1), &Integer::from(2)).unwrap()) == Integer::from(0) {
+        while Integer::from(
+            a.clone()
+                .pow_mod(&Integer::from(1), &Integer::from(2))
+                .unwrap(),
+        ) == Integer::from(0)
+        {
             a /= 2;
-            r = Integer::from(n.clone().pow_mod(&Integer::from(1), &Integer::from(8)).unwrap());
+            r = Integer::from(
+                n.clone()
+                    .pow_mod(&Integer::from(1), &Integer::from(8))
+                    .unwrap(),
+            );
             if r == Integer::from(3) || r == Integer::from(5) {
                 result = -result;
             }
@@ -272,8 +299,16 @@ fn evaluate_jacobi(d: i32, prime_candidate: Integer) -> i32 {
         r = n;
         n = a;
         a = r;
-        if Integer::from(a.clone().pow_mod(&Integer::from(1), &Integer::from(4)).unwrap()) == Integer::from(3)
-            && Integer::from(n.clone().pow_mod(&Integer::from(1), &Integer::from(4)).unwrap()) == Integer::from(3)
+        if Integer::from(
+            a.clone()
+                .pow_mod(&Integer::from(1), &Integer::from(4))
+                .unwrap(),
+        ) == Integer::from(3)
+            && Integer::from(
+                n.clone()
+                    .pow_mod(&Integer::from(1), &Integer::from(4))
+                    .unwrap(),
+            ) == Integer::from(3)
         {
             result = -result;
         }
