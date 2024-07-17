@@ -136,6 +136,48 @@ pub fn lamellar_wheel_miller_solovay() {
     }
 }
 
+pub fn lamellar_wheel_baillie_psw() {
+    let world = lamellar::LamellarWorldBuilder::new().build();
+    let my_pe = world.my_pe();
+    let num_pes = world.num_pes();
+
+    let start = std::time::Instant::now();
+
+    let results = AtomicArray::<u64>::new(&world, num_pes, Distribution::Block);
+    let limit = "10000000000";
+    let search_max = limit.parse::<Integer>().unwrap();
+
+    let step = Integer::from(&search_max / num_pes);
+
+    let local_min = Integer::from(&step * my_pe);
+    let mut local_max = Integer::from(&step * (my_pe + 1));
+    if my_pe == num_pes - 1 {
+        local_max = search_max.clone();
+    }
+
+    let local_results = baillie_psw_general_wheel(
+        local_min,
+        local_max,
+        128,
+        vec![2, 3, 5],
+        vec![1, 7, 11, 13, 17, 19, 23, 29], // vec![2, 3, 5, 7],
+                                            // vec![1, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 107, 109, 113, 127, 131, 137, 139, 149 ],
+    );
+    results
+        .mut_local_data()
+        .at(0)
+        .store(local_results.len() as u64);
+
+    world.barrier();
+
+    if my_pe == 0 {
+        let sum = world.block_on(results.sum());
+        let elapsed = start.elapsed();
+        println!("Found {} primes under {}", sum, &search_max);
+        println!("Time elapsed: {:?}", elapsed);
+    }
+}
+
 pub fn bigint_miller_rabin(loop_amount: u64, n: Integer) -> bool {
     let mut rand = rand::RandState::new();
     let minus_one = Integer::from(&n - 1);

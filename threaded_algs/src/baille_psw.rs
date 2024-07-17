@@ -178,7 +178,7 @@ pub fn lucas_test(n: &Integer) -> bool {
     // println!("q is {}, q inverse is {}", q, q_inv);
 
     // Auxiliary parameters
-    let a = Integer::from(p.clone().pow(2) * q_inv - 2).modulo(&n);
+    let a = Integer::from(p.clone().pow(2) * q_inv - 2).pow_mod(&Integer::from(1), &n).unwrap();
     let m: Integer = (n - evaluate_jacobi(d, n.clone())).complete() / 2;
 
     // lucas chain
@@ -189,15 +189,15 @@ pub fn lucas_test(n: &Integer) -> bool {
     for i in (0..=m.significant_bits()).rev() {
         if m.get_bit(i) {
             (u, v) = (
-                (&u * &v - &a).complete().modulo(&n),
-                (&v * &v - Integer::from(2)).modulo(&n),
+                (&u * &v - &a).complete().pow_mod(&Integer::from(1), &n).unwrap(),
+                (&v * &v - Integer::from(2)).pow_mod(&Integer::from(1), &n).unwrap(),
             );
             // x = 2*x+1;
             // y = 2*y;
         } else {
             (u, v) = (
-                (&u * &u - Integer::from(2)).modulo(&n),
-                (&u * &v - &a).complete().modulo(&n),
+                (&u * &u - Integer::from(2)).pow_mod(&Integer::from(1), &n).unwrap(),
+                (&u * &v - &a).complete().pow_mod(&Integer::from(1), &n).unwrap(),
             );
             // x = 2*x;
             // y = 2*y-1;
@@ -206,7 +206,7 @@ pub fn lucas_test(n: &Integer) -> bool {
 
     }
 
-    if (a * u).modulo(n) == (Integer::from(2) * v).modulo(&n) {
+    if (a * u).pow_mod(&Integer::from(1), n).unwrap() == (Integer::from(2) * v).pow_mod(&Integer::from(1), &n).unwrap() {
         return true;
     }
 
@@ -247,16 +247,16 @@ pub fn calculate_parameters (n: Integer) {
 fn evaluate_jacobi(d: i32, prime_candidate: Integer) -> i32 {
     let mut a = Integer::from(d);
     let mut n = prime_candidate.clone();
-    a = a.modulo(&n); // step 1
+    a = a.pow_mod(&Integer::from(1), &n).unwrap(); // step 1
     let mut result = 1;
     let mut r: Integer;
 
     //step 3
     while a != Integer::from(0) {
         //step 2
-        while Integer::from(a.clone().modulo(&Integer::from(2))) == Integer::from(0) {
+        while Integer::from(a.clone().pow_mod(&Integer::from(1), &Integer::from(2)).unwrap()) == Integer::from(0) {
             a /= 2;
-            r = Integer::from(n.clone().modulo(&Integer::from(8)));
+            r = Integer::from(n.clone().pow_mod(&Integer::from(1), &Integer::from(8)).unwrap());
             if r == Integer::from(3) || r == Integer::from(5) {
                 result = -result;
             }
@@ -266,12 +266,12 @@ fn evaluate_jacobi(d: i32, prime_candidate: Integer) -> i32 {
         r = n;
         n = a;
         a = r;
-        if Integer::from(a.clone().modulo(&Integer::from(4))) == Integer::from(3)
-            && Integer::from(n.clone().modulo(&Integer::from(4))) == Integer::from(3)
+        if Integer::from(a.clone().pow_mod(&Integer::from(1), &Integer::from(4)).unwrap()) == Integer::from(3)
+            && Integer::from(n.clone().pow_mod(&Integer::from(1), &Integer::from(4)).unwrap()) == Integer::from(3)
         {
             result = -result;
         }
-        a = a.modulo(&n);
+        a = a.pow_mod(&Integer::from(1), &n).unwrap();
     }
     if n != Integer::from(1) {
         result = 0;
@@ -281,7 +281,7 @@ fn evaluate_jacobi(d: i32, prime_candidate: Integer) -> i32 {
 }
 
 fn modular_inverse(input: &Integer, modulus: &Integer) -> Integer {
-    let result = input.clone().modulo(&modulus);
+    let result = input.clone().pow_mod(&Integer::from(1), &modulus).unwrap();
 
     let y = extended_gcd(&modulus, &result);
 

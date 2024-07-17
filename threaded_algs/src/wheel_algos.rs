@@ -303,7 +303,7 @@ pub fn baillie_psw_general_wheel(
                             let candidate = Integer::from(&idx * product) + c;
                             if candidate < min {
                                 break;
-                            } else if baillie_psw_test(candidate.clone()) {
+                            } else if baillie_psw_test(&candidate.clone()) {
                                 r.push(candidate);
                             }
                         }
@@ -316,7 +316,7 @@ pub fn baillie_psw_general_wheel(
                         if candidate > max {
                             break;
                         }
-                        if baillie_psw_test(candidate.clone()) {
+                        if baillie_psw_test(&candidate.clone()) {
                             r.push(candidate);
                         }
                     }
@@ -329,7 +329,7 @@ pub fn baillie_psw_general_wheel(
                             if candidate > max {
                                 break 'outer;
                             }
-                            if baillie_psw_test(candidate.clone()) {
+                            if baillie_psw_test(&candidate.clone()) {
                                 r.push(candidate);
                             }
                         }
@@ -361,7 +361,7 @@ pub fn baillie_psw_general_wheel(
                     .map(move |i| i * 30)
                     .map(move |i| std::iter::repeat(i).zip(coprimes).map(move |(i, j)| i + j))
                     .flatten()
-                    .filter(|i: &Integer| baillie_psw_test(i.clone()))
+                    .filter(|i: &Integer| baillie_psw_test(&i.clone()))
                     .collect::<Vec<_>>()
             });
             handles.push(handle);
