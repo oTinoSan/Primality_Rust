@@ -16,7 +16,7 @@ fn main() {
     // let limit_int = limit.parse::<Integer>().unwrap();
     // lamellar_wheel_miller();
     // lamellar_wheel_solovay();
-    lamellar_wheel_baillie_psw();
+    lamellar_baillie_psw();
     // lamellar_wheel_miller_solovay();
 }
 
