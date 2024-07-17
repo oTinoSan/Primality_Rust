@@ -187,7 +187,7 @@ pub fn lamellar_baillie_psw() {
     let start = std::time::Instant::now();
 
     let results = AtomicArray::<u64>::new(&world, num_pes, Distribution::Block);
-    let limit = "10_000_000_000";
+    let limit = "1_000";
     let search_max = limit.parse::<Integer>().unwrap();
 
     let step = Integer::from(&search_max / num_pes);
