@@ -207,18 +207,23 @@ pub fn lamellar_baillie_psw() {
     }
 
     let local_results = threaded_baillie_psw(local_min, local_max, 128);
-    let baillie_psw_primes = OpenOptions::new()
-        .append(true)
-        .create(true) // Optionally create the file if it doesn't already exist
-        .open("data/baillie_{}.txt", my_pe)
-        .expect("Unable to open file");
-    let mut stream = BufWriter::new(baillie_psw_primes);
-    for prime in &local_results {
-        let string = prime.to_string() + "\n";
-        stream
-            .write_all(string.as_bytes())
-            .expect("Unable to write data");
+    for pe in 0..num_pes {
+        let file = format!("data/baille_{}.txt", pe.clone());
+        let f = OpenOptions::new()
+            .append(true)
+            .create(true) // Optionally create the file if it doesn't already exist
+            .open(file)
+            .expect("Unable to open file");
+        let mut stream = BufWriter::new(f);
+        for prime in &local_results {
+            let string = prime.to_string() + "\n";
+            stream
+                .write_all(string.as_bytes())
+                .expect("Unable to write data");
+        }
+        stream.flush().unwrap();
     }
+
     results
         .mut_local_data()
         .at(0)
