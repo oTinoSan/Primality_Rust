@@ -199,7 +199,9 @@ pub fn lamellar_baillie_psw() {
     let step = Integer::from(&search_max / num_pes);
 
     let local_min = Integer::from(&step * my_pe);
+    println!("local_min: {}", local_min);
     let mut local_max = Integer::from(&step * (my_pe + 1));
+    println!("local_max: {}", local_max);
     if my_pe == num_pes - 1 {
         local_max = search_max.clone();
     }

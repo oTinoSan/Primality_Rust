@@ -1,5 +1,7 @@
 use divan::black_box;
-use primality::advanced_primality_tests::{threaded_baillie_psw, threaded_miller_rabin, threaded_solovay_strassen};
+use primality::advanced_primality_tests::{
+    threaded_baillie_psw, threaded_miller_rabin, threaded_solovay_strassen,
+};
 use primality::wheel_algos::*;
 use rug::Integer;
 
@@ -10,62 +12,91 @@ fn main() {
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
-fn solovay_strassen_bench(num_threads: u64){
-    black_box( solovay_strassen(10, Integer::from(1000000000),black_box(num_threads)));  
+fn solovay_strassen_bench(num_threads: u64) {
+    black_box(solovay_strassen(
+        10,
+        Integer::from(1000000000),
+        black_box(num_threads),
+    ));
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
-fn miller_rabin_bench(num_threads: u64){
-    black_box( miller_rabin(10, Integer::from(1000000000),black_box(num_threads)));  
+fn miller_rabin_bench(num_threads: u64) {
+    black_box(miller_rabin(
+        10,
+        Integer::from(1000000000),
+        black_box(num_threads),
+    ));
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
 fn solovay_strassen_general_bench(num_threads: u64) {
-    black_box( solovay_strassen_general(10, Integer::from(1000000000),black_box(num_threads)));
+    black_box(solovay_strassen_general(
+        10,
+        Integer::from(1000000000),
+        black_box(num_threads),
+    ));
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
 fn miller_rabin_general_bench(num_threads: u64) {
-    black_box( miller_rabin_general(black_box(10), black_box(Integer::from(1000000000)),black_box(num_threads)));
+    black_box(miller_rabin_general(
+        black_box(10),
+        black_box(Integer::from(1000000000)),
+        black_box(num_threads),
+    ));
 }
 
 // #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
 // fn miller_solovay_bench(num_threads: u64){
-//     black_box( miller_solovay(5, Integer::from(1000000000),black_box(num_threads)));  
+//     black_box( miller_solovay(5, Integer::from(1000000000),black_box(num_threads)));
 // }
 
 // #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
 // fn general_miller_solovay_bench(num_threads: u64){
-//     black_box( general_miller_solovay(5, Integer::from(1000000000),black_box(num_threads)));  
+//     black_box( general_miller_solovay(5, Integer::from(1000000000),black_box(num_threads)));
 // }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
-fn baillie_psw_bench(num_threads: u64){
-    black_box( baillie_psw_wheel_threaded( Integer::from(1000000000),black_box(num_threads)));  
+fn baillie_psw_bench(num_threads: u64) {
+    black_box(baillie_psw_wheel_threaded(
+        Integer::from(1000000000),
+        black_box(num_threads),
+    ));
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
-fn general_baille_psw_bench(num_threads: u64){
-    black_box( baillie_psw_general_wheel(
+fn general_baille_psw_bench(num_threads: u64) {
+    black_box(baillie_psw_general_wheel(
         Integer::ZERO,
         Integer::from(1000000000),
         black_box(num_threads),
         vec![2, 3, 5],
-        vec![1, 7, 11, 13, 17, 19, 23, 29]
-    )); 
+        vec![1, 7, 11, 13, 17, 19, 23, 29],
+    ));
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
-fn threaded_baillie_psw_benchmark(num_threads: u64){
-    black_box(threaded_baillie_psw(Integer::ZERO,Integer::from(1000000000), black_box(num_threads)));
+fn threaded_baillie_psw_benchmark(num_threads: u64) {
+    black_box(threaded_baillie_psw(
+        Integer::ZERO,
+        Integer::from(1000000000),
+        black_box(num_threads),
+    ));
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
-fn threaded_miller_rabin_benchmark(num_threads: u64){
-    black_box(threaded_miller_rabin(Integer::from(1000000000), black_box(num_threads)));
+fn threaded_miller_rabin_benchmark(num_threads: u64) {
+    black_box(threaded_miller_rabin(
+        Integer::from(1000000000),
+        black_box(num_threads),
+    ));
 }
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
-fn threaded_solovay_strassen_benchmark(num_threads: u64){
-    black_box(threaded_solovay_strassen(black_box(num_threads), Integer::from(1000000000)));
+fn threaded_solovay_strassen_benchmark(num_threads: u64) {
+    black_box(threaded_solovay_strassen(
+        black_box(num_threads),
+        Integer::from(1000000000),
+    ));
 }

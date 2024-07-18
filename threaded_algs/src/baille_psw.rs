@@ -46,8 +46,6 @@ pub fn threaded_baillie_psw(
         let mut thread_min: Integer = i * Integer::from(&block_size) + &lower_limit + 5;
         println!("thread_min: {}", thread_min);
         let mut thread_max: Integer = (i + 1) * Integer::from(&block_size) + &lower_limit + 5;
-        println!("thread_max: {}", thread_max);
-
         if Integer::from(&thread_min) % 2 == Integer::ZERO {
             thread_min += 1;
         }
@@ -55,6 +53,7 @@ pub fn threaded_baillie_psw(
         if i == num_threads - 1 {
             thread_max = upper_limit.clone();
         }
+        println!("thread_max: {}", thread_max);
 
         let thread = std::thread::spawn(move || {
             let mut return_vector = Vec::new();
@@ -74,9 +73,6 @@ pub fn threaded_baillie_psw(
     for handle in thread_handles {
         return_vector.append(&mut handle.join().unwrap());
     }
-    // if return_vector.len() > 0 {
-    //     println!("{:?}", return_vector);
-    // }
     let baillie_psw_primes = OpenOptions::new()
         .append(true)
         .create(true) // Optionally create the file if it doesn't already exist
@@ -89,7 +85,9 @@ pub fn threaded_baillie_psw(
             .write_all(string.as_bytes())
             .expect("Unable to write data");
     }
-    stream.flush().unwrap();
+    // if return_vector.len() > 0 {
+    //     println!("{:?}", return_vector);
+    // }
     return_vector
 }
 

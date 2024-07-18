@@ -1,6 +1,6 @@
-use rug::{Integer, Complete, rand};
-use std::{thread};
 use rug::ops::Pow;
+use rug::{rand, Complete, Integer};
+use std::thread;
 
 pub fn threaded_solovay_strassen(num_threads: u64, limit: Integer) -> Vec<Integer> {
     let block_size = (&limit / num_threads).complete();
@@ -54,9 +54,7 @@ impl bigJacobi {
         while self.a.clone() % 2 as u64 == Integer::ZERO {
             self.a = self.a.clone() / 2 as u64;
             let mut mod_8 = &self.n % Integer::from(8);
-            if !(mod_8 == Integer::from(1 as u64)
-                || mod_8 == Integer::from(7 as u64))
-            {
+            if !(mod_8 == Integer::from(1 as u64) || mod_8 == Integer::from(7 as u64)) {
                 self.sign = !self.sign;
             }
         }
@@ -94,13 +92,13 @@ impl bigJacobi {
 
 pub fn bigint_solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
     let mut rand = rand::RandState::new();
-    for _ in 0..num_tests{
+    for _ in 0..num_tests {
         let a = Integer::from(
             Integer::from(Integer::from(&candidate - 3).random_below_ref(&mut rand)) + 1,
         );
         let mut jacobi = bigJacobi::new(a.clone(), candidate.clone());
         let jacobi_result = jacobi.eval();
-        let mod_result = a.pow_mod(&(Integer::from(&candidate -1)/2), &candidate);
+        let mod_result = a.pow_mod(&(Integer::from(&candidate - 1) / 2), &candidate);
         if !((mod_result == Ok(Integer::from(0)) && jacobi_result == Integer::from(0))
             || (mod_result == Ok(Integer::from(1)) && jacobi_result == 1)
             || (mod_result == Ok(candidate.clone() - 1) && jacobi_result == -1))
@@ -109,21 +107,21 @@ pub fn bigint_solovay_strassen(num_tests: u64, candidate: Integer) -> bool {
         }
     }
     return false;
+}
+
+pub fn bigint_solovay_strassen_list(num_tests: u64, max_val: Integer) -> Vec<Integer> {
+    let mut primes = vec![];
+    let mut i = Integer::from(5);
+
+    while i <= max_val {
+        if bigint_solovay_strassen(num_tests, i.clone()) {
+            primes.push(i.clone());
+        }
+        i = i + 2;
     }
 
-    pub fn bigint_solovay_strassen_list(num_tests: u64, max_val: Integer) -> Vec<Integer>{
-        let mut primes= vec![];
-        let mut i = Integer::from(5);
-    
-        while i <= max_val {
-            if bigint_solovay_strassen(num_tests, i.clone()){
-                primes.push(i.clone());
-            }
-            i = i + 2;
-        }
-    
-        primes
-    }
+    primes
+}
 
 pub fn threaded_miller_rabin(limit: Integer, num_threads: u64) -> Vec<Integer> {
     let block_size = (&limit / num_threads).complete();
@@ -182,12 +180,12 @@ pub fn bigint_miller_rabin(loop_amount: u64, n: Integer) -> bool {
     true
 }
 
-pub fn bigint_miller_rabin_list(num_tests: u64, max_val: Integer) -> Vec<Integer>{
-    let mut primes= vec![];
+pub fn bigint_miller_rabin_list(num_tests: u64, max_val: Integer) -> Vec<Integer> {
+    let mut primes = vec![];
     let mut i = Integer::from(5);
 
     while i <= max_val {
-        if bigint_miller_rabin(num_tests, i.clone()){
+        if bigint_miller_rabin(num_tests, i.clone()) {
             primes.push(i.clone());
         }
         i = i + 2;
@@ -233,11 +231,17 @@ pub fn threaded_baillie_psw(
 
     for i in 0..num_threads {
         let mut thread_min: Integer = i * Integer::from(&block_size) + &lower_limit + 5;
-        let thread_max: Integer = (i + 1) * Integer::from(&block_size) + &lower_limit + 5;
-
+        println!("thread_min: {}", thread_min);
+        let mut thread_max: Integer = (i + 1) * Integer::from(&block_size) + &lower_limit + 5;
         if Integer::from(&thread_min) % 2 == Integer::ZERO {
             thread_min += 1;
         }
+
+        if i == num_threads - 1 {
+            thread_max = upper_limit.clone();
+        }
+        println!("thread_max: {}", thread_max);
+
         let thread = std::thread::spawn(move || {
             let mut return_vector = Vec::new();
             while thread_min < thread_max {
@@ -334,7 +338,8 @@ pub fn lucas_test(n: &Integer) -> bool {
         } else {
             result = Integer::from(-i).jacobi(&n);
         }
-        if result == 0 { //then D and n have a prime factor in common, quit
+        if result == 0 {
+            //then D and n have a prime factor in common, quit
             return false;
         }
         if result == -1 {
@@ -361,7 +366,6 @@ pub fn lucas_test(n: &Integer) -> bool {
     // println!("(-7/n): {}", evaluate_jacobi(-7, n.clone()));
     // println!("(9/n): {}", evaluate_jacobi(9, n.clone()));
     // println!("(-11/n): {}", evaluate_jacobi(-11, n.clone()));
-
 
     let q_inv = modular_inverse(&q, &n);
     if q_inv == Integer::ZERO {
@@ -397,7 +401,6 @@ pub fn lucas_test(n: &Integer) -> bool {
             // y = 2*y-1;
         }
         // println!("x: {}, y: {}, u: {}, v: {}",x,y,u,v);
-
     }
 
     if (a * u).modulo(n) == (Integer::from(2) * v).modulo(&n) {
@@ -407,7 +410,7 @@ pub fn lucas_test(n: &Integer) -> bool {
     return false;
 }
 
-pub fn calculate_parameters (n: Integer) {
+pub fn calculate_parameters(n: Integer) {
     let mut d: i32 = 0;
     let mut sign = true;
 
@@ -429,8 +432,11 @@ pub fn calculate_parameters (n: Integer) {
         sign = !sign;
     }
     if d == 0 {
-        println!("got through 100 jacobi iterations without finding a D s.t. (D/n)== -1.
-        {} is probably a square number, use newtons method of detecting them", n);
+        println!(
+            "got through 100 jacobi iterations without finding a D s.t. (D/n)== -1.
+        {} is probably a square number, use newtons method of detecting them",
+            n
+        );
     }
 
     let p: Integer = Integer::from(1);

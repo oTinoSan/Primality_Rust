@@ -1,10 +1,8 @@
-use rayon::prelude::*;
-use rug::{Integer, Complete, rand};
-use std::{thread};
 use crate::advanced_primality_tests::*;
+use rayon::prelude::*;
+use rug::{rand, Complete, Integer};
 use std::sync::Arc;
-
-
+use std::thread;
 
 pub fn wheel_threaded(
     num_tests: u64,
@@ -111,7 +109,6 @@ pub fn general_wheel_threaded(
         .collect()
 }
 
-
 pub fn general_wheel_rayon(
     num_tests: u64,
     min: Integer,
@@ -168,12 +165,12 @@ pub fn solovay_strassen_general(num_tests: u64, max: Integer, num_threads: u64) 
     )
 }
 
-
 pub fn wheel_threaded_two_fn(
     num_tests: u64,
     max: Integer,
     num_threads: u64,
-    f: fn(u64, Integer) -> bool, g: fn(u64, Integer)-> bool
+    f: fn(u64, Integer) -> bool,
+    g: fn(u64, Integer) -> bool,
 ) -> Vec<Integer> {
     let coprimes = [1, 7, 11, 13, 17, 19, 23, 29];
     let mut handles = vec![];
@@ -205,7 +202,8 @@ pub fn general_wheel_threaded_two_fn(
     min: Integer,
     max: Integer,
     num_threads: u64,
-    test_1: fn(u64, Integer) -> bool, test_2: fn(u64, Integer) -> bool,
+    test_1: fn(u64, Integer) -> bool,
+    test_2: fn(u64, Integer) -> bool,
     primes: Vec<u64>,
     coprimes: Vec<u64>,
 ) -> Vec<Integer> {
@@ -232,7 +230,9 @@ pub fn general_wheel_threaded_two_fn(
                         let candidate = Integer::from(&idx * product) + c;
                         if candidate < min {
                             break;
-                        } else if test_1(num_tests, candidate.clone()) && test_2(num_tests, candidate.clone()){
+                        } else if test_1(num_tests, candidate.clone())
+                            && test_2(num_tests, candidate.clone())
+                        {
                             r.push(candidate);
                         }
                     }
@@ -258,7 +258,9 @@ pub fn general_wheel_threaded_two_fn(
                         if candidate > max {
                             break 'outer;
                         }
-                        if test_1(num_tests, candidate.clone()) && test_2(num_tests, candidate.clone()) {
+                        if test_1(num_tests, candidate.clone())
+                            && test_2(num_tests, candidate.clone())
+                        {
                             r.push(candidate);
                         }
                     }
@@ -275,13 +277,27 @@ pub fn general_wheel_threaded_two_fn(
         .collect()
 }
 
-pub fn miller_solovay(num_tests:u64, max:Integer, num_threads: u64) -> Vec<Integer>{
-    wheel_threaded_two_fn(num_tests, max, num_threads, bigint_miller_rabin, bigint_solovay_strassen)
+pub fn miller_solovay(num_tests: u64, max: Integer, num_threads: u64) -> Vec<Integer> {
+    wheel_threaded_two_fn(
+        num_tests,
+        max,
+        num_threads,
+        bigint_miller_rabin,
+        bigint_solovay_strassen,
+    )
 }
 
-pub fn general_miller_solovay(num_tests:u64, max:Integer, num_threads: u64) -> Vec<Integer>{
-    general_wheel_threaded_two_fn(num_tests, Integer::ZERO, max, num_threads, bigint_miller_rabin, bigint_solovay_strassen, vec![2, 3, 5],
-        vec![1, 7, 11, 13, 17, 19, 23, 29])
+pub fn general_miller_solovay(num_tests: u64, max: Integer, num_threads: u64) -> Vec<Integer> {
+    general_wheel_threaded_two_fn(
+        num_tests,
+        Integer::ZERO,
+        max,
+        num_threads,
+        bigint_miller_rabin,
+        bigint_solovay_strassen,
+        vec![2, 3, 5],
+        vec![1, 7, 11, 13, 17, 19, 23, 29],
+    )
 }
 
 pub fn baillie_psw_general_wheel(
@@ -357,10 +373,7 @@ pub fn baillie_psw_general_wheel(
         .collect()
 }
 
-pub fn baillie_psw_wheel_threaded(
-    max: Integer,
-    num_threads: u64,
-) -> Vec<Integer> {
+pub fn baillie_psw_wheel_threaded(max: Integer, num_threads: u64) -> Vec<Integer> {
     let coprimes = [1, 7, 11, 13, 17, 19, 23, 29];
     let mut handles = vec![];
 

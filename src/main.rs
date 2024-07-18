@@ -1,13 +1,18 @@
 use mod_exp::mod_exp;
+use primality::advanced_primality_tests::threaded_baillie_psw;
 use rand::{thread_rng, Rng};
+use rug::Integer;
 use std::env;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let number: u32 = args[1].trim().parse().expect("Must be an integer");
-    // let is_prime = miller_test(number);
-    let primes = miller_list(number);
-    println!("{:?}", primes);
+    // let args: Vec<String> = env::args().collect();
+    // let number: u32 = args[1].trim().parse().expect("Must be an integer");
+    // // let is_prime = miller_test(number);
+    // let primes = miller_list(number);
+    // println!("{:?}", primes);
+    let results = threaded_baillie_psw(Integer::from(0), Integer::from(1000), 32);
+    println!("Results: {:?}", &results);
+    println!("Number of primes: {}", results.len());
 }
 
 fn miller_list(limit: u32) -> Vec<u32> {

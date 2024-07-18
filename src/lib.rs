@@ -229,7 +229,6 @@ pub fn solovay_strassen_list(num_tests: u64, max_val: u64) -> Vec<u64> {
     primes
 }
 
-
 // pub fn u64AKS(prime_candidate: u64) -> bool {
 //     let mut prime_int = Integer::from(prime_candidate.clone());
 //     let mut prime_float:Float = Float::with_val(31, 0);
