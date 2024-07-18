@@ -216,7 +216,7 @@ pub fn lamellar_baillie_psw() {
             .expect("Unable to open file");
         let mut stream = BufWriter::new(f);
         for prime in &local_results {
-            let string = prime.to_string() + "\n";
+            let string = prime.to_string() + " ";
             stream
                 .write_all(string.as_bytes())
                 .expect("Unable to write data");
