@@ -6,6 +6,7 @@ use std::{
     ops::Deref,
     sync::Mutex,
 };
+use rug::ops::DivRounding;
 
 pub fn baillie_psw_array(limit: Integer) -> Vec<Integer> {
     let mut array: Vec<Integer> = Vec::new();
@@ -38,7 +39,7 @@ pub fn threaded_baillie_psw(
     upper_limit: Integer,
     num_threads: u64,
 ) -> Vec<Integer> {
-    let block_size = Integer::from(Integer::from(&upper_limit - &lower_limit) / num_threads);
+    let block_size = Integer::from(Integer::from(&upper_limit - &lower_limit).div_ceil(num_threads));
 
     let mut thread_handles = Vec::new();
 
