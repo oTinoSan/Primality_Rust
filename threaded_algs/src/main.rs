@@ -18,10 +18,7 @@ fn main() {
     // let limit_int = limit.parse::<Integer>().unwrap();
     // lamellar_wheel_miller();
     // lamellar_wheel_solovay();
-    // lamellar_baillie_psw();
-    let results = threaded_baillie_psw(Integer::from(0), Integer::from(1000), 128);
-    println!("Results: {:?}", &results);
-    println!("Number of primes: {}", results.len());
+    lamellar_baillie_psw();
     // lamellar_wheel_miller_solovay();
 }
 
