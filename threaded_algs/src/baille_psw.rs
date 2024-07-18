@@ -48,9 +48,6 @@ pub fn threaded_baillie_psw(
             break;
         }
         let mut thread_min: Integer = i * Integer::from(&block_size) + &lower_limit + 5;
-        if thread_min > upper_limit{
-            break;
-        }
         println!("thread_min: {}", thread_min);
         let mut thread_max: Integer = (i + 1) * Integer::from(&block_size) + &lower_limit + 5;
         if Integer::from(&thread_min) % 2 == Integer::ZERO {
