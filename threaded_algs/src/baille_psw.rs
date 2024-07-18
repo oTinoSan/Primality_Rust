@@ -1,6 +1,11 @@
 use rug::ops::Pow;
 use rug::{Complete, Integer};
-use std::{fs::OpenOptions, io::{BufWriter, Write}, ops::Deref, sync::Mutex};
+use std::{
+    fs::OpenOptions,
+    io::{BufWriter, Write},
+    ops::Deref,
+    sync::Mutex,
+};
 
 pub fn baillie_psw_array(limit: Integer) -> Vec<Integer> {
     let mut array: Vec<Integer> = Vec::new();
@@ -39,7 +44,9 @@ pub fn threaded_baillie_psw(
 
     for i in 0..num_threads {
         let mut thread_min: Integer = i * Integer::from(&block_size) + &lower_limit + 5;
+        println!("thread_min: {}", thread_min);
         let mut thread_max: Integer = (i + 1) * Integer::from(&block_size) + &lower_limit + 5;
+        println!("thread_max: {}", thread_max);
 
         if Integer::from(&thread_min) % 2 == Integer::ZERO {
             thread_min += 1;
@@ -70,7 +77,19 @@ pub fn threaded_baillie_psw(
     // if return_vector.len() > 0 {
     //     println!("{:?}", return_vector);
     // }
-
+    let baillie_psw_primes = OpenOptions::new()
+        .append(true)
+        .create(true) // Optionally create the file if it doesn't already exist
+        .open("data/baillie.txt")
+        .expect("Unable to open file");
+    let mut stream = BufWriter::new(baillie_psw_primes);
+    for prime in &return_vector {
+        let string = prime.to_string() + "\n";
+        stream
+            .write_all(string.as_bytes())
+            .expect("Unable to write data");
+    }
+    stream.flush().unwrap();
     return_vector
 }
 
