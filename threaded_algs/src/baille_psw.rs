@@ -70,17 +70,6 @@ pub fn threaded_baillie_psw(
     // if return_vector.len() > 0 {
     //     println!("{:?}", return_vector);
     // }
-    let baillie_psw_primes = OpenOptions::new()
-            .append(true)
-            .create(true) // Optionally create the file if it doesn't already exist
-            .open("data/baillie.txt")
-            .expect("Unable to open file");
-        let mut stream = BufWriter::new(baillie_psw_primes);
-        for prime in &return_vector {
-            let string = prime.to_string() + "\n";
-            stream.write_all(string.as_bytes()).expect("Unable to write data");   
-        }
-        stream.flush().unwrap();
 
     return_vector
 }

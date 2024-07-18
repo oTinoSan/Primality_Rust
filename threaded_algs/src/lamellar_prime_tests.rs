@@ -4,6 +4,7 @@ use crate::wheel_algos::*;
 use crate::wheel_algos::{general_wheel_threaded, general_wheel_threaded_two_fn};
 use lamellar::array::prelude::*;
 use rug::{rand, Integer};
+use std::{fs::OpenOptions, io::{BufWriter, Write}, ops::Deref, sync::Mutex};
 
 pub fn lamellar_wheel_miller() {
     let world = lamellar::LamellarWorldBuilder::new().build();
@@ -199,6 +200,17 @@ pub fn lamellar_baillie_psw() {
     }
 
     let local_results = threaded_baillie_psw(local_min, local_max, 128);
+    let baillie_psw_primes = OpenOptions::new()
+            .append(true)
+            .create(true) // Optionally create the file if it doesn't already exist
+            .open("data/baillie.txt")
+            .expect("Unable to open file");
+        let mut stream = BufWriter::new(baillie_psw_primes);
+        for prime in &local_results {
+            let string = prime.to_string() + "\n";
+            stream.write_all(string.as_bytes()).expect("Unable to write data");   
+        }
+        stream.flush().unwrap();
     results
         .mut_local_data()
         .at(0)
@@ -212,6 +224,7 @@ pub fn lamellar_baillie_psw() {
         println!("Found {} primes under {}", sum, &search_max);
         println!("Time elapsed: {:?}", elapsed);
     }
+
 }
 
 pub fn bigint_miller_rabin(loop_amount: u64, n: Integer) -> bool {
