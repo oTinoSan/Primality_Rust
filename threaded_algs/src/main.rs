@@ -2,6 +2,7 @@ use crate::lamellar_prime_tests::{
     bigint_miller_rabin, lamellar_baillie_psw, lamellar_wheel_baillie_psw, lamellar_wheel_miller,
     lamellar_wheel_miller_solovay, lamellar_wheel_solovay,
 };
+use crate::baille_psw::threaded_baillie_psw;
 use crate::threaded_solovay::threaded_solovay_strassen;
 use rug::{Complete, Integer}; //integer::MiniInteger,
 
