@@ -51,7 +51,7 @@ pub fn threaded_baillie_psw(
             thread_min += 1;
         }
 
-        if i == num_threads - 1 {
+        if i == num_threads - 1 || thread_max > upper_limit{
             thread_max = upper_limit.clone();
         }
         println!("thread_max: {}", thread_max);
