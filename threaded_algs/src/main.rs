@@ -28,8 +28,8 @@ pub fn threaded_miller_rabin(num_threads: u64, limit: Integer) -> Vec<Integer> {
     let mut thread_handles = Vec::new();
 
     for i in 0..num_threads {
-        let mut thread_min: Integer = (i * &block_size).complete() + 5;
-        let thread_max: Integer = ((i + 1) * &block_size).complete() + 5;
+        let mut thread_min: Integer = (i * &block_size).complete() + 1;
+        let thread_max: Integer = ((i + 1) * &block_size).complete() + 1;
 
         if Integer::from(&thread_min % 2) == 0 {
             thread_min += 1;

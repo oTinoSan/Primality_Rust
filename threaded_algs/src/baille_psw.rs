@@ -39,7 +39,7 @@ pub fn threaded_baillie_psw(
     upper_limit: Integer,
     num_threads: u64,
 ) -> Vec<Integer> {
-    let block_size = Integer::from(Integer::from(&upper_limit - &lower_limit).div_ceil(num_threads));
+    let block_size = Integer::from(Integer::from(&upper_limit - &lower_limit)/num_threads);
 
     let mut thread_handles = Vec::new();
 
@@ -49,7 +49,7 @@ pub fn threaded_baillie_psw(
         }
         let mut thread_min: Integer = i * Integer::from(&block_size) + &lower_limit + 5;
         if thread_min > upper_limit{
-            thread_min = upper_limit.clone();
+            break;
         }
         println!("thread_min: {}", thread_min);
         let mut thread_max: Integer = (i + 1) * Integer::from(&block_size) + &lower_limit + 5;

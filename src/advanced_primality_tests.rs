@@ -236,8 +236,7 @@ pub fn threaded_baillie_psw(
         if Integer::from(&thread_min) % 2 == Integer::ZERO {
             thread_min += 1;
         }
-
-        if i == num_threads - 1 {
+        if i == num_threads - 1 || thread_max > upper_limit{
             thread_max = upper_limit.clone();
         }
         println!("thread_max: {}", thread_max);
@@ -293,7 +292,7 @@ pub fn baillie_psw_test(n: &Integer) -> bool {
     if !base_2_strong_probable_prime_test(&n) {
         return false;
     }
-    // Step 2: perfrom lucas test
+    // Step 2: perform lucas test
 
     let result: bool = lucas_test(&n);
 
