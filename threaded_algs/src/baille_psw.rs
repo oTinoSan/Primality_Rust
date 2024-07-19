@@ -69,6 +69,9 @@ pub fn threaded_baillie_psw(
             return_vector
         });
         thread_handles.push(thread);
+        if thread_max> &upper_limit + 5 {
+            break;
+        }
     }
 
     let mut return_vector: Vec<Integer> = Vec::new();
