@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use rho_table::*;
 
 fn main() {
@@ -9,7 +11,11 @@ fn main() {
     // let table = threaded_table_evmap(1000000, 4);
     // println!("evmap: {:?}", start.elapsed());
 
-    let mut factors:Vec<_> = sieve_factorize::sieve_factorize(150).into_iter().collect();
-    factors.sort_unstable_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
-    println!("{:?}", factors);
+    let factors = sieve_factorize::sieve_factorize(1000000000);
+    let writer = std::fs::OpenOptions::new().write(true).create(true).truncate(true).open("factors.bin").unwrap();
+    bincode::serialize_into(writer, &factors).unwrap();
+
+    // let reader = std::fs::OpenOptions::new().read(true).open("factors.bin").unwrap();
+    // let factors: Vec<(u64, HashMap<u64, u64>)> = bincode::deserialize_from(reader).unwrap();
+    // println!("{:?}", factors);
 }
