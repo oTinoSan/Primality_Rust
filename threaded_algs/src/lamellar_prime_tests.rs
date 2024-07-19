@@ -151,7 +151,7 @@ pub fn lamellar_wheel_baillie_psw() {
     let start = std::time::Instant::now();
 
     let results = AtomicArray::<u64>::new(&world, num_pes, Distribution::Block);
-    let limit = "10000000000";
+    let limit = "10_000_000_000";
     let search_max = limit.parse::<Integer>().unwrap();
 
     let step = Integer::from(&search_max / num_pes);
@@ -193,35 +193,33 @@ pub fn lamellar_baillie_psw() {
     let start = std::time::Instant::now();
 
     let results = AtomicArray::<u64>::new(&world, num_pes, Distribution::Block);
-    let limit = "1_000";
+    let limit = "10_000_000_000";
     let search_max = limit.parse::<Integer>().unwrap();
 
     let step = Integer::from(&search_max / num_pes);
 
     let local_min = Integer::from(&step * my_pe);
-    println!("local_min: {}", local_min);
     let mut local_max = Integer::from(&step * (my_pe + 1));
-    println!("local_max: {}", local_max);
     if my_pe == num_pes - 1 {
         local_max = search_max.clone() - 5;
     }
     let local_results = threaded_baillie_psw(local_min, local_max, 128);
-    for pe in 0..num_pes {
-        let file = format!("data/baille_{}.txt", pe.clone());
-        let f = OpenOptions::new()
-            .append(true)
-            .create(true) // Optionally create the file if it doesn't already exist
-            .open(file)
-            .expect("Unable to open file");
-        let mut stream = BufWriter::new(f);
-        for prime in &local_results {
-            let string = prime.to_string() + " ";
-            stream
-                .write_all(string.as_bytes())
-                .expect("Unable to write data");
-        }
-        stream.flush().unwrap();
-    }
+    // for pe in 0..num_pes { // print to file for numbers found by each node (not sorted)
+    //     let file = format!("data/baille_{}.txt", pe.clone());
+    //     let f = OpenOptions::new()
+    //         .append(true)
+    //         .create(true) // Optionally create the file if it doesn't already exist
+    //         .open(file)
+    //         .expect("Unable to open file");
+    //     let mut stream = BufWriter::new(f);
+    //     for prime in &local_results {
+    //         let string = prime.to_string() + " ";
+    //         stream
+    //             .write_all(string.as_bytes())
+    //             .expect("Unable to write data");
+    //     }
+    //     stream.flush().unwrap();
+    // }
 
     results
         .mut_local_data()
