@@ -1580,6 +1580,7 @@ name = "rho_table"
 version = "0.1.0"
 dependencies = [
  "chashmap",
+ "divan",
  "evmap",
  "mod_exp",
  "num 0.4.3",
