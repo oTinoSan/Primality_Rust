@@ -60,7 +60,7 @@ pub fn threaded_baillie_psw(
 
         let thread = std::thread::spawn(move || {
             let mut return_vector = Vec::new();
-            while thread_min < thread_max {
+            while thread_min < thread_max && thread_max < &upper_limit + 6{
                 if baillie_psw_test(&thread_min) {
                     return_vector.push(thread_min.clone());
                 }
@@ -69,9 +69,6 @@ pub fn threaded_baillie_psw(
             return_vector
         });
         thread_handles.push(thread);
-        if thread_max> &upper_limit + 5 {
-            break;
-        }
     }
 
     let mut return_vector: Vec<Integer> = Vec::new();
