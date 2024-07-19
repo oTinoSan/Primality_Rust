@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use num::integer::Roots;
 
+/// use an implementation of the sieve of eratosthenes to generate the prime factorization of every number up to max
 pub fn sieve_factorize(max: u64) -> HashMap<u64, HashMap<u64, u64>> {
     let mut factors = HashMap::new();
     for cur in 2 ..= (max.sqrt() + 1) {

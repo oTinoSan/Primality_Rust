@@ -7,13 +7,13 @@ use num_prime::nt_funcs::factorize64;
 
 pub mod sieve_factorize;
 
+/// find the multiplicative order of 2 mod a prime p
 pub fn prime_order_2(p: u64) -> u64 {
     let factors = factorize64(p - 1);
 
-    let factors: Vec<_> = factors.into_iter().collect();
-
     let mut potential_orders = vec![1];
 
+    // generate the set of all combinations of all powers of the factors of p-1
     for (prime, exp) in factors {
         let mut new_potentials = Vec::new();
         for e in 0..=exp {
@@ -27,6 +27,7 @@ pub fn prime_order_2(p: u64) -> u64 {
     potential_orders.sort_unstable();
 
     for order in potential_orders.iter() {
+        // the lowest k in the set satisfying 2^k%p==1 is the order of 2
         if mod_exp::mod_exp(2, *order, p) == 1 {
             return *order;
         }
@@ -35,10 +36,14 @@ pub fn prime_order_2(p: u64) -> u64 {
     potential_orders.pop().unwrap()
 }
 
+/// find the multiplicative order of 2 mod p^a where p is prime
 pub fn prime_exp_order_rho(p: u64, e: u32, rho: u64) -> u64 {
+    // rho is the multiplicative order of 2 mod p^1
     if e == 1 {
         return rho;
     }
+
+    // otherwise, rho(p) | rho(p^a), so we find the value by dumb iteration
     let mut potential = rho;
     let p_e = p.pow(e);
     loop {
@@ -49,9 +54,11 @@ pub fn prime_exp_order_rho(p: u64, e: u32, rho: u64) -> u64 {
     }
 }
 
+/// find the multiplicative order of 2 mod a composite number
 pub fn composite_order_2_chashmap(n: u64, update_channel: Sender<(u64, u64)>, table: Arc<CHashMap<u64, u64>>) -> u64 {
     let mut orders = vec![];
 
+    // find the multiplicative order of 2 mod all the individual prime powers of its factorization
     for (prime, exp) in factorize64(n) {
         let rho = match table.get(&prime) {
             Some(rho) => {
@@ -66,10 +73,11 @@ pub fn composite_order_2_chashmap(n: u64, update_channel: Sender<(u64, u64)>, ta
         orders.push(prime_exp_order_rho(prime, exp as u32, rho));
     }
 
+    // the multiplicative order of 2 mod a composite n is the lcm of the multiplicative order of 2 mod each of its factors
     orders.iter().fold(1, |acc, x| acc.lcm(x))
 }
 
-pub fn composite_order_2_evmap<'rh>(n: u64, update_channel: Sender<(u64, u64)>, table: ReadHandle<u64, u64>) -> u64 {
+pub fn composite_order_2_evmap<'rh>(n: u64, update_channel: Sender<(u64, u64)>, table: &ReadHandle<u64, u64>) -> u64 {
     let mut orders = vec![];
 
     for (prime, exp) in factorize64(n) {
@@ -117,7 +125,7 @@ pub fn threaded_table_chashmap(max: u64, num_threads: u64) -> Vec<(u64, u64)> {
 
     writer_handle.join().unwrap();
 
-    Arc::into_inner(map).unwrap().into_iter().collect::<Vec<_>>();
+    // Arc::into_inner(map).unwrap().into_iter().collect::<Vec<_>>();
     handles.into_iter().map(|handle| handle.join().unwrap()).flatten().collect()
 }
 
@@ -142,7 +150,7 @@ pub fn threaded_table_evmap(max: u64, num_threads: u64) -> Vec<(u64, u64)> {
         let handle = spawn(move || {
             let mut r = vec![];
             for i in ((2 * i + 3)..max).step_by(2).step_by(num_threads as usize) {
-                let rho = composite_order_2_evmap(i, tx.clone(), map_reader.clone());
+                let rho = composite_order_2_evmap(i, tx.clone(), &map_reader);
                 r.push((i, rho));
             }
             r
@@ -154,6 +162,6 @@ pub fn threaded_table_evmap(max: u64, num_threads: u64) -> Vec<(u64, u64)> {
 
     writer_handle.join().unwrap();
 
-    let _: Vec<_> = map_reader.map_into(|k, v| (*k, *v.get_one().unwrap()));
+    // let _: Vec<_> = map_reader.map_into(|k, v| (*k, *v.get_one().unwrap()));
     handles.into_iter().map(|handle| handle.join().unwrap()).flatten().collect()
 }

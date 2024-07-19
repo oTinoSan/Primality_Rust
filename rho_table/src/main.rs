@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, io::BufWriter};
 
 use rho_table::*;
 
@@ -13,6 +13,7 @@ fn main() {
 
     let factors = sieve_factorize::sieve_factorize(1000000000);
     let writer = std::fs::OpenOptions::new().write(true).create(true).truncate(true).open("factors.bin").unwrap();
+    let writer = BufWriter::new(writer);
     bincode::serialize_into(writer, &factors).unwrap();
 
     // let reader = std::fs::OpenOptions::new().read(true).open("factors.bin").unwrap();
