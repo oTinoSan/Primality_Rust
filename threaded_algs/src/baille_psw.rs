@@ -57,10 +57,10 @@ pub fn threaded_baillie_psw(
             thread_max = upper_limit.clone() + 5;
         }
         println!("thread_max: {}", thread_max);
-
+        let abs_max = upper_limit.clone();
         let thread = std::thread::spawn(move || {
             let mut return_vector = Vec::new();
-            while thread_min < thread_max && thread_max < Integer::from((&upper_limit + 6).complete()){
+            while thread_min < thread_max && thread_max < Integer::from(Integer::from(abs_max.clone() + 6)){
                 if baillie_psw_test(&thread_min) {
                     return_vector.push(thread_min.clone());
                 }
