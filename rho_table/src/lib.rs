@@ -138,21 +138,20 @@ pub fn threaded_table_evmap(max: u64, num_threads: u64) -> Vec<(u64, u64)> {
         let map_reader = map_reader.clone();
         let tx = tx.clone();
         let handle = spawn(move || {
+            let mut r = vec![];
             for i in ((2 * i + 3)..max).step_by(2).step_by(num_threads as usize) {
                 let rho = composite_order_2_evmap(i, tx.clone(), map_reader.clone());
-                tx.send((i, rho)).unwrap();
+                r.push((i, rho));
             }
+            r
         });
         handles.push(handle);
-    }
-
-    for handle in handles {
-        handle.join().unwrap();
     }
 
     drop(tx);
 
     writer_handle.join().unwrap();
 
-    map_reader.map_into(|k, v| (*k, *v.get_one().unwrap()))
+    let _: Vec<_> = map_reader.map_into(|k, v| (*k, *v.get_one().unwrap()));
+    handles.into_iter().map(|handle| handle.join().unwrap()).flatten().collect()
 }
