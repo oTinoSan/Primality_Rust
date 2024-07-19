@@ -53,8 +53,8 @@ pub fn threaded_baillie_psw(
         if Integer::from(&thread_min) % 2 == Integer::ZERO {
             thread_min += 1;
         }
-        if i == num_threads - 1 || thread_max> upper_limit.clone(){
-            thread_max = upper_limit.clone();
+        if i == num_threads - 1{
+            thread_max = upper_limit.clone() + 5;
         }
         println!("thread_max: {}", thread_max);
 

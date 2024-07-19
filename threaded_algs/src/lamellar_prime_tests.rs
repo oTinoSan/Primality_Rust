@@ -203,9 +203,8 @@ pub fn lamellar_baillie_psw() {
     let mut local_max = Integer::from(&step * (my_pe + 1));
     println!("local_max: {}", local_max);
     if my_pe == num_pes - 1 {
-        local_max = search_max.clone();
+        local_max = search_max.clone() - 5;
     }
-
     let local_results = threaded_baillie_psw(local_min, local_max, 128);
     for pe in 0..num_pes {
         let file = format!("data/baille_{}.txt", pe.clone());
