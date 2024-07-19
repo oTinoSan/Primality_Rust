@@ -5,6 +5,8 @@ use evmap::ReadHandle;
 use num::Integer;
 use num_prime::nt_funcs::factorize64;
 
+pub mod sieve_factorize;
+
 pub fn prime_order_2(p: u64) -> u64 {
     let factors = factorize64(p - 1);
 
