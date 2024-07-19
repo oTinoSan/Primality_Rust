@@ -29,6 +29,8 @@ fn main() {
     let num_pes = world.num_pes();
 
     if my_pe == 0 {
+        let test_max = Integer::from(u32::MAX);
+        let pe_range = Integer::from(&test_max / num_pes);
         
     }
 }

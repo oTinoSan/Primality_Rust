@@ -1,3 +1,6 @@
+[workspace]
+members = ["rho_table"]
+
 [package]
 name = "primality_tests"
 version = "0.1.0"
