@@ -87,7 +87,7 @@ pub fn composite_order_2_evmap<'rh>(n: u64, update_channel: Sender<(u64, u64)>, 
     orders.iter().fold(1, |acc, x| acc.lcm(x))
 }
 
-pub fn threaded_table_chashmap(max: u64, num_threads: u64) -> CHashMap<u64, u64> {
+pub fn threaded_table_chashmap(max: u64, num_threads: u64) -> Vec<(u64, u64)> {
     let map = Arc::new(CHashMap::new());
     let mut handles = vec![];
     let (tx, rx) = channel();
@@ -101,23 +101,22 @@ pub fn threaded_table_chashmap(max: u64, num_threads: u64) -> CHashMap<u64, u64>
         let map = map.clone();
         let tx = tx.clone();
         let handle = spawn(move || {
+            let mut r = vec![];
             for i in ((2 * i + 3) .. max).step_by(2).step_by(num_threads as usize) {
                 let rho = composite_order_2_chashmap(i, tx.clone(), map.clone());
-                tx.send((i, rho)).unwrap();
+                r.push((i, rho));
             }
+            r
         });
         handles.push(handle);
-    }
-
-    for handle in handles {
-        handle.join().unwrap();
     }
 
     drop(tx);
 
     writer_handle.join().unwrap();
 
-    Arc::into_inner(map).unwrap()
+    Arc::into_inner(map).unwrap().into_iter().collect::<Vec<_>>();
+    handles.into_iter().map(|handle| handle.join().unwrap()).flatten().collect()
 }
 
 pub fn threaded_table_evmap(max: u64, num_threads: u64) -> Vec<(u64, u64)> {
