@@ -248,9 +248,11 @@ pub fn calculate_parameters(n: Integer) {
     for i in (5..100).step_by(2) {
         let result: i32;
         if sign {
-            result = evaluate_jacobi(i, n.clone());
+            result = Integer::from(i).jacobi(&n.clone());
+            // evaluate_jacobi(i, n.clone());
         } else {
-            result = evaluate_jacobi(-i, n.clone());
+            result = Integer::from(-i).jacobi(&n.clone());
+            // evaluate_jacobi(-i, n.clone());
         }
         if result == -1 {
             if sign {
@@ -331,8 +333,7 @@ fn evaluate_jacobi(d: i32, prime_candidate: Integer) -> i32 {
 fn modular_inverse(input: &Integer, modulus: &Integer) -> Integer {
     let result = input.clone().pow_mod(&Integer::from(1), &modulus).unwrap();
 
-    let y = (modulus.clone()).extended_gcd(result, Integer::new());
-    // extended_gcd(&modulus, &result) Ethan's implementation call;
+    let y = extended_gcd(&modulus, &result);
 
     if y.2 == 1 {
         if y.1 < Integer::ZERO {
