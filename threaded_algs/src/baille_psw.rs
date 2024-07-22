@@ -332,7 +332,7 @@ fn modular_inverse(input: &Integer, modulus: &Integer) -> Integer {
     let result = input.clone().pow_mod(&Integer::from(1), &modulus).unwrap();
 
     let y = (modulus.clone()).extended_gcd(result, Integer::new());
-    // extended_gcd(&modulus, &result);
+    // extended_gcd(&modulus, &result) Ethan's implementation call;
 
     if y.2 == 1 {
         if y.1 < Integer::ZERO {
