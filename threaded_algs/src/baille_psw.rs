@@ -194,7 +194,7 @@ pub fn lucas_test(n: &Integer) -> bool {
     let a = Integer::from(p.clone().pow(2) * q_inv - 2)
         .pow_mod(&Integer::from(1), &n)
         .unwrap();
-    let m: Integer = (n - evaluate_jacobi(d, n.clone())).complete() / 2;
+    let m: Integer = (n - (Integer::from(d)).jacobi(&n.clone())).complete() / 2;
 
     // lucas chain
     let (mut u, mut v) = (Integer::from(2), a.clone());
