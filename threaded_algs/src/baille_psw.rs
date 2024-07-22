@@ -1,3 +1,4 @@
+use rug::ops::DivRounding;
 use rug::ops::Pow;
 use rug::{Complete, Integer};
 use std::{
@@ -6,7 +7,6 @@ use std::{
     ops::Deref,
     sync::Mutex,
 };
-use rug::ops::DivRounding;
 
 pub fn baillie_psw_array(limit: Integer) -> Vec<Integer> {
     let mut array: Vec<Integer> = Vec::new();
@@ -39,26 +39,27 @@ pub fn threaded_baillie_psw(
     upper_limit: Integer,
     num_threads: u64,
 ) -> Vec<Integer> {
-    let mut block_size = Integer::from(Integer::from(&upper_limit - &lower_limit)/num_threads);
-    if block_size < 1{
+    let mut block_size = Integer::from(Integer::from(&upper_limit - &lower_limit) / num_threads);
+    if block_size < 1 {
         block_size = Integer::from(1);
     }
     let mut thread_handles = Vec::new();
 
     for i in 0..num_threads {
-        
         let mut thread_min: Integer = i * Integer::from(&block_size) + &lower_limit + 5;
         let mut thread_max: Integer = (i + 1) * Integer::from(&block_size) + &lower_limit + 5;
         if Integer::from(&thread_min) % 2 == Integer::ZERO {
             thread_min += 1;
         }
-        if i == num_threads - 1{
+        if i == num_threads - 1 {
             thread_max = upper_limit.clone() + 5;
         }
         let abs_max = upper_limit.clone();
         let thread = std::thread::spawn(move || {
             let mut return_vector = Vec::new();
-            while thread_min < thread_max && thread_max < Integer::from(Integer::from(abs_max.clone() + 6)){
+            while thread_min < thread_max
+                && thread_max < Integer::from(Integer::from(abs_max.clone() + 6))
+            {
                 if baillie_psw_test(&thread_min) {
                     return_vector.push(thread_min.clone());
                 }
@@ -107,7 +108,7 @@ pub fn baillie_psw_test(n: &Integer) -> bool {
     if !base_2_strong_probable_prime_test(&n) {
         return false;
     }
-    // Step 2: perfrom lucas test
+    // Step 2: perform lucas test
 
     let result: bool = lucas_test(&n);
 
@@ -330,7 +331,8 @@ fn evaluate_jacobi(d: i32, prime_candidate: Integer) -> i32 {
 fn modular_inverse(input: &Integer, modulus: &Integer) -> Integer {
     let result = input.clone().pow_mod(&Integer::from(1), &modulus).unwrap();
 
-    let y = extended_gcd(&modulus, &result);
+    let y = (modulus.clone()).extended_gcd(result, Integer::new());
+    // extended_gcd(&modulus, &result);
 
     if y.2 == 1 {
         if y.1 < Integer::ZERO {

@@ -1,6 +1,8 @@
+use num_iter::{range, range_inclusive, range_step_inclusive};
 use rug::ops::AssignRound;
 use rug::{float::Round, Float, Integer};
 use rug_polynomial::ModPoly;
+use std::collections::HashMap;
 
 pub fn u64AKS(prime_candidate: u64) -> bool {
     let prime_int = Integer::from(prime_candidate.clone());
@@ -129,10 +131,13 @@ pub fn u64AKS(prime_candidate: u64) -> bool {
 //             totient += 1;
 //         }
 //     }
-//     let roof = (totient.sqrt() * log2n).to_integer_round(Round::Down).unwrap();
+//     let roof = (totient.sqrt() * log2n)
+//         .to_integer_round(Round::Down)
+//         .unwrap();
 //     for a in num_iter::range(Integer::from(1), roof.0) {
-//         let mut polynomial: Polynomial =
-//             Self::initialize_polynomial([a, Integer::from(1)], Integer(1)); // X + a
+//         let mut polynomial: Polynomial = Polynomial::initialize_polynomial(HashMap::new(), Integer::from(1));
+//         polynomial.set_polynomial_coef(Integer::from(0), a);
+//         polynomial.set_polynomial_coef(Integer::from(1), Integer::from(1)); // X + a
 //         let p = polynomial.clone();
 //         for _ in num_iter::range_inclusive(Integer::from(1), prime_candidate) {
 //             polynomial.polynomial_modular_multiplication(p, prime_candidate); // (X + a)^n
@@ -141,17 +146,17 @@ pub fn u64AKS(prime_candidate: u64) -> bool {
 //         for _ in num_iter::range_inclusive(Integer::from(1), prime_candidate) {
 //             poly_no_mod.polynomial_multiplication(p, prime_candidate); // (X + a)^n
 //         }
-//         let mut eq_poly = Self::initialize_polynomial(vec![a], prime_candidate); // X^n + a
-//         eq_poly.set_coefficient_coef(prime_candidate + 1, Integer::from(1));
-//         let mut mod_poly = Self::initialize_polynomial(vec![Integer::from(-1)], r); // X^r - 1
-//         mod_poly.set_coefficient(r + 1, Integer::from(1));
+//         let mut eq_poly = Polynomial::initialize_polynomial(HashMap::new(), prime_candidate); // X^n + a
+//         eq_poly.set_polynomial_coef(Integer::from(0), a);
+//         eq_poly.set_polynomial_coef(prime_candidate, Integer::from(1));
+//         let mut mod_poly = Polynomial::initialize_polynomial(HashMap::new(), r); // X^r - 1
+//         mod_poly.set_polynomial_coef(Integer::from(1), Integer::from(-1));
+//         mod_poly.set_polynomial_coef(r + 1, Integer::from(1));
+//         let mut r_poly = Polynomial::initialize_polynomial(HashMap::new(), Integer::from(0));
+//         r_poly.set_polynomial_coef(Integer::from(0), Integer::from(prime_candidate));
 //         // if (X+a)^n ≠ X^n+a (mod X^r − 1,n), then output composite
 //         if (poly_no_mod.polynomial_remainder(&mod_poly) != eq_poly.rem(&mod_poly)
-//             || polynomial
-//                 != eq_poly.polynomial_modular_multiplication(Self::initialize_polynomial(
-//                     vec![Integer::from(1)],
-//                     Integer::from(0),
-//                 )))
+//             || polynomial != eq_poly.polynomial_modular_multiplication())
 //         {
 //             return false;
 //         }
@@ -160,47 +165,66 @@ pub fn u64AKS(prime_candidate: u64) -> bool {
 //     return true;
 // }
 
-// struct Polynomial {
-//     coef: Vec<Integer>,
+// pub struct Polynomial {
+//     coef: HashMap<Integer, HashMap<Integer, Integer>>,
 //     deg: Integer,
 // }
 
 // impl Polynomial {
-//     fn initialize_polynomial(coef: Vec<Integer>, deg: Integer) -> Polynomial {
+//     pub fn initialize_polynomial(
+//         coef: HashMap<Integer, HashMap<Integer, Integer>>,
+//         deg: Integer,
+//     ) -> Polynomial {
 //         Polynomial { coef, deg }
 //     }
-//     fn is_equal_polynomial(&self, poly_2: &Polynomial) -> bool {
+//     pub fn is_equal_polynomial(&self, poly_2: &Polynomial) -> bool {
 //         if self.deg != poly_2.deg {
 //             return false;
 //         }
 //         for i in range_inclusive(Integer::from(0), self.deg) {
-//             if self.coef[i] != poly_2.coef[i] {
+//             if self.coef.get(i) != poly_2.coef.get(i) {
 //                 return false;
 //             }
 //         }
 //         return true;
 //     }
 
-//     fn set_polynomial_coef(&self, order: Integer, coefficient: Integer) {
+//     pub fn set_polynomial_coef(&self, order: Integer, coefficient: Integer) {
 //         if order <= self.deg + 1 {
-//             self.coef[order] = coefficient;
+//             self.coef.insert(order, coefficient);
 //             return;
+//         } else {
+//             for index in range(Integer::from(self.deg + 1), order) {
+//                 if index > 2^64 * (self.coef.len() + 1) {
+//                     self.coef.insert(self.coef.len()+1, HashMap::new());
+//                 }
+//                 let a = self.coef.get(&(index / 2^64 + 1));
+//                 a.insert(index, 0);
+//             }
+//             let b = self.coef.get(&Integer::from(self.coef.len()));
+//             b.insert(order, coefficient);
+//             self.deg = order;
 //         }
-//         for index in range(self.deg + 1, order) {
-//             self.coef.push(0);
-//         }
-//         self.coef.push(coefficient);
-//         self.deg = order;
 //     }
 
-//     fn polynomial_modular_multiplication(&self, poly_2: &Polynomial, mod_n: Integer) -> Polynomial {
+//     pub fn polynomial_modular_multiplication(
+//         &self,
+//         poly_2: &Polynomial,
+//         mod_n: Integer,
+//     ) -> Polynomial {
 //         let max_deg = self.deg * poly_2.deg;
-//         let mut poly_res = Self::initialize_polynomial(vec![], max_deg);
+//         let mut poly_res = Self::initialize_polynomial(HashMap::new(), max_deg);
 //         for i in range(Integer::from(0), max_deg) {
 //             let mut coef = 0;
+//             let mut home_1;
 //             let mut c0;
+//             let mut home_2;
 //             let mut c1;
-//             let mut jmin = if i > poly_2.deg { i - poly_2.deg } else { 0 };
+//             let mut jmin = if i > poly_2.deg {
+//                 Integer::from(i - poly_2.deg)
+//             } else {
+//                 Integer::from(0)
+//             };
 //             let mut jmax = if i < self.deg {
 //                 Integer::from(i)
 //             } else {
@@ -208,48 +232,54 @@ pub fn u64AKS(prime_candidate: u64) -> bool {
 //             };
 
 //             for j in range_inclusive(jmin, jmax) {
-//                 c0 = self.coef[j];
-//                 c1 = poly_2.coef[i - j];
-//                 let c0 = c0 * c1;
+//                 home_1 = self.coef.get(&j/ 2^64 +1).unwrap();
+//                 c0 = home_1.get(&j);
+//                 home_2 = poly_2.coef.get(&(&i - &j) / 2^64 +1).unwrap();
+//                 c1 = home_2.get(&(i - j));
+//                 let c0 = &Integer::from(c0 * c1);
 //                 coef = c0 + coef;
 //             }
-//             jmin = i + r - poly_2.deg;
+//             jmin = Integer::from(i - poly_2.deg);
 //             jmax = self.deg;
 //             for j in range_inclusive(jmin, jmax) {
-//                 c0 = self.coef[j];
-//                 c1 = poly_2.coef[i + r - j];
-//                 c0 = c0 * c1;
+//                 home_1 = self.coef.get(&j/ 2^64 +1).unwrap();
+//                 c0 = self.coef.get(j.clone());
+//                 home_2 = poly_2.coef.get((&(&i-&j))/ 2^64 +1).unwrap();
+//                 c1 = poly_2.coef.get(&(i - j));
+//                 c0 = &Integer::from(c0 * c1);
 //                 coef = c0 + coef;
 //             }
 //             coef = coef % mod_n;
-//             poly_res.coef.push(coef);
+//             let b = self.coef.get(&Integer::from(self.coef.len()));
+//             poly_res.coef.insert(i, coef);
 //         }
 //         return poly_res;
 //     }
-//     fn polynomial_modular_power(&self, exp: Integer) -> Vec<Integer> {
-//         let mut poly_res = Self::initialize_polynomial(vec![], 0);
-//         poly_res.set_polynomial_coef(0, 1);
-//         for i in range_step_inclusive(exp.significant_bits() + 1, 1) {
-//             poly_res = self.polynomial_modular_multiplication(poly_res, poly_res, exp);
+//     pub fn polynomial_modular_power(&self, exp: Integer) -> Polynomial {
+//         let mut poly_res = Self::initialize_polynomial(HashMap::new(), Integer::from(0));
+//         poly_res.set_polynomial_coef(Integer::from(0), Integer::from(1));
+//         for i in range_inclusive(exp.significant_bits() + 1, 1).rev() {
+//             poly_res = self.polynomial_modular_multiplication(&poly_res, exp.clone());
 //             if exp.get_bit(i - 1) {
 //                 poly_res = poly_res.polynomial_modular_multiplication(&self, exp.clone());
 //             }
 //         }
 //         return poly_res;
 //     }
-//     fn polynomial_remainder(&self, poly_2: &Polynomial) -> &Polynomial {
+//     pub fn polynomial_remainder(&self, poly_2: &Polynomial) -> &Polynomial {
 //         loop {
 //             if poly_2.deg >= self.deg {
 //                 return self;
 //             }
-//             let mut multiple_poly = Self::initialize_polynomial(vec![], self.deg - poly_2.deg);
-//             multiple_poly.set_coefficient_coef(self.deg - poly_2.deg, 1);
+//             let mut multiple_poly =
+//                 Self::initialize_polynomial(HashMap::new(), self.deg - poly_2.deg);
+//             multiple_poly.set_polynomial_coef(self.deg - poly_2.deg, Integer::from(1));
 //             let long_division_poly = poly_2.clone().polynomial_multiplication(&multiple_poly);
-//             for i in range(1, self.coef.len + 1) {
-//                 self.coef[i] = self.coef[i] - long_division_poly.coef[i];
+//             for i in range(Integer::from(1), Integer::from(self.coef.len() + 1)) {
+//                 self.set_polynomial_coef(i, &(self.coef.get(&i) - long_division_poly.coef.get(&i)));
 //             }
-//             for i in range_step_inclusive(self.coef.len, 1, -1) {
-//                 if self.coef[i] == 0 {
+//             for i in range_inclusive(self.coef.len(), 1).rev() {
+//                 if self.coef.get(&i) == Integer::from(0) {
 //                     self.deg = self.deg - 1;
 //                 } else {
 //                     break;
@@ -257,31 +287,49 @@ pub fn u64AKS(prime_candidate: u64) -> bool {
 //             }
 //         }
 //     }
-//     fn polynomial_multiplication(&self, poly_2: &Polynomial) -> Polynomial {
+//     pub fn polynomial_multiplication(&self, poly_2: &Polynomial) -> Polynomial {
 //         let max_deg = self.deg * poly_2.deg;
-//         let mut poly_res = Self::initialize_polynomial(vec![], max_deg);
+//         for i in range(Integer::from(1), Integer::from(max_deg + 1 / 2^64 + 1)){
+//             for j in range_inclusive(Integer::from(0), Integer::from(2^64-1)){
+//                 let tuple_list
+//                 poly_res.coef.insert(i, );
+//             }
+
+//         }
+//         let mut poly_res = Self::initialize_polynomial(HashMap::new(), max_deg);
 //         for i in range(Integer::from(0), max_deg) {
 //             let mut coef = Integer::from(0);
+//             let mut home_1;
 //             let mut c0;
+//             let mut home_2;
 //             let mut c1;
-//             let mut jmin = if i > poly_2.deg { i - poly_2.deg } else { Integer::from(0) };
+//             let mut jmin = if i > poly_2.deg {
+//                 i - poly_2.deg
+//             } else {
+//                 Integer::from(0)
+//             };
 //             let mut jmax = if i < self.deg { i } else { self.deg };
 
 //             for j in range_inclusive(jmin, jmax) {
-//                 c0 = self.coef[j];
-//                 c1 = poly_2.coef[i - j];
-//                 let c0 = c0 * c1;
+//                 home_1 = self.coef.get(j.clone()/2^64).unwrap();
+//                 c0 = home_1.get(&j).unwrap();
+//                 home_2 = poly_2.coef.get(j.clone()/2^64).unwrap();
+//                 c1 = home_2.get(&(i - j)).unwrap();
+//                 let c0 = &Integer::from(c0 * c1);
 //                 coef = c0 + coef;
 //             }
-//             jmin = i + r - poly_2.deg;
+//             jmin = i - poly_2.deg;
 //             jmax = self.deg;
 //             for j in range_inclusive(jmin, jmax) {
-//                 c0 = self.coef[j];
-//                 c1 = poly_2.coef[i + r - j];
-//                 c0 = c0 * c1;
+//                 home_1 = self.coef.get(&j / 2^64).unwrap();
+//                 c0 = home_1.get(&j).unwrap();
+//                 home_2 = self.coef.get(&(i - j) / 2^64).unwrap();
+//                 c1 = home_2.get(&(i - j)).unwrap();
+//                 c0 = &Integer::from(c0 * c1);
 //                 coef = c0 + coef;
 //             }
-//             poly_res.coef.push(Integer::from(coef));
+//             let b = poly_res.coef.get(i/ 2^64 + 1);
+//             b.insert(i, Integer::from(coef));
 //         }
 //         return poly_res;
 //     }
