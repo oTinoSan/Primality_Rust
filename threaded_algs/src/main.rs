@@ -1,9 +1,7 @@
-use crate::baille_psw::threaded_baillie_psw;
 use crate::lamellar_prime_tests::{
-    bigint_miller_rabin, lamellar_baillie_psw, lamellar_wheel_baillie_psw, lamellar_wheel_miller,
-    lamellar_wheel_miller_solovay, lamellar_wheel_solovay,
+    bigint_miller_rabin, lamellar_baillie_psw,
 };
-use crate::threaded_solovay::threaded_solovay_strassen;
+use crate::AKS_prime::BigIntAKS;
 use rug::{Complete, Integer}; //integer::MiniInteger,
 
 pub mod AKS_prime;
@@ -18,7 +16,10 @@ fn main() {
     // let limit_int = limit.parse::<Integer>().unwrap();
     // lamellar_wheel_miller();
     // lamellar_wheel_solovay();
-    lamellar_baillie_psw();
+    // lamellar_baillie_psw();
+    let limit = "100000000";
+    let limit_int = limit.parse::<Integer>().unwrap();
+    println!("Number is prime: {:?}", BigIntAKS(limit_int));
     // lamellar_wheel_miller_solovay();
 }
 

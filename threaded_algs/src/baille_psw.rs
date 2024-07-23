@@ -1,12 +1,5 @@
-use rug::ops::DivRounding;
 use rug::ops::Pow;
 use rug::{Complete, Integer};
-use std::{
-    fs::OpenOptions,
-    io::{BufWriter, Write},
-    ops::Deref,
-    sync::Mutex,
-};
 
 pub fn baillie_psw_array(limit: Integer) -> Vec<Integer> {
     let mut array: Vec<Integer> = Vec::new();
@@ -149,9 +142,9 @@ pub fn lucas_test(n: &Integer) -> bool {
     for i in (5..100).step_by(2) {
         let result: i32;
         if sign {
-            result = Integer::from(i).jacobi(&n);
+            result = evaluate_jacobi(i, n.clone());
         } else {
-            result = Integer::from(-i).jacobi(&n);
+            result = evaluate_jacobi(-i, n.clone());
         }
         if result == 0 {
             //then D and n have a prime factor in common, quit
@@ -194,7 +187,7 @@ pub fn lucas_test(n: &Integer) -> bool {
     let a = Integer::from(p.clone().pow(2) * q_inv - 2)
         .pow_mod(&Integer::from(1), &n)
         .unwrap();
-    let m: Integer = (n - (Integer::from(d)).jacobi(&n.clone())).complete() / 2;
+    let m: Integer = (n - (evaluate_jacobi(d, n.clone()))).complete() / 2;
 
     // lucas chain
     let (mut u, mut v) = (Integer::from(2), a.clone());
@@ -248,10 +241,10 @@ pub fn calculate_parameters(n: Integer) {
     for i in (5..100).step_by(2) {
         let result: i32;
         if sign {
-            result = Integer::from(i).jacobi(&n.clone());
+            result = evaluate_jacobi(i, n.clone());
             // evaluate_jacobi(i, n.clone());
         } else {
-            result = Integer::from(-i).jacobi(&n.clone());
+            result = evaluate_jacobi(-i, n.clone());
             // evaluate_jacobi(-i, n.clone());
         }
         if result == -1 {

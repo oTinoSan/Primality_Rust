@@ -47,15 +47,15 @@ fn miller_rabin_general_bench(num_threads: u64) {
     ));
 }
 
-// #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
-// fn miller_solovay_bench(num_threads: u64){
-//     black_box( miller_solovay(5, Integer::from(1000000000),black_box(num_threads)));
-// }
+#[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
+fn miller_solovay_bench(num_threads: u64){
+    black_box( miller_solovay(5, Integer::from(1000000000),black_box(num_threads)));
+}
 
-// #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
-// fn general_miller_solovay_bench(num_threads: u64){
-//     black_box( general_miller_solovay(5, Integer::from(1000000000),black_box(num_threads)));
-// }
+#[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
+fn general_miller_solovay_bench(num_threads: u64){
+    black_box( general_miller_solovay(5, Integer::from(1000000000),black_box(num_threads)));
+}
 
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
 fn baillie_psw_bench(num_threads: u64) {

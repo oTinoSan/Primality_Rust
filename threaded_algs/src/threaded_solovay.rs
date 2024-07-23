@@ -1,5 +1,4 @@
 use rug::{rand, Complete, Integer};
-use std::env;
 
 pub fn threaded_solovay_strassen(num_threads: u64, limit: Integer) -> Vec<Integer> {
     let block_size = (&limit / num_threads).complete();
@@ -52,7 +51,7 @@ impl Jacobi {
     fn remove_twos(&mut self) {
         while self.a.clone() % 2 as u64 == Integer::ZERO {
             self.a = self.a.clone() / 2 as u64;
-            let mut mod_8 = &self.n % Integer::from(8);
+            let mod_8 = &self.n % Integer::from(8);
             if !(mod_8 == Integer::from(1 as u64) || mod_8 == Integer::from(7 as u64)) {
                 self.sign = !self.sign;
             }

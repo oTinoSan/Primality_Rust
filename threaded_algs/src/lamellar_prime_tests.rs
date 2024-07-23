@@ -4,12 +4,6 @@ use crate::wheel_algos::*;
 use crate::wheel_algos::{general_wheel_threaded, general_wheel_threaded_two_fn};
 use lamellar::array::prelude::*;
 use rug::{rand, Integer};
-use std::{
-    fs::OpenOptions,
-    io::{BufWriter, Write},
-    ops::Deref,
-    sync::Mutex,
-};
 
 pub fn lamellar_wheel_miller() {
     let world = lamellar::LamellarWorldBuilder::new().build();
