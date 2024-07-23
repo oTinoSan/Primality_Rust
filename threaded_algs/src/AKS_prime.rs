@@ -86,13 +86,13 @@ pub fn u64AKS(prime_candidate: u64) -> bool {
 }
 
 pub fn BigIntAKS(prime_candidate: Integer) -> bool {
-    let mut prime_float = Float::new(0);
-    prime_float.assign_round(prime_candidate.clone(), Round::Nearest);
-    let log2n = prime_float.clone().log2();
     //check if n is a perfect power
     if prime_candidate.is_perfect_power() {
         return false;
     }
+    let mut prime_float = Float::new(prime_candidate.clone().significant_bits());
+    prime_float.assign_round(prime_candidate.clone(), Round::Nearest);
+    let log2n = prime_float.clone().log2();
     let r = Integer::from(0);
     //find smallest r such that the multiplicative order of prime modulo r is greater than (log2n)^2
     for mut r in num_iter::range(Integer::from(0), prime_candidate.clone()) {
@@ -136,28 +136,43 @@ pub fn BigIntAKS(prime_candidate: Integer) -> bool {
         .to_integer_round(Round::Down)
         .unwrap();
     for a in num_iter::range(Integer::from(1), roof.0) {
-        let mut polynomial: Polynomial =
-            Polynomial::initialize_polynomial(HashMap::new(), Integer::from(1));
+        let mut polynomial: Polynomial = Polynomial::initialize_polynomial(
+            HashMap::from([(Integer::from(1), HashMap::new())]),
+            Integer::from(1),
+        );
         polynomial.set_polynomial_coef(Integer::from(0), a.clone());
         polynomial.set_polynomial_coef(Integer::from(1), Integer::from(1)); // X + a
         let p = polynomial.polynomial_clone();
         for _ in num_iter::range_inclusive(Integer::from(1), prime_candidate.clone()) {
-            polynomial.polynomial_modular_multiplication(&p, prime_candidate.clone()); // (X + a)^n modular
+            polynomial.polynomial_modular_multiplication(&p, prime_candidate.clone());
+            // (X + a)^n modular
         }
         let mut poly_no_mod = p.polynomial_clone();
         for _ in num_iter::range_inclusive(Integer::from(1), prime_candidate.clone()) {
             poly_no_mod.polynomial_multiplication(&p); // (X + a)^n not modular
         }
-        let mut eq_poly = Polynomial::initialize_polynomial(HashMap::new(), prime_candidate.clone()); // X^n + a
+        let mut eq_poly = Polynomial::initialize_polynomial(
+            HashMap::from([(Integer::from(1), HashMap::new())]),
+            prime_candidate.clone(),
+        ); // X^n + a
         eq_poly.set_polynomial_coef(Integer::from(0), a);
         eq_poly.set_polynomial_coef(prime_candidate.clone(), Integer::from(1));
-        let mut mod_poly = Polynomial::initialize_polynomial(HashMap::new(), r.clone()); // X^r - 1
+        let mut mod_poly = Polynomial::initialize_polynomial(
+            HashMap::from([(Integer::from(1), HashMap::new())]),
+            r.clone(),
+        ); // X^r - 1
         mod_poly.set_polynomial_coef(Integer::from(1), Integer::from(-1));
         mod_poly.set_polynomial_coef(r.clone() + 1, Integer::from(1));
-        let mut n_poly = Polynomial::initialize_polynomial(HashMap::new(), Integer::from(0));
+        let mut n_poly = Polynomial::initialize_polynomial(
+            HashMap::from([(Integer::from(1), HashMap::new())]),
+            Integer::from(0),
+        );
         n_poly.set_polynomial_coef(Integer::from(0), Integer::from(prime_candidate.clone()));
+        println!("Calculating... ");
         // if (X+a)^n ≠ X^n+a (mod X^r − 1,n), then output composite
-        if !(poly_no_mod.polynomial_remainder(&mod_poly).is_equal_polynomial(&eq_poly.polynomial_remainder(&mod_poly)))
+        if !(poly_no_mod
+            .polynomial_remainder(&mod_poly)
+            .is_equal_polynomial(&eq_poly.polynomial_remainder(&mod_poly)))
             || !(polynomial.is_equal_polynomial(&eq_poly.polynomial_remainder(&n_poly)))
         {
             return false;
@@ -167,7 +182,7 @@ pub fn BigIntAKS(prime_candidate: Integer) -> bool {
     return true;
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Polynomial {
     coef: HashMap<Integer, HashMap<Integer, Integer>>,
     deg: Integer,
@@ -210,12 +225,16 @@ impl Polynomial {
                     self.coef
                         .insert((self.coef.len() + 1).into(), HashMap::new());
                 }
-                let a: &mut HashMap<Integer, Integer> =
-                    self.coef.get_mut(&(index.clone() / Integer::from(2).pow(64) + 1)).unwrap();
+                let a: &mut HashMap<Integer, Integer> = self
+                    .coef
+                    .get_mut(&(index.clone() / Integer::from(2).pow(64) + 1))
+                    .unwrap();
                 a.insert(index, Integer::from(0));
             }
-            let a: &mut HashMap<Integer, Integer> =
-                self.coef.get_mut(&(order.clone() / Integer::from(2).pow(64)+ 1)).unwrap();
+            let a: &mut HashMap<Integer, Integer> = self
+                .coef
+                .get_mut(&(order.clone() / Integer::from(2).pow(64) + 1))
+                .unwrap();
             a.insert(order.clone(), coefficient);
             self.deg = order;
         }
@@ -224,8 +243,15 @@ impl Polynomial {
         if order > self.deg {
             return Integer::from(0);
         }
-        let inner_hash = self.coef.get(&Integer::from(&order / Integer::from(2).pow(64) + 1)).unwrap();
-        return inner_hash.get(&order).unwrap().clone();
+        let inner_hash = self
+            .coef
+            .get(&Integer::from(&(&order / Integer::from(2).pow(64)) + 1))
+            .unwrap();
+        if inner_hash.contains_key(&order.clone()) {
+
+            return inner_hash.get(&order).unwrap().clone();
+        }
+        return Integer::from(0);
     }
 
     pub fn polynomial_modular_multiplication(
@@ -234,7 +260,10 @@ impl Polynomial {
         mod_n: Integer,
     ) -> Polynomial {
         let max_deg = self.deg.clone() * poly_2.deg.clone();
-        let mut poly_res = Self::initialize_polynomial(HashMap::new(), max_deg.clone());
+        let mut poly_res = Self::initialize_polynomial(
+            HashMap::from([(Integer::from(1), HashMap::new())]),
+            max_deg.clone(),
+        );
         for i in range(Integer::from(0), max_deg) {
             let mut coef = Integer::from(0);
             let mut c0;
@@ -270,7 +299,10 @@ impl Polynomial {
         return poly_res;
     }
     pub fn polynomial_modular_power(&self, exp: Integer) -> Polynomial {
-        let mut poly_res = Self::initialize_polynomial(HashMap::new(), Integer::from(0));
+        let mut poly_res = Self::initialize_polynomial(
+            HashMap::from([(Integer::from(1), HashMap::new())]),
+            Integer::from(0),
+        );
         poly_res.set_polynomial_coef(Integer::from(0), Integer::from(1));
         for i in range_inclusive(exp.significant_bits() + 1, 1).rev() {
             poly_res = self.polynomial_modular_multiplication(&poly_res, exp.clone());
@@ -285,8 +317,10 @@ impl Polynomial {
             if poly_2.deg >= self.deg {
                 return self;
             }
-            let mut multiple_poly =
-                Self::initialize_polynomial(HashMap::new(), self.deg.clone() - poly_2.deg.clone());
+            let mut multiple_poly = Self::initialize_polynomial(
+                HashMap::from([(Integer::from(1), HashMap::new())]),
+                self.deg.clone() - poly_2.deg.clone(),
+            );
             multiple_poly
                 .set_polynomial_coef(self.deg.clone() - poly_2.deg.clone(), Integer::from(1));
             let long_division_poly = poly_2.polynomial_multiplication(&multiple_poly);
@@ -300,8 +334,11 @@ impl Polynomial {
                         - long_division_poly.get_polynomial_coef(i.clone()),
                 );
             }
-            for i in
-                range_inclusive(Integer::from(self.coef.len() * Integer::from(2).pow(64)), Integer::from(1)).rev()
+            for i in range_inclusive(
+                Integer::from(self.coef.len() * Integer::from(2).pow(64)),
+                Integer::from(1),
+            )
+            .rev()
             {
                 if self.get_polynomial_coef(i.clone()) == Integer::from(0) {
                     self.deg = self.deg.clone() - 1;
@@ -313,7 +350,10 @@ impl Polynomial {
     }
     pub fn polynomial_multiplication(&self, poly_2: &Polynomial) -> Polynomial {
         let max_deg = self.deg.clone() * poly_2.deg.clone();
-        let mut poly_res = Self::initialize_polynomial(HashMap::new(), max_deg.clone());
+        let mut poly_res = Self::initialize_polynomial(
+            HashMap::from([(Integer::from(1), HashMap::new())]),
+            max_deg.clone(),
+        );
         for i in range(
             Integer::from(1),
             Integer::from(max_deg.clone() + 1 / Integer::from(2).pow(64) + 1),

@@ -1,4 +1,4 @@
-use crate::baille_psw::{baillie_psw_test};
+use crate::baille_psw::baillie_psw_test;
 use crate::threaded_solovay::bigint_solovay_strassen;
 use rayon::prelude::*;
 use rug::Integer;
