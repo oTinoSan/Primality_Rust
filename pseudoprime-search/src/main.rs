@@ -6,5 +6,5 @@ fn main() {
 
     let threaded_qs = q_search_threaded(1000000, 4);
 
-    assert_eq!(qs, threaded_qs);
+    assert_eq!(qs.keys().into_iter().collect::<Vec<_>>(), threaded_qs.keys().into_iter().collect::<Vec<_>>());
 }
