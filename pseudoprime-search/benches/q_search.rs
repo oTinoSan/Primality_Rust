@@ -1,7 +1,7 @@
 use pseudoprime_search::{q_search, q_search_threaded};
 use divan::black_box;
 
-const MAX_ARGS: [u64; 1] = [1000000000];
+const MAX_ARGS: [u64; 4] = [10000, 100000, 1000000, 10000000];
 
 fn main() {
     divan::main()
@@ -9,7 +9,7 @@ fn main() {
 
 #[divan::bench(args=MAX_ARGS, sample_count=1, sample_size=1)]
 fn q_search_test(arg: u64) {
-    q_search(black_box(3), black_box(arg));
+    q_search(black_box(arg));
 }
 
 #[divan::bench(args=MAX_ARGS, sample_count=1, sample_size=1)]
