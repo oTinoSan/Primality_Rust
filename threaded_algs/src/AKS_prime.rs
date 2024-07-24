@@ -170,8 +170,7 @@ pub fn BigIntAKS(prime_candidate: Integer) -> bool {
         n_poly.set_polynomial_coef(Integer::from(0), Integer::from(prime_candidate.clone()));
         println!("Calculating... ");
         // if (X+a)^n ≠ X^n+a (mod X^r − 1,n), then output composite
-        if !(poly_no_mod
-            .polynomial_remainder(&mod_poly)
+        if !((poly_no_mod.polynomial_remainder(&mod_poly))
             .is_equal_polynomial(&eq_poly.polynomial_remainder(&mod_poly)))
             || !(polynomial.is_equal_polynomial(&eq_poly.polynomial_remainder(&n_poly)))
         {
@@ -203,6 +202,7 @@ impl Polynomial {
         }
     }
     pub fn is_equal_polynomial(&self, poly_2: &Polynomial) -> bool {
+        println!("Figuring out if polynomials are equal");
         if self.deg != poly_2.deg {
             return false;
         }
@@ -210,6 +210,7 @@ impl Polynomial {
             if self.get_polynomial_coef(i.clone()) != poly_2.get_polynomial_coef(i.clone()) {
                 return false;
             }
+            println!("the polynomials' values at key {} are equal", &i);
         }
         return true;
     }
@@ -248,7 +249,6 @@ impl Polynomial {
             .get(&Integer::from(&(&order / Integer::from(2).pow(64)) + 1))
             .unwrap();
         if inner_hash.contains_key(&order.clone()) {
-
             return inner_hash.get(&order).unwrap().clone();
         }
         return Integer::from(0);
@@ -313,6 +313,7 @@ impl Polynomial {
         return poly_res;
     }
     pub fn polynomial_remainder(&mut self, poly_2: &Polynomial) -> &Polynomial {
+        println!("Entering loop...");
         loop {
             if poly_2.deg >= self.deg {
                 return self;
@@ -323,7 +324,9 @@ impl Polynomial {
             );
             multiple_poly
                 .set_polynomial_coef(self.deg.clone() - poly_2.deg.clone(), Integer::from(1));
+            println!("multiple_poly: {:?}", &multiple_poly);
             let long_division_poly = poly_2.polynomial_multiplication(&multiple_poly);
+            println!("long_division_poly: {:?}", &long_division_poly);
             for i in range_inclusive(
                 Integer::from(0),
                 Integer::from(self.coef.len() * Integer::from(2).pow(64) - 1),
