@@ -1464,6 +1464,7 @@ version = "0.1.0"
 dependencies = [
  "divan",
  "num 0.4.3",
+ "rayon",
 ]
 
 [[package]]

@@ -1,5 +1,7 @@
 use std::{collections::{BTreeMap, HashMap}, sync::mpsc::Sender, thread};
 
+use rayon::prelude::*;
+
 use num::integer::{gcd, Roots};
 
 pub fn q_search(max: u64) -> BTreeMap<u64, (u64, u64)> {
@@ -13,6 +15,20 @@ pub fn q_search(max: u64) -> BTreeMap<u64, (u64, u64)> {
         }
     }
     result
+}
+
+pub fn q_search_rayon(max: u64) -> BTreeMap<u64, (u64, u64)> {
+    let is: Vec<_> = (3..=max.sqrt() + 1).step_by(2).collect();
+    is.par_iter().map(|i| {
+        let mut r = BTreeMap::new();
+        for j in *i..=max / *i {
+            let gcd = gcd(*i, j);
+            if gcd == 1 {
+                r.insert(*i * j, (j, *i));
+            }
+        }
+        r
+    }).reduce(|| BTreeMap::new(), |mut acc, x| {acc.extend(x); acc})
 }
 
 fn q_single_thread(mut min: u64, max: u64) -> BTreeMap<u64, (u64, u64)>{
@@ -35,11 +51,11 @@ fn q_single_thread(mut min: u64, max: u64) -> BTreeMap<u64, (u64, u64)>{
     r
 }
 
-pub fn q_search_threaded(max: u64, num_threads: u64) -> BTreeMap<u64, (u64, u64)> {
+pub fn q_search_threaded(min: u64, max: u64, num_threads: u64) -> BTreeMap<u64, (u64, u64)> {
     let mut handles = vec![];
-    let step = max / num_threads;
+    let step = (max - min) / num_threads;
     for i in 0..num_threads {
-        let thread_min = step * i;
+        let thread_min = min + step * i;
         let mut thread_max = thread_min + step;
         if i == num_threads - 1 {
             thread_max = max;
