@@ -15,7 +15,7 @@ fn main() {
     // lamellar_wheel_miller();
     // lamellar_wheel_solovay();
     // lamellar_baillie_psw();
-    let limit = "13";
+    let limit = "5";
     let limit_int = limit.parse::<Integer>().unwrap();
     println!("Number is prime: {:?}", BigIntAKS(limit_int));
     // lamellar_wheel_miller_solovay();
