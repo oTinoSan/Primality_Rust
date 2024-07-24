@@ -147,27 +147,32 @@ pub fn BigIntAKS(prime_candidate: Integer) -> bool {
             polynomial.polynomial_modular_multiplication(&p, prime_candidate.clone());
             // (X + a)^n modular
         }
+        println!("polynomial: {:?}", &polynomial);
         let mut poly_no_mod = p.polynomial_clone();
         for _ in num_iter::range_inclusive(Integer::from(1), prime_candidate.clone()) {
             poly_no_mod.polynomial_multiplication(&p); // (X + a)^n not modular
         }
+        println!("poly_no_mod: {:?}", &poly_no_mod);
         let mut eq_poly = Polynomial::initialize_polynomial(
             HashMap::from([(Integer::from(1), HashMap::new())]),
             prime_candidate.clone(),
         ); // X^n + a
         eq_poly.set_polynomial_coef(Integer::from(0), a);
         eq_poly.set_polynomial_coef(prime_candidate.clone(), Integer::from(1));
+        println!("eq_poly: {:?}", &eq_poly);
         let mut mod_poly = Polynomial::initialize_polynomial(
             HashMap::from([(Integer::from(1), HashMap::new())]),
             r.clone(),
         ); // X^r - 1
         mod_poly.set_polynomial_coef(Integer::from(1), Integer::from(-1));
         mod_poly.set_polynomial_coef(r.clone() + 1, Integer::from(1));
+        println!("mod_poly: {:?}", &mod_poly);
         let mut n_poly = Polynomial::initialize_polynomial(
             HashMap::from([(Integer::from(1), HashMap::new())]),
             Integer::from(0),
         );
         n_poly.set_polynomial_coef(Integer::from(0), Integer::from(prime_candidate.clone()));
+        println!("n_poly: {:?}", &n_poly);
         println!("Calculating... ");
         // if (X+a)^n ≠ X^n+a (mod X^r − 1,n), then output composite
         if !((poly_no_mod.polynomial_remainder(&mod_poly))
