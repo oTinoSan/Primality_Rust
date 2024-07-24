@@ -1,0 +1,14 @@
+[package]
+name = "pseudoprime-search"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+num = "0.4.3"
+
+[dev-dependencies]
+divan = "0.1.14"
+
+[[bench]]
+name="q_search"
+harness=false

@@ -1459,6 +1459,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "pseudoprime-search"
+version = "0.1.0"
+dependencies = [
+ "divan",
+ "num 0.4.3",
+]
+
+[[package]]
 name = "quote"
 version = "1.0.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"

@@ -1,5 +1,5 @@
 [workspace]
-members = ["rho_table"]
+members = [ "pseudoprime-search","rho_table"]
 
 [package]
 name = "primality_tests"
