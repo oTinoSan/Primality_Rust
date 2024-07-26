@@ -1,6 +1,6 @@
 use divan::black_box;
 use primality::advanced_primality_tests::{
-    threaded_baillie_psw, threaded_miller_rabin, threaded_solovay_strassen,
+    threaded_baillie_psw, threaded_miller_rabin, threaded_solovay_strassen, threaded_AKS_prime
 };
 use primality::wheel_algos::*;
 use rug::Integer;
@@ -96,6 +96,14 @@ fn threaded_miller_rabin_benchmark(num_threads: u64) {
 #[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
 fn threaded_solovay_strassen_benchmark(num_threads: u64) {
     black_box(threaded_solovay_strassen(
+        black_box(num_threads),
+        Integer::from(1000000000),
+    ));
+}
+
+#[divan::bench(sample_count = 1, sample_size = 1, args=THREAD_ARGS)]
+fn threaded_AKS_prime_benchmark(num_threads: u64) {
+    black_box(threaded_AKS_prime(
         black_box(num_threads),
         Integer::from(1000000000),
     ));
