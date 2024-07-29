@@ -1,8 +1,9 @@
 use num_iter::{range, range_inclusive};
 use rug::ops::AssignRound;
 use rug::ops::Pow;
-use rug::{float::Round, Float, Integer};
+use rug::{float::Round, Float, Integer, Complete};
 use std::collections::HashMap;
+
 
 // pub fn u64AKS(prime_candidate: u64) -> bool {
 //     let prime_int = Integer::from(prime_candidate.clone());
