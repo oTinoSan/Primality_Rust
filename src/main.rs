@@ -1,5 +1,5 @@
 use mod_exp::mod_exp;
-use primality::advanced_primality_tests::threaded_baillie_psw;
+use primality::advanced_primality_tests::{threaded_AKS_prime, threaded_baillie_psw};
 use rand::{thread_rng, Rng};
 use rug::Integer;
 use std::env;
@@ -10,7 +10,7 @@ fn main() {
     // // let is_prime = miller_test(number);
     // let primes = miller_list(number);
     // println!("{:?}", primes);
-    let results = threaded_baillie_psw(Integer::from(0), Integer::from(1000), 32);
+    let results = threaded_AKS_prime(64, Integer::from(1000));
     println!("Results: {:?}", &results);
     println!("Number of primes: {}", results.len());
 }

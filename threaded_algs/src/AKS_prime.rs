@@ -85,6 +85,18 @@ pub fn u64AKS(prime_candidate: u64) -> bool {
     return true;
 }
 
+pub fn BigIntAKS_list(limit: Integer) -> Vec<Integer>{
+    let mut array: Vec<Integer> = Vec::new();
+    let mut i = Integer::from(5);
+    while i < limit {
+        if BigIntAKS(i.clone()) {
+            array.push(i.clone());
+        }
+        i += 2;
+    }
+    return array;
+}
+
 pub fn BigIntAKS(prime_candidate: Integer) -> bool {
     //check if n is a perfect power
     if prime_candidate.is_perfect_power() {
@@ -190,25 +202,6 @@ impl Polynomial {
             deg: self.deg.clone(),
         }
     }
-    // pub fn is_equal_polynomial(&self, poly_2: &Polynomial) -> bool {
-    //     println!("Figuring out if polynomials are equal");
-    //     if self.deg != poly_2.deg {
-    //         println!("uh oh: {}, {}", self.deg, poly_2.deg);
-    //         return false;
-    //     }
-    //     for i in range_inclusive(Integer::from(0), self.deg.clone()) {
-    //         if self.get_polynomial_coef(i.clone()) != poly_2.get_polynomial_coef(i.clone()) {
-    //             println!(
-    //                 "bang: {}, {}",
-    //                 self.get_polynomial_coef(i.clone()),
-    //                 poly_2.get_polynomial_coef(i.clone())
-    //             );
-    //             return false;
-    //         }
-    //         println!("the polynomials' values at key {} are equal", &i);
-    //     }
-    //     return true;
-    // }
 
     pub fn set_polynomial_coef(&mut self, order: Integer, coefficient: Integer) {
         if order <= Integer::from(&self.deg) {
