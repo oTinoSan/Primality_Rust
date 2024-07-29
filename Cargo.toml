@@ -23,4 +23,4 @@ harness = false
 
 [[bench]]
 name = "kruskal_benchmarks"
-harness = true
+harness = false
