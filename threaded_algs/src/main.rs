@@ -1,4 +1,4 @@
-use crate::lamellar_prime_tests::{bigint_miller_rabin, lamellar_baillie_psw};
+use crate::lamellar_prime_tests::{bigint_miller_rabin, lamellar_baillie_psw, lamellar_wheel_miller, lamellar_wheel_miller_solovay, lamellar_wheel_solovay};
 use crate::AKS_prime::{BigIntAKS, Polynomial};
 use rug::{Complete, Integer};
 use std::collections::HashMap; //integer::MiniInteger,

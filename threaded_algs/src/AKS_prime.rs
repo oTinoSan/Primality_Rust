@@ -2,88 +2,87 @@ use num_iter::{range, range_inclusive};
 use rug::ops::AssignRound;
 use rug::ops::Pow;
 use rug::{float::Round, Float, Integer};
-use rug_polynomial::ModPoly;
 use std::collections::HashMap;
 
-pub fn u64AKS(prime_candidate: u64) -> bool {
-    let prime_int = Integer::from(prime_candidate.clone());
-    let mut prime_float: Float = Float::with_val(31, 0);
-    prime_float.assign_round(prime_int.clone(), Round::Nearest);
-    let log2n = prime_float.clone().log2();
-    //check if n is a perfect power
-    if prime_int.clone().is_perfect_power() {
-        return false;
-    }
-    let r = 0;
-    //find smallest r such that the multiplicative order of prime modulo r is greater than (log2n)^2
-    for mut r in num_iter::range(Integer::from(0), prime_int.clone()) {
-        r = Integer::from(r);
-        for k in num_iter::range(Integer::from(0), r.clone()) {
-            if prime_int.clone().pow_mod(&k, &r.clone()) == Ok(Integer::from(1)) {
-                if log2n.clone() * log2n.clone() < r.clone() {
-                    if prime_int.clone().gcd(&r.clone()) == Integer::from(1) {
-                        break;
-                    }
-                    return false;
-                }
-            }
-        }
-    } // checking for all 2<=a>= min(r,prime_candidate-1) that a does not divide n
-    if prime_int.clone() - Integer::from(0) < r.clone() {
-        for a in num_iter::range(Integer::from(2), prime_int.clone()) {
-            if prime_int.clone() % a == 0 {
-                return false;
-            }
-        }
-    } else {
-        for a in num_iter::range_inclusive(Integer::from(2), Integer::from(r)) {
-            if prime_int.clone() % a == 0 {
-                return false;
-            }
-        }
-    }
-    // if n =< r output prime
-    if prime_int.clone() <= r {
-        return true;
-    }
-    // check finite ring
-    let mut totient = Float::new(53);
-    for i in num_iter::range(Integer::from(1), prime_int.clone()) {
-        if prime_int.clone().gcd(&i) == Integer::from(1) {
-            totient += 1;
-        }
-    }
-    let roof = (totient.sqrt() * log2n)
-        .to_integer_round(Round::Down)
-        .unwrap();
-    for a in num_iter::range(Integer::from(1), roof.0) {
-        let mut polynomial: ModPoly =
-            ModPoly::with_roots(vec![-a.clone()], &Integer::from(u64::MAX)); // X + a
-        let p = polynomial.clone();
-        for _ in num_iter::range_inclusive(Integer::from(1), prime_int.clone()) {
-            polynomial.mul(&p); // (X + a)^n
-        }
+// pub fn u64AKS(prime_candidate: u64) -> bool {
+//     let prime_int = Integer::from(prime_candidate.clone());
+//     let mut prime_float: Float = Float::with_val(31, 0);
+//     prime_float.assign_round(prime_int.clone(), Round::Nearest);
+//     let log2n = prime_float.clone().log2();
+//     //check if n is a perfect power
+//     if prime_int.clone().is_perfect_power() {
+//         return false;
+//     }
+//     let r = 0;
+//     //find smallest r such that the multiplicative order of prime modulo r is greater than (log2n)^2
+//     for mut r in num_iter::range(Integer::from(0), prime_int.clone()) {
+//         r = Integer::from(r);
+//         for k in num_iter::range(Integer::from(0), r.clone()) {
+//             if prime_int.clone().pow_mod(&k, &r.clone()) == Ok(Integer::from(1)) {
+//                 if log2n.clone() * log2n.clone() < r.clone() {
+//                     if prime_int.clone().gcd(&r.clone()) == Integer::from(1) {
+//                         break;
+//                     }
+//                     return false;
+//                 }
+//             }
+//         }
+//     } // checking for all 2<=a>= min(r,prime_candidate-1) that a does not divide n
+//     if prime_int.clone() - Integer::from(0) < r.clone() {
+//         for a in num_iter::range(Integer::from(2), prime_int.clone()) {
+//             if prime_int.clone() % a == 0 {
+//                 return false;
+//             }
+//         }
+//     } else {
+//         for a in num_iter::range_inclusive(Integer::from(2), Integer::from(r)) {
+//             if prime_int.clone() % a == 0 {
+//                 return false;
+//             }
+//         }
+//     }
+//     // if n =< r output prime
+//     if prime_int.clone() <= r {
+//         return true;
+//     }
+//     // check finite ring
+//     let mut totient = Float::new(53);
+//     for i in num_iter::range(Integer::from(1), prime_int.clone()) {
+//         if prime_int.clone().gcd(&i) == Integer::from(1) {
+//             totient += 1;
+//         }
+//     }
+//     let roof = (totient.sqrt() * log2n)
+//         .to_integer_round(Round::Down)
+//         .unwrap();
+//     for a in num_iter::range(Integer::from(1), roof.0) {
+//         let mut polynomial: ModPoly =
+//             ModPoly::with_roots(vec![-a.clone()], &Integer::from(u64::MAX)); // X + a
+//         let p = polynomial.clone();
+//         for _ in num_iter::range_inclusive(Integer::from(1), prime_int.clone()) {
+//             polynomial.mul(&p); // (X + a)^n
+//         }
 
-        let mut eq_poly = ModPoly::from_int(Integer::from(u64::MAX), a.clone()); // X^n + a
-        eq_poly.set_coefficient((prime_candidate + 1).try_into().unwrap(), &Integer::from(1));
-        let mut mod_poly = ModPoly::from_int(Integer::from(u64::MAX), Integer::from(-1)); // X^r - 1
-        mod_poly.set_coefficient(r + 1, &Integer::from(1));
-        // if (X+a)^n ≠ X^n+a (mod X^r − 1,n), then output composite
-        if polynomial.rem(&mod_poly) != eq_poly.rem(&mod_poly)
-            || polynomial.rem(&ModPoly::from_int(
-                Integer::from(u64::MAX),
-                prime_int.clone(),
-            )) != eq_poly.rem(&ModPoly::from_int(
-                Integer::from(u64::MAX),
-                prime_int.clone(),
-            ))
-        {
-            return false;
-        }
-    }
+//         let mut eq_poly = ModPoly::from_int(Integer::from(u64::MAX), a.clone()); // X^n + a
+//         eq_poly.set_coefficient((prime_candidate + 1).try_into().unwrap(), &Integer::from(1));
+//         let mut mod_poly = ModPoly::from_int(Integer::from(u64::MAX), Integer::from(-1)); // X^r - 1
+//         mod_poly.set_coefficient(r + 1, &Integer::from(1));
+//         // if (X+a)^n ≠ X^n+a (mod X^r − 1,n), then output composite
+//         if polynomial.rem(&mod_poly) != eq_poly.rem(&mod_poly)
+//             || polynomial.rem(&ModPoly::from_int(
+//                 Integer::from(u64::MAX),
+//                 prime_int.clone(),
+//             )) != eq_poly.rem(&ModPoly::from_int(
+//                 Integer::from(u64::MAX),
+//                 prime_int.clone(),
+//             ))
+//         {
+//             return false;
+//         }
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
 pub fn BigIntAKS_list(limit: Integer) -> Vec<Integer>{
     let mut array: Vec<Integer> = Vec::new();

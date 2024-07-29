@@ -6,9 +6,8 @@ edition = "2021"
 [dependencies]
 rand = "0.8.5"
 mod_exp = "1.0.1"
-rug = {version = "1.16.0", features = ["num-traits"]}
-rug-polynomial = "0.2.5"
+rug = {version = "1.24.0", features = ["num-traits"]}
 num-iter = "0.1.45"
 rayon = "1.10.0"
 async-trait = "0.1.80"
-lamellar = {version = "0.6.1", features = ["enable-rofi"]}
+lamellar = {version = "0.6.1"}
