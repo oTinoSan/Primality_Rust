@@ -11,14 +11,14 @@ pub mod wheel_algos;
 
 fn main() {
     // threaded_miller_rabin(Integer::from(1000000000), 8);
-    // let limit = "100000000";
-    // let limit_int = limit.parse::<Integer>().unwrap();
-    // lamellar_wheel_miller();
+    let limit = "100000000";
+    let limit_int = limit.parse::<Integer>().unwrap();
+    lamellar_wheel_miller();
     // lamellar_wheel_solovay();
     // lamellar_baillie_psw();
-    let limit = "2_147_483_647";
-    let prime_candidate = limit.parse::<Integer>().unwrap();
-    println!("Number is prime: {:?}", BigIntAKS(prime_candidate));
+    // let limit = "2_147_483_647";
+    // let prime_candidate = limit.parse::<Integer>().unwrap();
+    // println!("Number is prime: {:?}", BigIntAKS(prime_candidate));
     // lamellar_wheel_miller_solovay();
 }
 
