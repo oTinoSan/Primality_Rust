@@ -110,8 +110,7 @@ pub fn BigIntAKS(prime_candidate: Integer) -> bool {
     for mut r in num_iter::range(Integer::from(0), prime_candidate.clone()) {
         r_true = r.clone();
         for k in num_iter::range(Integer::from(0), r.clone()) {
-            if prime_candidate.clone().pow_mod(&k, &r.clone()) == Ok(Integer::from(1)) {
-                if log2n.clone() * log2n.clone() < r.clone() {
+            if prime_candidate.clone().pow_mod(&k, &r.clone()) == Ok(Integer::from(1)) && log2n.clone() * log2n.clone() < r.clone() {
                     if prime_candidate.clone().gcd(&r.clone()) == Integer::from(1) {
                         break;
                     }
@@ -119,7 +118,7 @@ pub fn BigIntAKS(prime_candidate: Integer) -> bool {
                 }
             }
         }
-    } // checking for all 2<=a>= min(r,prime_candidate-1) that a does not divide n
+     // checking for all 2<=a>= min(r,prime_candidate-1) that a does not divide n
     if prime_candidate.clone() - Integer::from(0) < r_true.clone() {
         for a in num_iter::range_inclusive(Integer::from(2), prime_candidate.clone()) {
             if prime_candidate.clone() % a == 0 {

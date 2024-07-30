@@ -14,7 +14,7 @@ fn main() {
     let limit = "100000000";
     let limit_int = limit.parse::<Integer>().unwrap();
     // lamellar_wheel_miller();
-    lamellar_wheel_solovay();
+    lamellar_wheel_miller_solovay();
     // lamellar_baillie_psw();
     // let limit = "2_147_483_647";
     // let prime_candidate = limit.parse::<Integer>().unwrap();
