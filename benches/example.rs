@@ -51,23 +51,28 @@ fn main() {
 // fn threaded_miller_primes_16(arg: &Integer){
 //     black_box(threaded_miller_rabin((black_box(arg.clone())), 16u64));
 // }
-
-#[divan::bench(args = [Integer::from(1000),Integer::from(10000), Integer::from(100000), Integer::from(1000000)])]
+// args = [Integer::from(173),Integer::from(233), Integer::from(307), Integer::from(409)
+#[divan::bench(args = [Integer::from(541),Integer::from(809), Integer::from(1069), Integer::from(1223)],  sample_count=1, sample_size=1)]
 fn AKS_prime(arg: &Integer){
     black_box(BigIntAKS(black_box(arg.clone())));
 }
 
-#[divan::bench(args = [Integer::from(1000),Integer::from(10000), Integer::from(100000), Integer::from(1000000)])]
+#[divan::bench(args = [Integer::from(541),Integer::from(809), Integer::from(1069), Integer::from(1223)])]
 fn bigint_miller_rabin_single (arg: &Integer){
-    black_box(bigint_miller_rabin(10, black_box(arg.clone())));
+    black_box(bigint_miller_rabin_ethan(black_box(arg), 10));
 }
 
-#[divan::bench(args = [Integer::from(1000),Integer::from(10000), Integer::from(100000), Integer::from(1000000)])]
+#[divan::bench(args = [Integer::from(541),Integer::from(809), Integer::from(1069), Integer::from(1223)])]
 fn bigint_solovay_strassen_single (arg: &Integer){
     black_box(bigint_solovay_strassen(10, black_box(arg.clone())));
 }
 
-#[divan::bench(args = [Integer::from(1000),Integer::from(10000), Integer::from(100000), Integer::from(1000000)])]
-fn baillie_psw_test (arg: &Integer){
+#[divan::bench(args = [541, 809, 1069, 1223])]
+fn wheel_factoring_single_test (arg: u64) {
+    black_box(wheel_factoring_single(black_box(arg)));
+}
+
+#[divan::bench(args = [Integer::from(541),Integer::from(809), Integer::from(1069), Integer::from(1223)])]
+fn baillie_psw_test_single (arg: &Integer){
     black_box(baillie_psw_test(black_box(arg)));
 }

@@ -3,6 +3,37 @@ use rug::ops::Pow;
 use rug::{rand, Complete, Integer};
 use std::thread;
 
+pub fn wheel_factoring_single(prime_candidate: u64) -> bool {
+    //first primes to generate the wheel with
+    let first_primes = vec![2, 3, 5];
+    let wheel = [7, 11, 13, 17, 19, 23, 29, 31];
+    // let wheel = generate_wheel(first_primes.clone());
+    let wheel_mod = 30; // product of first_primes
+
+    //test the first primes against candidate number
+    for p in &first_primes {
+        if prime_candidate % p == 0 {
+            return false;
+        }
+    }
+
+    let sqrt = (f64::sqrt(prime_candidate as f64)) as usize;
+
+    for turn_num in (0..=sqrt).step_by(wheel_mod) {
+        for spoke in &wheel {
+            if prime_candidate % (turn_num as u64 + *spoke as u64) == 0 {
+                if prime_candidate == (turn_num as u64 + *spoke as u64) {
+                    return true; //edge case for primes in the first turn of the wheel
+                }
+                return false;
+            }
+        }
+    }
+
+    //if we got this far it must be prime
+    return true;
+}
+
 pub fn threaded_solovay_strassen(num_threads: u64, limit: Integer) -> Vec<Integer> {
     let block_size = (&limit / num_threads).complete();
 
@@ -184,6 +215,35 @@ pub fn bigint_miller_rabin(loop_amount: u64, n: Integer) -> bool {
     true
 }
 
+pub fn bigint_miller_rabin_ethan(n: &Integer, loop_amount: u64) -> bool {
+    if *n == 5 || *n == 7 {
+        return true;
+    }
+    let s = (n - Integer::from(1)).find_one(0).unwrap();
+    let d: Integer = Integer::from(n - 1) / (2u64.pow(s.try_into().unwrap()));
+    let mut rand = rug::rand::RandState::new();
+
+    // println!("prime_candidate: {}, s: {}, d: {}, 2^s*d + 1 = {}", prime_candidate, s, d, {2u32.pow(s)*d+1});
+    for _ in 0..loop_amount {
+        let a: Integer = (n - Integer::from(2)).random_below(&mut rand);
+        let mut x = a.pow_mod(&d, &n).unwrap();
+        let mut y: Integer = Integer::from(0);
+        for _ in 0..s {
+            y = x.clone().pow_mod(&Integer::from(2), &n).unwrap();
+            if y == Integer::from(1) && x != Integer::from(1) && x != Integer::from(n - 1) {
+                return false;
+            }
+            x = y.clone();
+        }
+        if y != Integer::from(1) {
+            return false;
+        }
+    }
+
+    return true; // probably prime
+}
+
+
 pub fn bigint_miller_rabin_list(num_tests: u64, max_val: Integer) -> Vec<Integer> {
     let mut primes = vec![];
     let mut i = Integer::from(5);
@@ -202,7 +262,7 @@ pub fn baillie_psw_array(limit: Integer) -> Vec<Integer> {
     let mut array: Vec<Integer> = Vec::new();
     let mut i = Integer::from(5);
     while i < limit {
-        if baillie_wagstaff_lucas_test(&i).0 {
+        if baillie_psw_test(&i) {
             array.push(i.clone());
         }
         i += 2;
@@ -229,20 +289,27 @@ pub fn threaded_baillie_psw(
     upper_limit: Integer,
     num_threads: u64,
 ) -> Vec<Integer> {
-    let block_size = Integer::from(Integer::from(&upper_limit - &lower_limit) / num_threads);
-
+    let mut block_size = Integer::from(Integer::from(&upper_limit - &lower_limit) / num_threads);
+    if block_size < 1 {
+        block_size = Integer::from(1);
+    }
     let mut thread_handles = Vec::new();
 
     for i in 0..num_threads {
         let mut thread_min: Integer = i * Integer::from(&block_size) + &lower_limit + 5;
-        let thread_max: Integer = (i + 1) * Integer::from(&block_size) + &lower_limit + 5;
-
+        let mut thread_max: Integer = (i + 1) * Integer::from(&block_size) + &lower_limit + 5;
         if Integer::from(&thread_min) % 2 == Integer::ZERO {
             thread_min += 1;
         }
+        if i == num_threads - 1 {
+            thread_max = upper_limit.clone() + 5;
+        }
+        let abs_max = upper_limit.clone();
         let thread = std::thread::spawn(move || {
             let mut return_vector = Vec::new();
-            while thread_min < thread_max {
+            while thread_min < thread_max
+                && thread_max < Integer::from(Integer::from(abs_max.clone() + 6))
+            {
                 if baillie_psw_test(&thread_min) {
                     return_vector.push(thread_min.clone());
                 }
@@ -258,9 +325,9 @@ pub fn threaded_baillie_psw(
     for handle in thread_handles {
         return_vector.append(&mut handle.join().unwrap());
     }
-    if return_vector.len() > 0 {
-        println!("{:?}", return_vector);
-    }
+    // if return_vector.len() > 0 {
+    //     println!("{:?}", return_vector);
+    // }
     return_vector
 }
 
@@ -291,11 +358,11 @@ pub fn baillie_psw_test(n: &Integer) -> bool {
     if !base_2_strong_probable_prime_test(&n) {
         return false;
     }
-    // Step 2: perfrom lucas test
+    // Step 2: perform lucas test
 
-    let result = crandall_pomerance_lucas_test(&n);
+    let result: bool = lucas_test(&n);
 
-    return result.1;
+    return result;
 }
 
 pub fn base_2_strong_probable_prime_test(n: &Integer) -> bool {
@@ -319,216 +386,13 @@ pub fn base_2_strong_probable_prime_test(n: &Integer) -> bool {
     return true;
 }
 
-pub fn crandall_pomerance_lucas_test(n: &Integer) -> (bool, bool) {
+pub fn lucas_test(n: &Integer) -> bool {
     // Lucas test: Find the first D in the sequence 5, −7, 9, −11, 13, −15, ...
     // for which the Jacobi symbol (D/n) is −1. Set P = 1 and Q = (1 − D) / 4.
 
     // if Integer::from(n % 3) == 0 || Integer::from(n % 5) == 0 || Integer::from(n % 7) == 0 {
     //     return false;
     // }
-    let s = (n - Integer::from(1)).find_one(0).unwrap();
-    let d: Integer = Integer::from(n - 1) / (2u64.pow(s.try_into().unwrap()));
-
-    let mut lucas_probable = false;
-    let mut strong_lucas_probable = false;
-    let mut delta: i32 = 0;
-    let mut sign = true;
-
-    for i in (5..100).step_by(2) {
-        let result: i32;
-        if sign {
-            result = Integer::from(i).jacobi(&n);
-        } else {
-            result = Integer::from(-i).jacobi(&n);
-        }
-        if result == 0 { //then D and n have a prime factor in common, quit
-            return (false, false);
-        }
-        if result == -1 {
-            if sign {
-                delta = i;
-            } else {
-                delta = -i;
-            }
-            break;
-        }
-        sign = !sign;
-    }
-    if delta == 0 {
-        // println!("got through 100 jacobi iterations without finding a D s.t. (D/n)== -1.
-        // {} is probably a square number, use newtons method of detecting them", n);
-        return (false, false);
-    }
-
-    let p: Integer = Integer::from(1);
-    let q = Integer::from((1 - delta) / 4);
-    // println!("n: {}, p: {}, q: {}, d: {}, (d/n): {}, gcd(n, 2pqd): {}", n, p, q, d, evaluate_jacobi(d, n.clone()), n.clone().gcd(&((2 * (&p * &q).complete()) * d)));
-
-    // println!("(5/n): {}", evaluate_jacobi(5, n.clone()));
-    // println!("(-7/n): {}", evaluate_jacobi(-7, n.clone()));
-    // println!("(9/n): {}", evaluate_jacobi(9, n.clone()));
-    // println!("(-11/n): {}", evaluate_jacobi(-11, n.clone()));
-
-
-    let q_inv = modular_inverse(&q, &n);
-    if q_inv == Integer::ZERO {
-        // println!("there is no inverse for {} modulo {}", q, n);
-        return (false, false);
-    }
-
-    // println!("q is {}, q inverse is {}", q, q_inv);
-
-    // Auxiliary parameters
-    let a = Integer::from(p.clone().pow(2) * q_inv - 2).modulo(&n);
-    let m: Integer = (n - evaluate_jacobi(delta, n.clone())).complete() / 2;
-
-    // lucas chain starts here
-    let (mut u, mut v) = (Integer::from(2), a.clone());
-
-    // if d = 1 and p = n, then v1 = vd is 0 (mod n), so n is a strong lprp
-    if d == 1 && u.clone().modulo(n) == 0 {
-        strong_lucas_probable = true;
-    }
-
-    // let mut x = 0;
-    // let mut y = 1;
-    for i in (0..=m.significant_bits()).rev() {
-        if m.get_bit(i) {
-            (u, v) = (
-                (&u * &v - &a).complete().modulo(&n),
-                (&v * &v - Integer::from(2)).modulo(&n),
-            );
-            // x = 2*x+1;
-            // y = 2*y;
-        } else {
-            (u, v) = (
-                (&u * &u - Integer::from(2)).modulo(&n),
-                (&u * &v - &a).complete().modulo(&n),
-            );
-            // x = 2*x;
-            // y = 2*y-1;
-        }
-        // println!("x: {}, y: {}, u: {}, v: {}",x,y,u,v);
-        // check strong lucas conditions
-        
-        if i == n.significant_bits() - s { // 1: u(d) == 0
-            if modular_inverse(&Integer::from(delta), n) * ((2*&v) - (&p * &u).complete()) == 0{
-                strong_lucas_probable = true;
-            }
-        }
-        if i >= n.significant_bits() - s && i < n.significant_bits() && u == 0 {
-            strong_lucas_probable = true;
-        }
-    }
-
-    if (a * u).modulo(n) == (Integer::from(2) * &v).modulo(&n) {
-        lucas_probable = true;
-    }
-
-    return (lucas_probable, strong_lucas_probable);
-}
-
-pub fn baillie_wagstaff_lucas_test(n: &Integer) -> (bool, bool) {
-    // Lucas test: Find the first D in the sequence 5, −7, 9, −11, 13, −15, ...
-    // for which the Jacobi symbol (D/n) is −1. Set P = 1 and Q = (1 − D) / 4.
-
-    // if Integer::from(n % 3) == 0 || Integer::from(n % 5) == 0 || Integer::from(n % 7) == 0 {
-    //     return false;
-    // }
-    let mut lucas_probable = false;
-    let mut strong_lucas_probable = false;
-    let mut delta: i32 = 0;
-    let mut sign = true;
-
-    for i in (5..100).step_by(2) {
-        let result: i32;
-        if sign {
-            result = Integer::from(i).jacobi(&n);
-        } else {
-            result = Integer::from(-i).jacobi(&n);
-        }
-        if result == 0 { //then D and n have a prime factor in common, quit
-            return (false, false);
-        }
-        if result == -1 {
-            if sign {
-                delta = i;
-            } else {
-                delta = -i;
-            }
-            break;
-        }
-        sign = !sign;
-    }
-    if delta == 0 {
-        // println!("got through 100 jacobi iterations without finding a D s.t. (D/n)== -1.
-        // {} is probably a square number, use newtons method of detecting them", n);
-        return (false, false);
-    }
-
-    let p: Integer = Integer::from(1);
-    let q = Integer::from((1 - delta) / 4);
-    // println!("n: {}, p: {}, q: {}, d: {}, (d/n): {}, gcd(n, 2pqd): {}", n, p, q, delta, evaluate_jacobi(delta, n.clone()), n.clone().gcd(&((2 * (&p * &q).complete()) * delta)));
-
-    // println!("(5/n): {}", evaluate_jacobi(5, n.clone()));
-    // println!("(-7/n): {}", evaluate_jacobi(-7, n.clone()));
-    // println!("(9/n): {}", evaluate_jacobi(9, n.clone()));
-    // println!("(-11/n): {}", evaluate_jacobi(-11, n.clone()));
-    let n_plus_one = Integer::from(n+1);
-
-    let s = n_plus_one.find_one(0).unwrap();
-    let d: Integer = n_plus_one.clone() / (2u64.pow(s.try_into().unwrap()));
-    // println!("s: {}, d: {}", s, d);
-    
-    let n_bits = n_plus_one.significant_bits();
-    // let mut string = String::new();
-    // for i in 0..n_bits {
-    //     string += &n_plus_one.get_bit(n_bits-i-1).to_string();
-    // }
-    // println!("n_bits: {}, {}",n_bits, string);
-
-    //initialize u1, v1, q^1
-    let mut u_k: Integer = Integer::from(1);
-    let mut v_k: Integer = p.clone();
-    let mut q_k: Integer = q.clone();
-
-    // if d = 1 and if p = n, then v1 = v(d) is 0 (mod n) , so n is already a strong lprp
-    if d == 1 && v_k.clone().modulo(n) == 0 {
-        strong_lucas_probable = true;
-    }
-    // let mut x = 1;
-    for i in 2..=n_bits {
-        (u_k, v_k, q_k) = ((&u_k * &v_k).complete().modulo(n), ((&v_k * &v_k).complete() -(&q_k* &Integer::from(2)).complete()).modulo(n), q_k.pow(2).modulo(n));
-        // x *= 2;
-        if n_plus_one.get_bit(n_bits-i) {
-            let mut u_temp = (&p * &u_k + &v_k).complete();
-            if !(u_temp.is_even()) { // make it even
-                u_temp += n;
-            }
-            let mut v_temp = (&delta * &u_k).complete() + &p * &v_k;
-            if !(v_temp.is_even()) {
-                v_temp += n;
-            }
-            (u_k, v_k, q_k) = ((u_temp / Integer::from(2)).modulo(n),(v_temp / Integer::from(2)).modulo(n),(q_k * &q).modulo(n));
-            // x += 1;
-        }
-        if i == n_bits - s && u_k == 0 {
-            // println!("condition one");
-            strong_lucas_probable = true;
-        }
-        if i >= n_bits - s && i < n_bits && v_k == 0 {
-            // println!("condition two");
-            strong_lucas_probable = true;
-        }
-        // println!("bit: {}, x: {}, u: {}, v: {}",n_plus_one.get_bit(n_bits-i),x,u_k,v_k);
-    }
-    if u_k == 0 {
-        lucas_probable = true;
-    }
-    return (lucas_probable, strong_lucas_probable);
-}
-
-pub fn calculate_parameters (n: Integer) {
     let mut d: i32 = 0;
     let mut sign = true;
 
@@ -538,6 +402,10 @@ pub fn calculate_parameters (n: Integer) {
             result = evaluate_jacobi(i, n.clone());
         } else {
             result = evaluate_jacobi(-i, n.clone());
+        }
+        if result == 0 {
+            //then D and n have a prime factor in common, quit
+            return false;
         }
         if result == -1 {
             if sign {
@@ -550,8 +418,108 @@ pub fn calculate_parameters (n: Integer) {
         sign = !sign;
     }
     if d == 0 {
-        println!("got through 100 jacobi iterations without finding a D s.t. (D/n)== -1.
-        {} is probably a square number, use newtons method of detecting them", n);
+        // println!("got through 100 jacobi iterations without finding a D s.t. (D/n)== -1.
+        // {} is probably a square number, use newtons method of detecting them", n);
+        return false;
+    }
+
+    let p: Integer = Integer::from(1);
+    let q = Integer::from((1 - d) / 4);
+    // println!("n: {}, p: {}, q: {}, d: {}, (d/n): {}, gcd(n, 2pqd): {}", n, p, q, d, evaluate_jacobi(d, n.clone()), n.clone().gcd(&((2 * (&p * &q).complete()) * d)));
+
+    // println!("(5/n): {}", evaluate_jacobi(5, n.clone()));
+    // println!("(-7/n): {}", evaluate_jacobi(-7, n.clone()));
+    // println!("(9/n): {}", evaluate_jacobi(9, n.clone()));
+    // println!("(-11/n): {}", evaluate_jacobi(-11, n.clone()));
+
+    let q_inv = modular_inverse(&q, &n);
+    if q_inv == Integer::ZERO {
+        // println!("there is no inverse for {} modulo {}", q, n);
+        return false;
+    }
+
+    // println!("q is {}, q inverse is {}", q, q_inv);
+
+    // Auxiliary parameters
+    let a = Integer::from(p.clone().pow(2) * q_inv - 2)
+        .pow_mod(&Integer::from(1), &n)
+        .unwrap();
+    let m: Integer = (n - (evaluate_jacobi(d, n.clone()))).complete() / 2;
+
+    // lucas chain
+    let (mut u, mut v) = (Integer::from(2), a.clone());
+
+    // let mut x = 0;
+    // let mut y = 1;
+    for i in (0..=m.significant_bits()).rev() {
+        if m.get_bit(i) {
+            (u, v) = (
+                (&u * &v - &a)
+                    .complete()
+                    .pow_mod(&Integer::from(1), &n)
+                    .unwrap(),
+                (&v * &v - Integer::from(2))
+                    .pow_mod(&Integer::from(1), &n)
+                    .unwrap(),
+            );
+            // x = 2*x+1;
+            // y = 2*y;
+        } else {
+            (u, v) = (
+                (&u * &u - Integer::from(2))
+                    .pow_mod(&Integer::from(1), &n)
+                    .unwrap(),
+                (&u * &v - &a)
+                    .complete()
+                    .pow_mod(&Integer::from(1), &n)
+                    .unwrap(),
+            );
+            // x = 2*x;
+            // y = 2*y-1;
+        }
+        // println!("x: {}, y: {}, u: {}, v: {}",x,y,u,v);
+    }
+
+    if (a * u).pow_mod(&Integer::from(1), n).unwrap()
+        == (Integer::from(2) * v)
+            .pow_mod(&Integer::from(1), &n)
+            .unwrap()
+    {
+        return true;
+    }
+
+    return false;
+}
+
+pub fn calculate_parameters(n: Integer) {
+    let mut d: i32 = 0;
+    let mut sign = true;
+
+    for i in (5..100).step_by(2) {
+        let result: i32;
+        if sign {
+            result = evaluate_jacobi(i, n.clone());
+            // evaluate_jacobi(i, n.clone());
+        } else {
+            result = evaluate_jacobi(-i, n.clone());
+            // evaluate_jacobi(-i, n.clone());
+        }
+        if result == -1 {
+            if sign {
+                d = i;
+            } else {
+                d = -i;
+            }
+            break;
+        }
+        sign = !sign;
+    }
+    if d == 0 {
+        println!(
+            "got through 100 jacobi iterations without finding a D s.t. (D/n)== -1.
+        {} is probably a square number, use newtons method of detecting them",
+            n
+        );
     }
 
     let p: Integer = Integer::from(1);
@@ -562,16 +530,25 @@ pub fn calculate_parameters (n: Integer) {
 fn evaluate_jacobi(d: i32, prime_candidate: Integer) -> i32 {
     let mut a = Integer::from(d);
     let mut n = prime_candidate.clone();
-    a = a.modulo(&n); // step 1
+    a = a.pow_mod(&Integer::from(1), &n).unwrap(); // step 1
     let mut result = 1;
     let mut r: Integer;
 
     //step 3
     while a != Integer::from(0) {
         //step 2
-        while Integer::from(a.clone().modulo(&Integer::from(2))) == Integer::from(0) {
+        while Integer::from(
+            a.clone()
+                .pow_mod(&Integer::from(1), &Integer::from(2))
+                .unwrap(),
+        ) == Integer::from(0)
+        {
             a /= 2;
-            r = Integer::from(n.clone().modulo(&Integer::from(8)));
+            r = Integer::from(
+                n.clone()
+                    .pow_mod(&Integer::from(1), &Integer::from(8))
+                    .unwrap(),
+            );
             if r == Integer::from(3) || r == Integer::from(5) {
                 result = -result;
             }
@@ -581,12 +558,20 @@ fn evaluate_jacobi(d: i32, prime_candidate: Integer) -> i32 {
         r = n;
         n = a;
         a = r;
-        if Integer::from(a.clone().modulo(&Integer::from(4))) == Integer::from(3)
-            && Integer::from(n.clone().modulo(&Integer::from(4))) == Integer::from(3)
+        if Integer::from(
+            a.clone()
+                .pow_mod(&Integer::from(1), &Integer::from(4))
+                .unwrap(),
+        ) == Integer::from(3)
+            && Integer::from(
+                n.clone()
+                    .pow_mod(&Integer::from(1), &Integer::from(4))
+                    .unwrap(),
+            ) == Integer::from(3)
         {
             result = -result;
         }
-        a = a.modulo(&n);
+        a = a.pow_mod(&Integer::from(1), &n).unwrap();
     }
     if n != Integer::from(1) {
         result = 0;
@@ -596,7 +581,7 @@ fn evaluate_jacobi(d: i32, prime_candidate: Integer) -> i32 {
 }
 
 fn modular_inverse(input: &Integer, modulus: &Integer) -> Integer {
-    let result = input.clone().modulo(&modulus);
+    let result = input.clone().pow_mod(&Integer::from(1), &modulus).unwrap();
 
     let y = extended_gcd(&modulus, &result);
 
