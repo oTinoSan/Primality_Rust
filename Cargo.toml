@@ -1,0 +1,6 @@
+[workspace]
+members = [ "fermat_pseudoprime",
+    "mod_pow_array",
+    "primality_testing"
+, "rho_table"]
+resolver = "2"

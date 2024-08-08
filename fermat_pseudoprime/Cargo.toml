@@ -1,0 +1,14 @@
+[package]
+name = "fermat_pseudoprime"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-trait = "0.1.81"
+bincode = "1.3.3"
+lamellar = "0.6.1"
+# lamellar = {version = "0.6.1", features = ["enable-rofi"]}
+num = "0.4.3"
+num-prime = "0.4.4"
+rho_table = { version = "0.1.0", path = "../rho_table" }
+rug = "1.25.0"

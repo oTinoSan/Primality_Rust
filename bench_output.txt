@@ -1,0 +1,72 @@
+
+running 16 tests
+test bigint_num::big_int_jacob::basic_sieve ... ignored
+test bigint_num::big_int_jacob::t_find_k_m ... ignored
+test bigint_num::big_int_jacob::t_largeprimetest_smallinterval ... ignored
+test bigint_num::big_int_jacob::t_mr_32761 ... ignored
+test bigint_num::big_int_jacob::t_mr_lt_100 ... ignored
+test bigint_num::big_int_jacob::t_mr_max ... ignored
+test bigint_num::big_int_jacob::t_shift ... ignored
+test bigint_num::big_int_jacob::t_small ... ignored
+test bigint_num::big_int_jacob::t_smallprimetest ... ignored
+test bigint_num::big_int_jacob::t_trial_div_32761 ... ignored
+test bigint_num::big_int_jacob::t_trial_div_lt_100 ... ignored
+test bigint_num::big_int_jacob::t_trial_div_max ... ignored
+test bigint_num::miller_rabin_threaded::tests::test_miller_rabin_threaded_with_prime ... ignored
+test bigint_rug::threaded_bigint_rug::threaded_tests::test_threaded_bigrug_basic ... ignored
+test bigint_rug::threaded_bigint_rug::threaded_tests::test_threaded_bigrug_large_numbers ... ignored
+test bigint_rug::threaded_bigint_rug::threaded_tests::test_threaded_bigrug_single_thread ... ignored
+
+test result: ok. 0 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+example                     fastest       │ slowest       │ median        │ mean          │ samples │ iters
+├─ check_all_primes_bignum                │               │               │               │         │
+│  ╰─ 10000                 19.16 ms      │ 40.46 ms      │ 21.21 ms      │ 22.44 ms      │ 100     │ 100
+├─ check_all_primes_bigrug                │               │               │               │         │
+│  ╰─ 10000                 19.22 ms      │ 48.27 ms      │ 24.19 ms      │ 27.77 ms      │ 100     │ 100
+╰─ threaded_bigrug_test                   │               │               │               │         │
+   ╰─ 10000                 4.508 ms      │ 8.393 ms      │ 5.573 ms      │ 5.712 ms      │ 100     │ 100
+
+
+running 18 tests
+test bigint_num::big_int_jacob::basic_sieve ... ignored
+test bigint_num::big_int_jacob::t_find_k_m ... ignored
+test bigint_num::big_int_jacob::t_largeprimetest_smallinterval ... ignored
+test bigint_num::big_int_jacob::t_mr_32761 ... ignored
+test bigint_num::big_int_jacob::t_mr_lt_100 ... ignored
+test bigint_num::big_int_jacob::t_mr_max ... ignored
+test bigint_num::big_int_jacob::t_shift ... ignored
+test bigint_num::big_int_jacob::t_small ... ignored
+test bigint_num::big_int_jacob::t_smallprimetest ... ignored
+test bigint_num::big_int_jacob::t_trial_div_32761 ... ignored
+test bigint_num::big_int_jacob::t_trial_div_lt_100 ... ignored
+test bigint_num::big_int_jacob::t_trial_div_max ... ignored
+test bigint_num::threaded_bigint_num::threaded_tests::test_threaded_bignum_basic ... ignored
+test bigint_num::threaded_bigint_num::threaded_tests::test_threaded_bignum_large_numbers ... ignored
+test bigint_num::threaded_bigint_num::threaded_tests::test_threaded_bignum_single_thread ... ignored
+test bigint_rug::threaded_bigint_rug::threaded_tests::test_threaded_bigrug_basic ... ignored
+test bigint_rug::threaded_bigint_rug::threaded_tests::test_threaded_bigrug_large_numbers ... ignored
+test bigint_rug::threaded_bigint_rug::threaded_tests::test_threaded_bigrug_single_thread ... ignored
+
+test result: ok. 0 passed; 0 failed; 18 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+example                     fastest       │ slowest       │ median        │ mean          │ samples │ iters
+├─ check_all_primes_bignum                │               │               │               │         │
+│  ╰─ 10000                 19.16 ms      │ 57.69 ms      │ 21 ms         │ 24.15 ms      │ 100     │ 100
+├─ check_all_primes_bigrug                │               │               │               │         │
+│  ╰─ 10000                 19.58 ms      │ 36.96 ms      │ 20.17 ms      │ 21.36 ms      │ 100     │ 100
+├─ threaded_bignum_test                   │               │               │               │         │
+│  ╰─ 10000                 13.87 ms      │ 48.46 ms      │ 15.28 ms      │ 18.29 ms      │ 100     │ 100
+╰─ threaded_bigrug_test                   │               │               │               │         │
+   ╰─ 10000                 3.565 ms      │ 9.885 ms      │ 4.634 ms      │ 5.215 ms      │ 100     │ 100
+
